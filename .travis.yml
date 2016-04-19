@@ -9,3 +9,20 @@ android:
 
 script:
   - ./gradlew test
+
+jdk:
+  - oraclejdk8
+
+after_success:
+  - .buildscript/deploy_snapshot.sh
+
+cache:
+  directories:
+    - $HOME/.gradle
+
+sudo: false
+
+env:
+  global:
+    - secure TODO: BINTRAY_USER
+    - secure TODO: BINTRAY_API_KEY
