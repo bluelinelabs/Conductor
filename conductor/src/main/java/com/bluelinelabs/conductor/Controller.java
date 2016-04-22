@@ -270,6 +270,24 @@ public abstract class Controller {
     }
 
     /**
+     * Returns the a nested Controller with the given instance id, if available.
+     *
+     * @param instanceId The instance ID being searched for
+     * @return The matching Controller, if one exists
+     */
+    public final Controller getControllerWithInstanceId(String instanceId) {
+        if (getInstanceId().equals(instanceId))
+            return this;
+
+        for (ControllerTransaction transaction : mChildControllers) {
+            Controller controllerWithId = transaction.controller.getControllerWithInstanceId(instanceId);
+            if (controllerWithId != null)
+                return controllerWithId;
+        }
+        return null;
+    }
+
+    /**
      * Returns all of this Controller's child Controllers
      */
     public final List<Controller> getChildControllers() {

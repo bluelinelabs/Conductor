@@ -271,14 +271,10 @@ public class Router {
      */
     public Controller getControllerWithInstanceId(String instanceId) {
         for (ControllerTransaction transaction : mBackStack) {
-            if (transaction.controller.getInstanceId().equals(instanceId)) {
-                return transaction.controller;
-            } else {
-                Controller childWithId = transaction.controller.getChildControllerWithInstanceId(instanceId);
-                if (childWithId != null) {
-                    return childWithId;
+            Controller controllerWithId = transaction.controller.getControllerWithInstanceId(instanceId);
+                if (controllerWithId != null) {
+                    return controllerWithId;
                 }
-            }
         }
         return null;
     }
