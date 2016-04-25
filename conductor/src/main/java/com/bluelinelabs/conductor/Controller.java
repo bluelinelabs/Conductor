@@ -256,10 +256,11 @@ public abstract class Controller {
 
     /**
      * Returns the child Controller with the given instance id, if available.
-     *
      * @param instanceId The instance ID being searched for
      * @return The matching child Controller, if one exists
+     * @deprecated Use {@link #getChildController(String)} or {@link #getChildControllers()} instead.
      */
+    @Deprecated
     public final Controller getChildControllerWithInstanceId(String instanceId) {
         for (ControllerTransaction transaction : mChildControllers) {
             if (transaction.controller.getInstanceId().equals(instanceId)) {
