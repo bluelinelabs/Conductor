@@ -271,7 +271,7 @@ public class Router {
      */
     public Controller getControllerWithInstanceId(String instanceId) {
         for (ControllerTransaction transaction : mBackStack) {
-            Controller controllerWithId = transaction.controller.getControllerWithInstanceId(instanceId);
+            Controller controllerWithId = transaction.controller.findController(instanceId);
                 if (controllerWithId != null) {
                     return controllerWithId;
                 }
