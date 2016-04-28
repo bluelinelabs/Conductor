@@ -84,6 +84,7 @@ afterEvaluate { project ->
           }
         }
 
+
         // Resolve dependencies to other modules
         pom.whenConfigured { pom ->
           pom.dependencies.findAll { dep -> dep.groupId == rootProject.name }.collect { dep ->
