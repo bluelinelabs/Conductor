@@ -32,11 +32,21 @@ def getSnapshotRepositoryUrl() {
 }
 
 def getRepositoryUsername() {
-  return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+  def username = "$System.env.NEXUS_USERNAME"
+  if (username == null) {
+    username = ""
+  }
+
+  return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : username
 }
 
 def getRepositoryPassword() {
-  return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+  def password = "$System.env.NEXUS_PASSWORD"
+  if (password == null) {
+    password = ""
+  }
+
+  return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : password
 }
 
 afterEvaluate { project ->
