@@ -378,7 +378,7 @@ public class Router {
             transaction.controller.prepareForActivityPause();
         }
 
-        mBackStack.detachAndSaveInstanceState(outState);
+        mBackStack.saveInstanceState(outState);
     }
 
     public final void onActivityDestroyed(Activity activity) {

@@ -124,7 +124,6 @@ public class ControllerLifecycleTests {
         Bundle bundle = new Bundle();
         mActivityController.saveInstanceState(bundle);
 
-        expectedCallState.detachCalls++;
         expectedCallState.saveViewStateCalls++;
         expectedCallState.saveInstanceStateCalls++;
         assertCalls(expectedCallState, controller);
@@ -136,6 +135,7 @@ public class ControllerLifecycleTests {
         assertCalls(expectedCallState, controller);
 
         mActivityController.destroy();
+        expectedCallState.detachCalls++;
         expectedCallState.destroyViewCalls++;
         assertCalls(expectedCallState, controller);
 
@@ -181,14 +181,11 @@ public class ControllerLifecycleTests {
         Bundle bundle = new Bundle();
         mActivityController.saveInstanceState(bundle);
 
-        expectedCallState.detachCalls++;
         expectedCallState.saveInstanceStateCalls++;
         expectedCallState.saveViewStateCalls++;
         assertCalls(expectedCallState, controller);
 
         mActivityController.resume();
-        expectedCallState.createViewCalls++;
-        expectedCallState.restoreViewStateCalls++;
     }
 
     @Test

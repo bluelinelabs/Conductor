@@ -20,7 +20,7 @@ public class ControllerTransactionTests {
                 .tag("Test Tag")
                 .build();
 
-        Bundle bundle = transaction.detachAndSaveInstanceState();
+        Bundle bundle = transaction.saveInstanceState();
 
         RouterTransaction restoredTransaction = new RouterTransaction(bundle);
 
@@ -39,7 +39,7 @@ public class ControllerTransactionTests {
                 .tag("Test Tag")
                 .build();
 
-        Bundle bundle = transaction.detachAndSaveInstanceState();
+        Bundle bundle = transaction.saveInstanceState();
 
         ChildControllerTransaction restoredTransaction = new ChildControllerTransaction(bundle);
 

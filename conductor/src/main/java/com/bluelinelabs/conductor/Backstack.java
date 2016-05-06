@@ -75,10 +75,10 @@ class Backstack implements Iterable<RouterTransaction> {
         return list;
     }
 
-    public void detachAndSaveInstanceState(Bundle outState) {
+    public void saveInstanceState(Bundle outState) {
         ArrayList<Bundle> entryBundles = new ArrayList<>(mBackStack.size());
         for (RouterTransaction entry : mBackStack) {
-            entryBundles.add(entry.detachAndSaveInstanceState());
+            entryBundles.add(entry.saveInstanceState());
         }
 
         outState.putParcelableArrayList(KEY_ENTRIES, entryBundles);

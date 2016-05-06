@@ -756,7 +756,7 @@ public abstract class Controller {
 
     final void activityDestroyed(boolean isChangingConfigurations) {
         if (isChangingConfigurations) {
-            removeViewReference();
+            detach(mView, true);
         } else {
             destroy(true);
         }
@@ -791,8 +791,8 @@ public abstract class Controller {
         }
     }
 
-    private void detach(@NonNull View view, boolean allowViewRefRemoval) {
-        final boolean removeViewRef = allowViewRefRemoval && (mRetainViewMode == RetainViewMode.RELEASE_DETACH || mIsBeingDestroyed);
+    private void detach(@NonNull View view, boolean forceViewRefRemoval) {
+        final boolean removeViewRef = forceViewRefRemoval || mRetainViewMode == RetainViewMode.RELEASE_DETACH || mIsBeingDestroyed;
 
         if (mAttached) {
             for (LifecycleListener lifecycleListener : mLifecycleListeners) {
@@ -816,11 +816,9 @@ public abstract class Controller {
             for (LifecycleListener lifecycleListener : mLifecycleListeners) {
                 lifecycleListener.postDetach(this, view);
             }
+        }
 
-            if (removeViewRef) {
-                removeViewReference();
-            }
-        } else if (removeViewRef) {
+        if (removeViewRef) {
             removeViewReference();
         }
     }
@@ -880,7 +878,7 @@ public abstract class Controller {
                 @Override
                 public void onViewDetachedFromWindow(View v) {
                     mViewIsAttached = false;
-                    detach(v, true);
+                    detach(v, false);
                 }
             };
             mView.addOnAttachStateChangeListener(mOnAttachStateChangeListener);
@@ -923,7 +921,7 @@ public abstract class Controller {
         if (!mAttached) {
             removeViewReference();
         } else if (removeViews) {
-            detach(mView, true);
+            detach(mView, false);
         }
     }
 
@@ -968,11 +966,7 @@ public abstract class Controller {
         }
     }
 
-    final Bundle detachAndSaveInstanceState() {
-        if (mAttached && mView != null) {
-            detach(mView, mIsBeingDestroyed);
-        }
-
+    final Bundle saveInstanceState() {
         if (!mHasSavedViewState && mView != null) {
             saveViewState(mView);
         }
@@ -995,7 +989,7 @@ public abstract class Controller {
 
         ArrayList<Bundle> childBundles = new ArrayList<>();
         for (ChildControllerTransaction childController : mChildControllers) {
-            childBundles.add(childController.detachAndSaveInstanceState());
+            childBundles.add(childController.saveInstanceState());
         }
         outState.putParcelableArrayList(KEY_CHILDREN, childBundles);
 
