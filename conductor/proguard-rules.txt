@@ -1,0 +1,4 @@
+# Retain constructor that is called by using reflection to recreate the Controller
+-keepclassmembers public class * extends com.bluelinelabs.conductor.Controller {
+   public <init>(android.os.Bundle);
+}
