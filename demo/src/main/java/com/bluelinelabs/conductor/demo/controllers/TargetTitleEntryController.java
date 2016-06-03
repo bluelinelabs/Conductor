@@ -33,9 +33,7 @@ public class TargetTitleEntryController extends BaseController {
     @Override
     protected void onDetach(@NonNull View view) {
         InputMethodManager imm = (InputMethodManager) mEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm.isActive()) {
-            imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-        }
+        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
     @NonNull
