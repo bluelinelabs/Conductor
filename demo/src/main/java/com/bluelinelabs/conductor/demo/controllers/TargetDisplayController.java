@@ -18,6 +18,7 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.controllers.TargetTitleEntryController.TargetTitleEntryControllerListener;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -100,7 +101,11 @@ public class TargetDisplayController extends BaseController implements TargetTit
     }
 
     private void setImageView() {
-        mImageView.setImageURI(mImageUri);
+        Picasso.with(getActivity())
+                .load(mImageUri)
+                .fit()
+                .centerCrop()
+                .into(mImageView);
     }
 
     private void setTextView() {

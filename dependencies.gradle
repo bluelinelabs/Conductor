@@ -10,6 +10,7 @@ ext {
     supportAppCompat = 'com.android.support:appcompat-v7:23.1.1'
 
     butterknife = 'com.jakewharton:butterknife:7.0.1'
+    picasso = 'com.squareup.picasso:picasso:2.5.2'
 
     leakCanary = 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     leakCanaryNoOp = 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
