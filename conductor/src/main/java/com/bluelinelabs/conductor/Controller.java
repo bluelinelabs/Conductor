@@ -92,7 +92,7 @@ public abstract class Controller {
                 controller = (Controller)getDefaultConstructor(constructors).newInstance();
             }
         } catch (Exception e) {
-            throw new RuntimeException("An exception occurred while creating a new instance of " + className + ". " + e.getMessage());
+            throw new RuntimeException("An exception occurred while creating a new instance of " + className + ". " + e.getMessage(), e);
         }
 
         controller.restoreInstanceState(bundle);
