@@ -84,6 +84,18 @@ public abstract class Controller {
     private final ArrayList<RouterRequiringFunc> onRouterSetListeners = new ArrayList<>();
     private final Deque<Controller> childBackstack = new ArrayDeque<>();
 
+    private final ControllerChangeListener childRouterChangeListener = new ControllerChangeListener() {
+        @Override
+        public void onChangeStarted(Controller to, Controller from, boolean isPush, ViewGroup container, ControllerChangeHandler handler) {
+            if (isPush) {
+                onChildControllerPushed(to);
+            }
+        }
+
+        @Override
+        public void onChangeCompleted(Controller to, Controller from, boolean isPush, ViewGroup container, ControllerChangeHandler handler) { }
+    };
+
     static Controller newInstance(Bundle bundle) {
         final String className = bundle.getString(KEY_CLASS_NAME);
         //noinspection ConstantConditions
@@ -169,6 +181,7 @@ public abstract class Controller {
             childRouters.add(childRouter);
         } else if (!childRouter.hasHost()) {
             childRouter.setHost(this, container);
+            monitorChildRouter(childRouter);
             childRouter.rebindIfNeeded();
         }
 
@@ -1048,18 +1061,7 @@ public abstract class Controller {
     }
 
     private void monitorChildRouter(ControllerHostedRouter childRouter) {
-        //TODO: is this even triggered on restoration?
-        childRouter.addChangeListener(new ControllerChangeListener() {
-            @Override
-            public void onChangeStarted(Controller to, Controller from, boolean isPush, ViewGroup container, ControllerChangeHandler handler) {
-                if (isPush) {
-                    onChildControllerPushed(to);
-                }
-            }
-
-            @Override
-            public void onChangeCompleted(Controller to, Controller from, boolean isPush, ViewGroup container, ControllerChangeHandler handler) { }
-        });
+        childRouter.addChangeListener(childRouterChangeListener);
     }
 
     private void onChildControllerPushed(Controller controller) {
