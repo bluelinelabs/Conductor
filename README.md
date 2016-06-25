@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        ViewGroup container = (ViewGroup)findViewById(R.id.controller_container)
+        ViewGroup container = (ViewGroup) findViewById(R.id.controller_container);
 
         mRouter = Conductor.attachRouter(this, container, savedInstanceState);
         if (!mRouter.hasRootController()) {
