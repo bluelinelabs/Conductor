@@ -12,6 +12,8 @@ ext {
     butterknife = 'com.jakewharton:butterknife:8.0.1'
     butterknifeCompiler = 'com.jakewharton:butterknife-compiler:8.0.1'
 
+    picasso = 'com.squareup.picasso:picasso:2.5.2'
+
     leakCanary = 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     leakCanaryNoOp = 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 

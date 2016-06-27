@@ -51,6 +51,6 @@ public class HorizontalChangeHandler extends AnimatorChangeHandler {
 
     @Override
     protected void resetFromView(@NonNull View from) {
-        from.setTranslationY(0);
+        from.setTranslationX(0);
     }
 }

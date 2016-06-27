@@ -28,6 +28,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
+        consumerProguardFiles 'proguard-rules.txt'
     }
 }
 

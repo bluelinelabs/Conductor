@@ -1,9 +1,11 @@
 package com.bluelinelabs.conductor.demo.controllers;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.bluelinelabs.conductor.Controller;
@@ -26,6 +28,12 @@ public class TargetTitleEntryController extends BaseController {
     }
 
     public TargetTitleEntryController() { }
+
+    @Override
+    protected void onDetach(@NonNull View view) {
+        InputMethodManager imm = (InputMethodManager) mEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+    }
 
     @NonNull
     @Override
