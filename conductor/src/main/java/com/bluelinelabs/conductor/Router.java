@@ -164,7 +164,11 @@ public abstract class Router {
         }
     }
 
-    //TODO: this needs a better name and some docs
+    /**
+     * If set to true, this router will handle back presses by performing a change handler on the last controller and view
+     * in the stack. This defaults to false so that the developer can either finish its containing Activity or otherwise 
+     * hide its parent view without any strange artifacting.
+     */
     public Router setPopsLastView(boolean popsLastView) {
         this.popsLastView = popsLastView;
         return this;
