@@ -25,6 +25,7 @@ import rx.functions.Action1;
 public class ParentController extends BaseController {
 
     private static final int NUMBER_OF_CHILDREN = 5;
+    private static final int ANIMATION_DURATION_MS = 300;
     private Subscription sub;
 
     @NonNull
@@ -36,7 +37,7 @@ public class ParentController extends BaseController {
     @Override
     protected void onViewBound(@NonNull View view) {
         super.onViewBound(view);
-        sub = Observable.interval(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).take(NUMBER_OF_CHILDREN).subscribe(new Action1<Long>() {
+        sub = Observable.interval(ANIMATION_DURATION_MS, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).take(NUMBER_OF_CHILDREN).subscribe(new Action1<Long>() {
             @Override
             public void call(Long index) {
                 addChild(index.intValue());
@@ -59,8 +60,7 @@ public class ParentController extends BaseController {
         if (!childRouter.hasRootController()) {
             ChildController childController = new ChildController("Child Controller #" + index, ColorUtil.getMaterialColor(getResources(), index), false);
             childRouter.setRoot(RouterTransaction.with(childController)
-                    .pushChangeHandler(new FadeChangeHandler())
-                    .popChangeHandler(new FadeChangeHandler()));
+                    .pushChangeHandler(new FadeChangeHandler(ANIMATION_DURATION_MS)));
         }
     }
 
