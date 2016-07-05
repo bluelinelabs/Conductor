@@ -37,8 +37,11 @@ public class ParentController extends BaseController {
     }
 
     private void addChild(final int index) {
+        if (finishing) {
+            return;
+        }
         @IdRes final int frameId = getResources().getIdentifier("child_content_" + (index + 1), "id", getActivity().getPackageName());
-        final ViewGroup container = (ViewGroup)getView().findViewById(frameId);
+        final ViewGroup container = (ViewGroup) getView().findViewById(frameId);
         final Router childRouter = getChildRouter(container, null).setPopsLastView(true);
 
         if (!childRouter.hasRootController()) {
