@@ -35,10 +35,20 @@ public class VerticalChangeHandler extends AnimatorChangeHandler {
         AnimatorSet animator = new AnimatorSet();
         List<Animator> viewAnimators = new ArrayList<>();
 
-        if (isPush && to != null) {
-            viewAnimators.add(ObjectAnimator.ofFloat(to, View.TRANSLATION_Y, to.getHeight(), 0));
-        } else if (!isPush && from != null) {
-            viewAnimators.add(ObjectAnimator.ofFloat(from, View.TRANSLATION_Y, from.getHeight()));
+        if (isPush) {
+            if (from != null) {
+                viewAnimators.add(ObjectAnimator.ofFloat(from, View.TRANSLATION_Y, -from.getHeight()));
+            }
+            if (to != null) {
+                viewAnimators.add(ObjectAnimator.ofFloat(to, View.TRANSLATION_Y, to.getHeight(), 0));
+            }
+        } else {
+            if (from != null) {
+                viewAnimators.add(ObjectAnimator.ofFloat(from, View.TRANSLATION_Y, from.getHeight()));
+            }
+            if (to != null) {
+                viewAnimators.add(ObjectAnimator.ofFloat(to, View.TRANSLATION_Y, -to.getHeight(), 0));
+            }
         }
 
         animator.playTogether(viewAnimators);
@@ -46,6 +56,8 @@ public class VerticalChangeHandler extends AnimatorChangeHandler {
     }
 
     @Override
-    protected void resetFromView(@NonNull View from) { }
+    protected void resetFromView(@NonNull View from) {
+        from.setTranslationY(0);
+    }
 
 }
