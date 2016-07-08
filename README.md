@@ -38,6 +38,17 @@ compile 'com.bluelinelabs:conductor-support:2.0.1-SNAPSHOT'
 compile 'com.bluelinelabs:conductor-rxlifecycle:2.0.1-SNAPSHOT'
 ```
 
+You also have to add the url to the snapshot repository:
+
+```gradle
+allprojects {
+  repositories {
+    ...
+
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+```
+
 ## Components to Know
 
               |  Conductor Components
