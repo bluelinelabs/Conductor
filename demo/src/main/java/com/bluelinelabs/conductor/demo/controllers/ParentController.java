@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.ControllerChangeHandler;
 import com.bluelinelabs.conductor.ControllerChangeType;
 import com.bluelinelabs.conductor.Router;
@@ -16,10 +15,18 @@ import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 import com.bluelinelabs.conductor.demo.util.ColorUtil;
 
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 public class ParentController extends BaseController {
 
     private static final int NUMBER_OF_CHILDREN = 5;
-    private boolean finishing;
+    private static final int ANIMATION_DURATION_MS = 300;
+    private Subscription sub;
 
     @NonNull
     @Override
@@ -28,54 +35,33 @@ public class ParentController extends BaseController {
     }
 
     @Override
-    protected void onChangeEnded(@NonNull ControllerChangeHandler changeHandler, @NonNull ControllerChangeType changeType) {
-        super.onChangeEnded(changeHandler, changeType);
+    protected void onViewBound(@NonNull View view) {
+        super.onViewBound(view);
+        sub = Observable.interval(ANIMATION_DURATION_MS, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).take(NUMBER_OF_CHILDREN).subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long index) {
+                addChild(index.intValue());
+            }
+        });
+    }
 
-        if (changeType == ControllerChangeType.PUSH_ENTER) {
-            addChild(0);
-        }
+    @Override
+    protected void onDestroyView(View view) {
+        super.onDestroyView(view);
+        sub.unsubscribe();
+        sub = null;
     }
 
     private void addChild(final int index) {
         @IdRes final int frameId = getResources().getIdentifier("child_content_" + (index + 1), "id", getActivity().getPackageName());
-        final ViewGroup container = (ViewGroup)getView().findViewById(frameId);
-        final Router childRouter = getChildRouter(container, null).setPopsLastView(true);
+        final ViewGroup container = (ViewGroup) getView().findViewById(frameId);
+        final Router childRouter = getChildRouter(container, null);
 
         if (!childRouter.hasRootController()) {
             ChildController childController = new ChildController("Child Controller #" + index, ColorUtil.getMaterialColor(getResources(), index), false);
-
-            childController.addLifecycleListener(new LifecycleListener() {
-                @Override
-                public void onChangeEnd(@NonNull Controller controller, @NonNull ControllerChangeHandler changeHandler, @NonNull ControllerChangeType changeType) {
-                    if (changeType == ControllerChangeType.PUSH_ENTER && index < NUMBER_OF_CHILDREN - 1) {
-                        addChild(index + 1);
-                    } else if (changeType == ControllerChangeType.POP_EXIT) {
-                        if (index > 0) {
-                            removeChild(index - 1);
-                        } else {
-                            getRouter().popController(ParentController.this);
-                        }
-                    }
-                }
-            });
-
             childRouter.setRoot(RouterTransaction.with(childController)
-                    .pushChangeHandler(new FadeChangeHandler())
-                    .popChangeHandler(new FadeChangeHandler()));
+                    .pushChangeHandler(new FadeChangeHandler(ANIMATION_DURATION_MS)));
         }
-    }
-
-    private void removeChild(int index) {
-        removeChildRouter(getChildRouters().get(index));
-    }
-
-    @Override
-    public boolean handleBack() {
-        if (!finishing) {
-            finishing = true;
-            return super.handleBack();
-        }
-        return true;
     }
 
     @Override
