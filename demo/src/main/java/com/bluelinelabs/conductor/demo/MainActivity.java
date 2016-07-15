@@ -12,22 +12,20 @@ import com.bluelinelabs.conductor.demo.controllers.HomeController;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
-public class MainActivity extends AppCompatActivity implements ActionBarProvider {
+public final class MainActivity extends AppCompatActivity implements ActionBarProvider {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.controller_container) ViewGroup container;
 
     private Router router;
-    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        unbinder = ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
@@ -42,12 +40,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarProvider
         if (!router.handleBack()) {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
     }
 
 }
