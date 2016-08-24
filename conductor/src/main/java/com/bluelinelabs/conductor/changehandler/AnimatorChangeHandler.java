@@ -140,6 +140,7 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
             @Override
             public void onAnimationCancel(Animator animation) {
                 changeListener.onChangeCompleted();
+                animator.removeListener(this);
             }
 
             @Override
@@ -149,6 +150,7 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
                 }
 
                 changeListener.onChangeCompleted();
+                animator.removeListener(this);
 
                 if (isPush && from != null) {
                     resetFromView(from);
