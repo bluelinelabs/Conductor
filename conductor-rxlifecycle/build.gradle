@@ -28,6 +28,7 @@ dependencies {
     compile rootProject.ext.rxJava
     compile rootProject.ext.rxAndroid
     compile rootProject.ext.rxLifecycle
+    compile rootProject.ext.rxLifecycleAndroid
 
     compile project(':conductor')
 }

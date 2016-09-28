@@ -17,9 +17,10 @@ ext {
     leakCanary = 'com.squareup.leakcanary:leakcanary-android:1.4'
     leakCanaryNoOp = 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
 
-    rxJava = 'io.reactivex:rxjava:1.1.0'
-    rxAndroid = 'io.reactivex:rxandroid:1.1.0'
-    rxLifecycle = 'com.trello:rxlifecycle:0.6.0'
+    rxJava = 'io.reactivex:rxjava:1.2.0'
+    rxAndroid = 'io.reactivex:rxandroid:1.2.1'
+    rxLifecycle = 'com.trello:rxlifecycle:0.8.0'
+    rxLifecycleAndroid = 'com.trello:rxlifecycle-android:0.8.0'
 
     junit = 'junit:junit:4.11'
     roboelectric = 'org.robolectric:robolectric:3.0'

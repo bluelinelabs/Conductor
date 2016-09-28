@@ -14,7 +14,7 @@ public class RxControllerLifecycle {
 
     /**
      * Binds the given source to a Controller lifecycle. This is the Controller version of
-     * {@link com.trello.rxlifecycle.RxLifecycle#bindFragment(Observable)}.
+     * {@link com.trello.rxlifecycle.android.RxLifecycleAndroid#bindFragment(Observable)}.
      *
      * @param lifecycle the lifecycle sequence of a Controller
      * @return a reusable {@link Observable.Transformer} that unsubscribes the source during the Controller lifecycle
