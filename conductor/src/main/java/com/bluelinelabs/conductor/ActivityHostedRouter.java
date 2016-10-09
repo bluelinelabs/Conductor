@@ -32,7 +32,7 @@ public class ActivityHostedRouter extends Router {
 
     @Override
     public Activity getActivity() {
-        return lifecycleHandler != null ? lifecycleHandler.getLifecycleActivity() : null;
+        return lifecycleHandler != null ? lifecycleHandler.getActivity() : null;
     }
 
     @Override
