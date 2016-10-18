@@ -2,7 +2,7 @@ ext {
     minSdkVersion = 16
     compileSdkVersion = 24
     targetSdkVersion = 24
-    buildToolsVersion = '24.0.1'
+    buildToolsVersion = '24.0.3'
 
     supportV4 = 'com.android.support:support-v4:24.1.1'
     supportDesign = 'com.android.support:design:24.1.1'
