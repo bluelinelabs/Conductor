@@ -130,6 +130,23 @@ public class HomeController extends BaseController {
         return "Conductor Demos";
     }
 
+    /**
+     * will navigate to the controller represented by the @{code enumIdParam} parameter.
+     *
+     * @param enumIdParam can be any Id of the HomeDemoModel enumerations (case does not matter)
+     * @return @{code false} when we did not find a matching controller, @{code true} otherwise
+     */
+    public boolean navigateTo(@NonNull String enumIdParam) {
+        String enumIdentifier = enumIdParam.toUpperCase();
+        try {
+            HomeDemoModel hdm = HomeDemoModel.valueOf(enumIdentifier);
+            onModelRowClick(hdm);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
     void onModelRowClick(HomeDemoModel model) {
         switch (model) {
             case NAVIGATION:
