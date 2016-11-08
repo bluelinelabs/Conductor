@@ -12,6 +12,8 @@ import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 
 import butterknife.BindViews;
 
+import static com.bluelinelabs.conductor.demo.controllers.NavigationDemoController.DisplayUpMode.HIDE;
+
 public class MultipleChildRouterController extends BaseController {
 
     @BindViews({R.id.container_0, R.id.container_1, R.id.container_2}) ViewGroup[] childContainers;
@@ -28,7 +30,7 @@ public class MultipleChildRouterController extends BaseController {
         for (ViewGroup childContainer : childContainers) {
             Router childRouter = getChildRouter(childContainer, null).setPopsLastView(false);
             if (!childRouter.hasRootController()) {
-                childRouter.setRoot(RouterTransaction.with(new NavigationDemoController(0, false)));
+                childRouter.setRoot(RouterTransaction.with(new NavigationDemoController(0, HIDE)));
             }
         }
     }

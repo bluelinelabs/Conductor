@@ -33,6 +33,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bluelinelabs.conductor.demo.controllers.NavigationDemoController.DisplayUpMode.SHOW_FOR_CHILDREN_ONLY;
+
 public class HomeController extends BaseController {
 
     public enum HomeDemoModel {
@@ -133,7 +135,7 @@ public class HomeController extends BaseController {
     void onModelRowClick(HomeDemoModel model) {
         switch (model) {
             case NAVIGATION:
-                getRouter().pushController(RouterTransaction.with(new NavigationDemoController(0, false))
+                getRouter().pushController(RouterTransaction.with(new NavigationDemoController(0, SHOW_FOR_CHILDREN_ONLY))
                         .pushChangeHandler(new FadeChangeHandler())
                         .popChangeHandler(new FadeChangeHandler())
                         .tag(NavigationDemoController.TAG_UP_TRANSACTION)
