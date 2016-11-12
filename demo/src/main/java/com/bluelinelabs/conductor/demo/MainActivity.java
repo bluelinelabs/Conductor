@@ -36,11 +36,22 @@ public final class MainActivity extends AppCompatActivity implements ActionBarPr
 
         router = Conductor.attachRouter(this, container, savedInstanceState);
         if (!router.hasRootController()) {
-
             HomeController homeController = new HomeController();
             router.setRoot(RouterTransaction.with(homeController));
-            handleIntentDataUri(homeController);
+            handleIntentDataUri(homeController, getIntent());
         }
+    }
+
+    private HomeController getHomeController() {
+        RouterTransaction rootRouterTransaction = router.getBackstack().get(0);
+        return (HomeController) rootRouterTransaction.controller();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        HomeController homeController = getHomeController();
+        handleIntentDataUri(homeController, intent);
     }
 
     /**
@@ -58,8 +69,7 @@ public final class MainActivity extends AppCompatActivity implements ActionBarPr
      *
      * @param homeController the {@link HomeController} will handle the actual navigation
      */
-    private void handleIntentDataUri(HomeController homeController) {
-        final Intent intent = getIntent();
+    private void handleIntentDataUri(HomeController homeController, Intent intent) {
         Uri intentDataUri = intent.getData();
         if (intentDataUri == null || intentDataUri.getPath() == null) return;
 
