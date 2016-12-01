@@ -49,7 +49,7 @@ public class RxLifecycleController extends BaseController {
 
     @Override
     public void onViewBound(@NonNull View view) {
-        Log.i(TAG, "onCreateView() called");
+        Log.i(TAG, "onViewBound() called");
 
         tvTitle.setText(getResources().getString(R.string.rxlifecycle_title, TAG));
 
@@ -57,14 +57,14 @@ public class RxLifecycleController extends BaseController {
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
-                        Log.i(TAG, "Unsubscribing from onCreateView)");
+                        Log.i(TAG, "Unsubscribing from onViewBound)");
                     }
                 })
                 .compose(this.<Long>bindUntilEvent(ControllerEvent.DESTROY_VIEW))
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long num) {
-                        Log.i(TAG, "Started in onCreateView(), running until onDestroyView(): " + num);
+                        Log.i(TAG, "Started in onViewBound(), running until onDestroyView(): " + num);
                     }
                 });
     }
