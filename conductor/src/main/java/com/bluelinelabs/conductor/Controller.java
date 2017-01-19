@@ -849,6 +849,7 @@ public abstract class Controller {
             onDestroyView(view);
 
             viewAttachHandler.unregisterAttachListener(view);
+            viewAttachHandler = null;
             viewIsAttached = false;
 
             if (isBeingDestroyed) {
