@@ -53,12 +53,17 @@ public abstract class ControllerPagerAdapter extends PagerAdapter {
             }
         }
 
+        final Controller controller;
         if (!router.hasRootController()) {
-            Controller controller = getItem(position);
+            controller = getItem(position);
             router.setRoot(RouterTransaction.with(controller).tag(name));
-            visiblePageIds.put(position, controller.getInstanceId());
         } else {
             router.rebindIfNeeded();
+            controller = router.getControllerWithTag(name);
+        }
+
+        if (controller != null) {
+            visiblePageIds.put(position, controller.getInstanceId());
         }
 
         return router.getControllerWithTag(name);
