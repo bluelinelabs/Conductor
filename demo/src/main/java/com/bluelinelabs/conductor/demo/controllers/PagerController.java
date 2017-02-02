@@ -30,7 +30,7 @@ public class PagerController extends BaseController {
     public PagerController() {
         pagerAdapter = new RouterPagerAdapter(this) {
             @Override
-            public void configureRouter(Router router, int position) {
+            public void configureRouter(@NonNull Router router, int position) {
                 if (!router.hasRootController()) {
                     Controller page = new ChildController(String.format(Locale.getDefault(), "Child #%d (Swipe to see more)", position), PAGE_COLORS[position], true);
                     router.setRoot(RouterTransaction.with(page));

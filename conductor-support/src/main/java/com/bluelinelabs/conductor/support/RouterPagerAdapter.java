@@ -2,6 +2,7 @@ package com.bluelinelabs.conductor.support;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.util.SparseArray;
@@ -28,7 +29,7 @@ public abstract class RouterPagerAdapter extends PagerAdapter {
     /**
      * Creates a new RouterPagerAdapter using the passed host.
      */
-    public RouterPagerAdapter(Controller host) {
+    public RouterPagerAdapter(@NonNull Controller host) {
         this.host = host;
     }
 
@@ -38,7 +39,7 @@ public abstract class RouterPagerAdapter extends PagerAdapter {
      * @param router   The router used for the page
      * @param position The page position to be instantiated.
      */
-    public abstract void configureRouter(Router router, int position);
+    public abstract void configureRouter(@NonNull Router router, int position);
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {

@@ -2,6 +2,7 @@ package com.bluelinelabs.conductor.support;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.util.SparseArray;
@@ -34,7 +35,7 @@ public abstract class ControllerPagerAdapter extends PagerAdapter {
     /**
      * Creates a new ControllerPagerAdapter using the passed host.
      */
-    public ControllerPagerAdapter(Controller host, boolean saveControllerState) {
+    public ControllerPagerAdapter(@NonNull Controller host, boolean saveControllerState) {
         this.host = host;
         savesState = saveControllerState;
     }
@@ -42,6 +43,7 @@ public abstract class ControllerPagerAdapter extends PagerAdapter {
     /**
      * Return the Controller associated with a specified position.
      */
+    @NonNull
     public abstract Controller getItem(int position);
 
     @Override
