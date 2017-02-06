@@ -2,6 +2,7 @@ package com.bluelinelabs.conductor;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -558,6 +559,40 @@ public abstract class Router {
             }
         }
         return false;
+    }
+
+    /**
+     * @see Controller#setRecreateViewOnConfigChange(boolean)
+     */
+    public final void onConfigurationChanged(Configuration newConfig) {
+        if (backstack.isEmpty()) {
+            return;
+        }
+
+        RouterTransaction topTransaction = backstack.peek();
+        Controller topController = topTransaction.controller;
+        if (topController.isRecreateViewOnConfigChange()) {
+            View currentView = topController.getView();
+            if (currentView != null) {
+                container.removeView(currentView);
+            }
+
+            View newView = topController.reinflate(container);
+            container.addView(newView);
+        }
+
+        for (RouterTransaction transaction : backstack) {
+            if (transaction == topTransaction) {
+                continue;
+            }
+
+            Controller controller = transaction.controller;
+            if (controller.isRecreateViewOnConfigChange()
+                && controller.getRetainViewMode() == Controller.RetainViewMode.RETAIN_DETACH) {
+
+                controller.reinflate(container);
+            }
+        }
     }
 
     private void popToTransaction(@NonNull RouterTransaction transaction, @Nullable ControllerChangeHandler changeHandler) {

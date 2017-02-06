@@ -1,6 +1,7 @@
 package com.bluelinelabs.conductor;
 
 import android.view.ViewGroup;
+import android.view.View;
 
 import com.bluelinelabs.conductor.util.ActivityProxy;
 import com.bluelinelabs.conductor.util.ListUtils;
@@ -13,10 +14,13 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -345,7 +349,7 @@ public class RouterTests {
         Controller parent = new TestController();
         router.setRoot(RouterTransaction.with(parent));
 
-        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.CHILD_VIEW_ID_1));
+        Router childRouter = parent.getChildRouter((ViewGroup) parent.getView().findViewById(TestController.CHILD_VIEW_ID_1));
 
         RouterTransaction transaction1 = RouterTransaction.with(new TestController());
         RouterTransaction transaction2 = RouterTransaction.with(new TestController());
@@ -369,6 +373,88 @@ public class RouterTests {
 
         childRouter.handleBack();
         assertEquals(0, childRouter.getBackstackSize());
+    }
+
+    public void testRecreateViewsOnConfigChange_notRecreatesTopControllerView() {
+        RouterTransaction rootTransaction = RouterTransaction.with(new TestController());
+        RouterTransaction topTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
+
+        List<RouterTransaction> backstack = new ArrayList<>();
+        backstack.add(rootTransaction);
+        backstack.add(topTransaction);
+
+        router.setBackstack(backstack, null);
+
+        View originalTopView = topTransaction.controller.getView();
+        router.onConfigurationChanged(null);
+        View newTopView = topTransaction.controller.getView();
+
+        assertNotNull(originalTopView);
+        assertNotNull(newTopView);
+        assertEquals(originalTopView, newTopView);
+    }
+
+    @Test
+    public void testRecreateViewsOnConfigChange_recreatesTopControllerView() {
+        RouterTransaction rootTransaction = RouterTransaction.with(new TestController());
+        RouterTransaction topTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
+        topTransaction.controller.setRecreateViewOnConfigChange(true);
+
+        List<RouterTransaction> backstack = new ArrayList<>();
+        backstack.add(rootTransaction);
+        backstack.add(topTransaction);
+
+        router.setBackstack(backstack, null);
+
+        View originalTopView = topTransaction.controller.getView();
+        router.onConfigurationChanged(null);
+        View newTopView = topTransaction.controller.getView();
+
+        assertNotNull(originalTopView);
+        assertNotNull(newTopView);
+        assertNotEquals(originalTopView, newTopView);
+    }
+
+    @Test
+    public void testRecreateViewsOnConfigChange_notRecreatesLowerControllerView() {
+        RouterTransaction rootTransaction = RouterTransaction.with(new TestController());
+        RouterTransaction topTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
+
+        List<RouterTransaction> backstack = new ArrayList<>();
+        backstack.add(rootTransaction);
+        backstack.add(topTransaction);
+
+        router.setBackstack(backstack, null);
+
+        View originalRootView = rootTransaction.controller.getView();
+        router.onConfigurationChanged(null);
+        View newRootView = rootTransaction.controller.getView();
+
+        assertNotNull(originalRootView);
+        assertNotNull(newRootView);
+        assertEquals(originalRootView, newRootView);
+    }
+
+    @Test
+    public void testRecreateViewsOnConfigChange_recreatesLowerControllerView() {
+        RouterTransaction rootTransaction = RouterTransaction.with(new TestController());
+        RouterTransaction topTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
+        rootTransaction.controller.setRecreateViewOnConfigChange(true);
+        rootTransaction.controller.setRetainViewMode(Controller.RetainViewMode.RETAIN_DETACH);
+
+        List<RouterTransaction> backstack = new ArrayList<>();
+        backstack.add(rootTransaction);
+        backstack.add(topTransaction);
+
+        router.setBackstack(backstack, null);
+
+        View originalRootView = rootTransaction.controller.getView();
+        router.onConfigurationChanged(null);
+        View newRootView = rootTransaction.controller.getView();
+
+        assertNotNull(originalRootView);
+        assertNotNull(newRootView);
+        assertNotEquals(originalRootView, newRootView);
     }
 
 }

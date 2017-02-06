@@ -6,6 +6,7 @@ import android.app.Application.ActivityLifecycleCallbacks;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -259,6 +260,15 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        for (Router router : routerMap.values()) {
+            router.onConfigurationChanged(newConfig);
+        }
     }
 
     public void registerForActivityResult(@NonNull String instanceId, int requestCode) {

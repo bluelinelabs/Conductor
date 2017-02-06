@@ -86,6 +86,7 @@ public abstract class Controller {
     private final ArrayList<String> requestedPermissions = new ArrayList<>();
     private final ArrayList<RouterRequiringFunc> onRouterSetListeners = new ArrayList<>();
     private WeakReference<View> destroyedView;
+    private boolean recreateViewOnConfigChange;
 
     @NonNull
     static Controller newInstance(@NonNull Bundle bundle) {
@@ -619,6 +620,33 @@ public abstract class Controller {
     }
 
     /**
+     * Returns whether this controller should recreate its view when configuration changes.
+     *
+     * @see #setRecreateViewOnConfigChange(boolean)
+     */
+    public boolean isRecreateViewOnConfigChange() {
+        return recreateViewOnConfigChange;
+    }
+
+    /**
+     * Sets whether this Controller should recreate its view when configuration changes. This is
+     * typically necessary when the Activity has specified in the manifest that it will handle
+     * configuration changes such as an orientation change.
+     *
+     * For this method to have any effect, the Activity should set a value for {@code android:configChanges}
+     * in the manifest. Otherwise, the Activity will be destroyed and recreated, and there will be
+     * no need to explicitly recreate the view outside of that.
+     *
+     * If the top Controller has set this to {@code true} when a configuration change happens, that
+     * Controller's current view will be removed and a recreated view will be added to the parent.
+     * For Controllers that are lower in the stack, those Controllers' view will only be recreated
+     * if the Controller also has a {@link RetainViewMode} of {@link RetainViewMode#RETAIN_DETACH}.
+     */
+    public void setRecreateViewOnConfigChange(boolean recreateViewOnConfigChange) {
+        this.recreateViewOnConfigChange = recreateViewOnConfigChange;
+    }
+
+    /**
      * Returns the {@link ControllerChangeHandler} that should be used for pushing this Controller, or null
      * if the handler from the {@link RouterTransaction} should be used instead.
      */
@@ -902,6 +930,21 @@ public abstract class Controller {
             removeViewReference();
         }
 
+        return inflateAfterCheckingView(parent);
+    }
+
+    final View reinflate(@NonNull ViewGroup parent) {
+        if (view != null) {
+            detach(view, true, false);
+            removeViewReference();
+        }
+
+        view = null;
+
+        return inflateAfterCheckingView(parent);
+    }
+
+    private View inflateAfterCheckingView(@NonNull ViewGroup parent) {
         if (view == null) {
             List<LifecycleListener> listeners = new ArrayList<>(lifecycleListeners);
             for (LifecycleListener lifecycleListener : listeners) {
