@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.util.ActivityProxy;
-import com.bluelinelabs.conductor.util.ListUtils;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
 
@@ -17,6 +16,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -62,12 +63,12 @@ public class ControllerLifecycleActivityReferenceTests {
                 .pushChangeHandler(MockChangeHandler.defaultHandler())
                 .popChangeHandler(MockChangeHandler.defaultHandler()));
 
-        assertEquals(ListUtils.listOf(true), listener.changeEndReferences);
-        assertEquals(ListUtils.listOf(true), listener.postCreateViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postAttachReferences);
-        assertEquals(ListUtils.listOf(), listener.postDetachReferences);
-        assertEquals(ListUtils.listOf(), listener.postDestroyViewReferences);
-        assertEquals(ListUtils.listOf(), listener.postDestroyReferences);
+        assertEquals(Collections.singletonList(true), listener.changeEndReferences);
+        assertEquals(Collections.singletonList(true), listener.postCreateViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postAttachReferences);
+        assertEquals(Collections.emptyList(), listener.postDetachReferences);
+        assertEquals(Collections.emptyList(), listener.postDestroyViewReferences);
+        assertEquals(Collections.emptyList(), listener.postDestroyReferences);
     }
 
     @Test
@@ -89,12 +90,12 @@ public class ControllerLifecycleActivityReferenceTests {
                 .pushChangeHandler(MockChangeHandler.defaultHandler())
                 .popChangeHandler(MockChangeHandler.defaultHandler()));
 
-        assertEquals(ListUtils.listOf(true), listener.changeEndReferences);
-        assertEquals(ListUtils.listOf(true), listener.postCreateViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postAttachReferences);
-        assertEquals(ListUtils.listOf(), listener.postDetachReferences);
-        assertEquals(ListUtils.listOf(), listener.postDestroyViewReferences);
-        assertEquals(ListUtils.listOf(), listener.postDestroyReferences);
+        assertEquals(Collections.singletonList(true), listener.changeEndReferences);
+        assertEquals(Collections.singletonList(true), listener.postCreateViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postAttachReferences);
+        assertEquals(Collections.emptyList(), listener.postDetachReferences);
+        assertEquals(Collections.emptyList(), listener.postDestroyViewReferences);
+        assertEquals(Collections.emptyList(), listener.postDestroyReferences);
     }
 
     @Test
@@ -110,12 +111,12 @@ public class ControllerLifecycleActivityReferenceTests {
 
         router.popCurrentController();
 
-        assertEquals(ListUtils.listOf(true, true), listener.changeEndReferences);
-        assertEquals(ListUtils.listOf(true), listener.postCreateViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postAttachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDetachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyReferences);
+        assertEquals(Arrays.asList(true, true), listener.changeEndReferences);
+        assertEquals(Collections.singletonList(true), listener.postCreateViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postAttachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDetachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
     @Test
@@ -139,12 +140,12 @@ public class ControllerLifecycleActivityReferenceTests {
 
         childRouter.popCurrentController();
 
-        assertEquals(ListUtils.listOf(true, true), listener.changeEndReferences);
-        assertEquals(ListUtils.listOf(true), listener.postCreateViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postAttachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDetachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyReferences);
+        assertEquals(Arrays.asList(true, true), listener.changeEndReferences);
+        assertEquals(Collections.singletonList(true), listener.postCreateViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postAttachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDetachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
     @Test
@@ -168,12 +169,12 @@ public class ControllerLifecycleActivityReferenceTests {
 
         router.popCurrentController();
 
-        assertEquals(ListUtils.listOf(true), listener.changeEndReferences);
-        assertEquals(ListUtils.listOf(true), listener.postCreateViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postAttachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDetachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyReferences);
+        assertEquals(Collections.singletonList(true), listener.changeEndReferences);
+        assertEquals(Collections.singletonList(true), listener.postCreateViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postAttachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDetachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
     @Test
@@ -189,12 +190,12 @@ public class ControllerLifecycleActivityReferenceTests {
 
         activityProxy.pause().stop(false).destroy();
 
-        assertEquals(ListUtils.listOf(true), listener.changeEndReferences);
-        assertEquals(ListUtils.listOf(true), listener.postCreateViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postAttachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDetachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyReferences);
+        assertEquals(Collections.singletonList(true), listener.changeEndReferences);
+        assertEquals(Collections.singletonList(true), listener.postCreateViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postAttachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDetachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
     @Test
@@ -218,21 +219,21 @@ public class ControllerLifecycleActivityReferenceTests {
 
         activityProxy.pause().stop(false).destroy();
 
-        assertEquals(ListUtils.listOf(true), listener.changeEndReferences);
-        assertEquals(ListUtils.listOf(true), listener.postCreateViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postAttachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDetachReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyViewReferences);
-        assertEquals(ListUtils.listOf(true), listener.postDestroyReferences);
+        assertEquals(Collections.singletonList(true), listener.changeEndReferences);
+        assertEquals(Collections.singletonList(true), listener.postCreateViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postAttachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDetachReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyViewReferences);
+        assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
     static class ActivityReferencingLifecycleListener extends Controller.LifecycleListener {
-        List<Boolean> changeEndReferences = new ArrayList<>();
-        List<Boolean> postCreateViewReferences = new ArrayList<>();
-        List<Boolean> postAttachReferences = new ArrayList<>();
-        List<Boolean> postDetachReferences = new ArrayList<>();
-        List<Boolean> postDestroyViewReferences = new ArrayList<>();
-        List<Boolean> postDestroyReferences = new ArrayList<>();
+        final List<Boolean> changeEndReferences = new ArrayList<>();
+        final List<Boolean> postCreateViewReferences = new ArrayList<>();
+        final List<Boolean> postAttachReferences = new ArrayList<>();
+        final List<Boolean> postDetachReferences = new ArrayList<>();
+        final List<Boolean> postDestroyViewReferences = new ArrayList<>();
+        final List<Boolean> postDestroyReferences = new ArrayList<>();
 
         @Override
         public void onChangeEnd(@NonNull Controller controller, @NonNull ControllerChangeHandler changeHandler, @NonNull ControllerChangeType changeType) {

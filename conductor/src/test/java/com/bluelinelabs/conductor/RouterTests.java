@@ -4,7 +4,6 @@ import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.util.ActivityProxy;
-import com.bluelinelabs.conductor.util.ListUtils;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
 
@@ -14,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -190,7 +190,7 @@ public class RouterTests {
         RouterTransaction middleTransaction = RouterTransaction.with(new TestController());
         RouterTransaction topTransaction = RouterTransaction.with(new TestController());
 
-        List<RouterTransaction> backstack = ListUtils.listOf(rootTransaction, middleTransaction, topTransaction);
+        List<RouterTransaction> backstack = Arrays.asList(rootTransaction, middleTransaction, topTransaction);
         router.setBackstack(backstack, null);
 
         assertEquals(3, router.getBackstackSize());
@@ -211,7 +211,7 @@ public class RouterTests {
         RouterTransaction middleTransaction = RouterTransaction.with(new TestController());
         RouterTransaction topTransaction = RouterTransaction.with(new TestController());
 
-        List<RouterTransaction> backstack = ListUtils.listOf(rootTransaction, middleTransaction, topTransaction);
+        List<RouterTransaction> backstack = Arrays.asList(rootTransaction, middleTransaction, topTransaction);
         router.setBackstack(backstack, null);
 
         assertEquals(3, router.getBackstackSize());
@@ -242,7 +242,7 @@ public class RouterTests {
         RouterTransaction middleTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
         RouterTransaction topTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
 
-        List<RouterTransaction> backstack = ListUtils.listOf(rootTransaction, middleTransaction, topTransaction);
+        List<RouterTransaction> backstack = Arrays.asList(rootTransaction, middleTransaction, topTransaction);
         router.setBackstack(backstack, null);
 
         assertEquals(3, router.getBackstackSize());
@@ -264,7 +264,7 @@ public class RouterTests {
         RouterTransaction rootTransaction = RouterTransaction.with(new TestController());
         RouterTransaction topTransaction = RouterTransaction.with(new TestController());
 
-        List<RouterTransaction> backstack = ListUtils.listOf(rootTransaction, topTransaction);
+        List<RouterTransaction> backstack = Arrays.asList(rootTransaction, topTransaction);
         router.setBackstack(backstack, null);
 
         assertEquals(2, router.getBackstackSize());
@@ -288,7 +288,7 @@ public class RouterTests {
         RouterTransaction rootTransaction = RouterTransaction.with(new TestController());
         RouterTransaction topTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
 
-        List<RouterTransaction> backstack = ListUtils.listOf(rootTransaction, topTransaction);
+        List<RouterTransaction> backstack = Arrays.asList(rootTransaction, topTransaction);
         router.setBackstack(backstack, null);
 
         assertEquals(2, router.getBackstackSize());
@@ -320,13 +320,13 @@ public class RouterTests {
         RouterTransaction transaction1 = RouterTransaction.with(new TestController());
         RouterTransaction transaction2 = RouterTransaction.with(new TestController());
 
-        List<RouterTransaction> backstack = ListUtils.listOf(transaction1, transaction2);
+        List<RouterTransaction> backstack = Arrays.asList(transaction1, transaction2);
         router.setBackstack(backstack, null);
 
         assertEquals(1, transaction1.transactionIndex);
         assertEquals(2, transaction2.transactionIndex);
 
-        backstack = ListUtils.listOf(transaction2, transaction1);
+        backstack = Arrays.asList(transaction2, transaction1);
         router.setBackstack(backstack, null);
 
         assertEquals(1, transaction2.transactionIndex);
@@ -351,13 +351,13 @@ public class RouterTests {
         RouterTransaction transaction1 = RouterTransaction.with(new TestController());
         RouterTransaction transaction2 = RouterTransaction.with(new TestController());
 
-        List<RouterTransaction> backstack = ListUtils.listOf(transaction1, transaction2);
+        List<RouterTransaction> backstack = Arrays.asList(transaction1, transaction2);
         childRouter.setBackstack(backstack, null);
 
         assertEquals(2, transaction1.transactionIndex);
         assertEquals(3, transaction2.transactionIndex);
 
-        backstack = ListUtils.listOf(transaction2, transaction1);
+        backstack = Arrays.asList(transaction2, transaction1);
         childRouter.setBackstack(backstack, null);
 
         assertEquals(2, transaction2.transactionIndex);

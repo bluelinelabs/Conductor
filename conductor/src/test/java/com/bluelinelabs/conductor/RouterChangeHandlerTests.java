@@ -3,7 +3,6 @@ package com.bluelinelabs.conductor;
 import android.view.View;
 
 import com.bluelinelabs.conductor.util.ActivityProxy;
-import com.bluelinelabs.conductor.util.ListUtils;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
 
@@ -13,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -142,7 +142,7 @@ public class RouterChangeHandlerTests {
         TestController newController2 = new TestController();
         MockChangeHandler setBackstackHandler = MockChangeHandler.taggedHandler("setBackstackHandler", true);
 
-        List<RouterTransaction> newBackstack = ListUtils.listOf(
+        List<RouterTransaction> newBackstack = Arrays.asList(
                 RouterTransaction.with(newController1),
                 RouterTransaction.with(newController2)
         );
@@ -194,7 +194,7 @@ public class RouterChangeHandlerTests {
         TestController newController2 = new TestController();
         MockChangeHandler setBackstackHandler = MockChangeHandler.taggedHandler("setBackstackHandler", true);
 
-        List<RouterTransaction> newBackstack = ListUtils.listOf(
+        List<RouterTransaction> newBackstack = Arrays.asList(
                 RouterTransaction.with(newController1),
                 RouterTransaction.with(newController2).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler())
         );
