@@ -288,8 +288,7 @@ public abstract class Router {
      */
     @UiThread
     public void setRoot(@NonNull RouterTransaction transaction) {
-        List<RouterTransaction> transactions = new ArrayList<>();
-        transactions.add(transaction);
+        List<RouterTransaction> transactions = Collections.singletonList(transaction);
         setBackstack(transactions, transaction.pushChangeHandler());
     }
 
