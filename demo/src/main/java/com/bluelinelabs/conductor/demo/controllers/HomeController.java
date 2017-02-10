@@ -47,6 +47,7 @@ public class HomeController extends BaseController {
         DRAG_DISMISS("Drag Dismiss", R.color.lime_300),
         RX_LIFECYCLE("Rx Lifecycle", R.color.teal_300),
         RX_LIFECYCLE_2("Rx Lifecycle 2", R.color.brown_300),
+        CUSTOM_TRANSITIONS("Custom Transitions", R.color.cyan_300),
         OVERLAY("Overlay Controller", R.color.purple_300);
 
         String title;
@@ -179,6 +180,11 @@ public class HomeController extends BaseController {
                 break;
             case RX_LIFECYCLE_2:
                 getRouter().pushController(RouterTransaction.with(new RxLifecycle2Controller())
+                        .pushChangeHandler(new FadeChangeHandler())
+                        .popChangeHandler(new FadeChangeHandler()));
+                break;
+            case CUSTOM_TRANSITIONS:
+                getRouter().pushController(RouterTransaction.with(new CustomTransitionDemoController())
                         .pushChangeHandler(new FadeChangeHandler())
                         .popChangeHandler(new FadeChangeHandler()));
                 break;

@@ -27,4 +27,8 @@
     <color name="grey_300">#e0e0e0</color>
     <color name="grey_400">#78909C</color>
 
+    <color name="ripple_dark">#40808080</color>
+    <color name="dark_icon">#99000000</color>
+    <color name="dialog_background">#fafafa</color>
+
 </resources>
