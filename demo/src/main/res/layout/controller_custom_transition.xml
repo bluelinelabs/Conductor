@@ -6,17 +6,17 @@
     android:layout_height="match_parent"
     android:background="@color/cyan_300">
 
-    <ImageButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/padding_normal"
         android:layout_marginRight="@dimen/padding_normal"
         android:layout_marginEnd="@dimen/padding_normal"
-        android:background="@drawable/fab"
         android:elevation="@dimen/z_fab"
         android:src="@drawable/ic_add_dark"
+        android:scaleType="matrix"
         android:stateListAnimator="@animator/raise"
         android:transitionName="@string/fab_dialog_transition_name"/>
 

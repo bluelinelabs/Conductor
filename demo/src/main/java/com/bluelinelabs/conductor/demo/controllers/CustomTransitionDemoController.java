@@ -1,14 +1,11 @@
 package com.bluelinelabs.conductor.demo.controllers;
 
-
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
-import com.bluelinelabs.conductor.ChangeHandlerFrameLayout;
-import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.changehandler.FabToDialogAnimatorChangeHandler;
@@ -22,10 +19,9 @@ import static com.bluelinelabs.conductor.demo.util.CustomTransitionCompatUtil.ge
 
 public class CustomTransitionDemoController extends BaseController {
 
-    @BindView(R.id.custom_transition_container)
-    ChangeHandlerFrameLayout frameLayout;
-    @BindView(R.id.fab)
-    ImageButton fab;
+    private static final String KEY_FAB_VISIBILITY = "CustomTransitionDemoController.fabVisibility";
+
+    @BindView(R.id.fab) View fab;
 
     @Override
     protected View inflateView(@NonNull final LayoutInflater inflater, @NonNull final ViewGroup container) {
@@ -33,35 +29,26 @@ public class CustomTransitionDemoController extends BaseController {
     }
 
     @Override
-    protected void onAttach(@NonNull final View view) {
-        super.onAttach(view);
-        //dialog is visible
-        if (childRouter().getBackstackSize() > 0) {
-            fab.setVisibility(View.INVISIBLE);
-        }
+    protected void onSaveViewState(@NonNull View view, @NonNull Bundle outState) {
+        super.onSaveViewState(view, outState);
+        outState.putInt(KEY_FAB_VISIBILITY, fab.getVisibility());
+    }
+
+    @Override
+    protected void onRestoreViewState(@NonNull View view, @NonNull Bundle savedViewState) {
+        super.onRestoreViewState(view, savedViewState);
+
+        //noinspection WrongConstant
+        fab.setVisibility(savedViewState.getInt(KEY_FAB_VISIBILITY));
     }
 
     @OnClick(R.id.fab)
     public void showDialog() {
-        childRouter()
+        getRouter()
                 .pushController(RouterTransaction.with(new DialogController())
                         .pushChangeHandler(getTransitionCompat(new FabToDialogTransitionChangeHandler(), new FabToDialogAnimatorChangeHandler()))
                         .popChangeHandler(getTransitionCompat(new FabToDialogTransitionChangeHandler(), new FabToDialogAnimatorChangeHandler()))
                 );
     }
 
-    @Override
-    public boolean handleBack() {
-        if (!childRouter().getBackstack().isEmpty()) {
-            childRouter().popCurrentController();
-            return true;
-        } else {
-            return super.handleBack();
-        }
-    }
-
-    @NonNull
-    private Router childRouter() {
-        return getChildRouter(frameLayout).setPopsLastView(true);
-    }
 }

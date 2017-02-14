@@ -37,6 +37,7 @@ import java.util.ArrayList;
 /**
  * Utility methods for working with animations.
  */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class AnimUtils {
 
     private AnimUtils() { }
