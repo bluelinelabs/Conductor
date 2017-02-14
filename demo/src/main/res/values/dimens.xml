@@ -7,7 +7,6 @@
     <dimen name="display_target_image_margin">24dp</dimen>
 
     <!-- Custom transition dimensions -->
-    <dimen name="fab_size">56dp</dimen>
     <dimen name="padding_normal">16dp</dimen>
     <dimen name="z_fab">6dp</dimen>
     <dimen name="touch_raise">6dp</dimen>

@@ -24,31 +24,25 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.transition.Transition;
 import android.transition.TransitionValues;
-import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.view.animation.Interpolator;
 
-import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.util.AnimUtils;
 
 import java.util.ArrayList;
@@ -64,8 +58,6 @@ import static android.view.View.MeasureSpec.makeMeasureSpec;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class FabTransform extends Transition {
 
-    private static final String EXTRA_FAB_COLOR = "EXTRA_FAB_COLOR";
-    private static final String EXTRA_FAB_ICON_RES_ID = "EXTRA_FAB_ICON_RES_ID";
     private static final long DEFAULT_DURATION = 240L;
     private static final String PROP_BOUNDS = "plaid:fabTransform:bounds";
     private static final String[] TRANSITION_PROPERTIES = {
@@ -80,55 +72,6 @@ public class FabTransform extends Transition {
         icon = fabIconResId;
         setPathMotion(new GravityArcMotion());
         setDuration(DEFAULT_DURATION);
-    }
-
-    public FabTransform(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        TypedArray a = null;
-        try {
-            a = context.obtainStyledAttributes(attrs, R.styleable.FabTransform);
-            if (!a.hasValue(R.styleable.FabTransform_fabColor)
-                    || !a.hasValue(R.styleable.FabTransform_fabIcon)) {
-                throw new IllegalArgumentException("Must provide both color & icon.");
-            }
-            color = a.getColor(R.styleable.FabTransform_fabColor, Color.TRANSPARENT);
-            icon = a.getResourceId(R.styleable.FabTransform_fabIcon, 0);
-            setPathMotion(new GravityArcMotion());
-            if (getDuration() < 0) {
-                setDuration(DEFAULT_DURATION);
-            }
-        } finally {
-            a.recycle();
-        }
-    }
-
-    /**
-     * Configure {@code intent} with the extras needed to initialize this transition.
-     */
-    public static void addExtras(@NonNull Intent intent, @ColorInt int fabColor,
-                                 @DrawableRes int fabIconResId) {
-        intent.putExtra(EXTRA_FAB_COLOR, fabColor);
-        intent.putExtra(EXTRA_FAB_ICON_RES_ID, fabIconResId);
-    }
-
-    /**
-     * Create a {@link FabTransform} from the supplied {@code activity} extras and set as its
-     * shared element enter/return transition.
-     */
-    public static boolean setup(@NonNull Activity activity, @Nullable View target) {
-        final Intent intent = activity.getIntent();
-        if (!intent.hasExtra(EXTRA_FAB_COLOR) || !intent.hasExtra(EXTRA_FAB_ICON_RES_ID)) {
-            return false;
-        }
-
-        final int color = intent.getIntExtra(EXTRA_FAB_COLOR, Color.TRANSPARENT);
-        final int icon = intent.getIntExtra(EXTRA_FAB_ICON_RES_ID, -1);
-        final FabTransform sharedEnter = new FabTransform(color, icon);
-        if (target != null) {
-            sharedEnter.addTarget(target);
-        }
-        activity.getWindow().setSharedElementEnterTransition(sharedEnter);
-        return true;
     }
 
     @Override
@@ -158,8 +101,8 @@ public class FabTransform extends Transition {
         final boolean fromFab = endBounds.width() > startBounds.width();
         final View view = endValues.view;
         final Rect dialogBounds = fromFab ? endBounds : startBounds;
-        final Rect fabBounds = fromFab ? startBounds : endBounds;
-        final Interpolator fastOutSlowInInterpolator = AnimUtils.getFastOutSlowInInterpolator();
+        final Interpolator fastOutSlowInInterpolator =
+                AnimUtils.getFastOutSlowInInterpolator(sceneRoot.getContext());
         final long duration = getDuration();
         final long halfDuration = duration / 2;
         final long twoThirdsDuration = duration * 2 / 3;
@@ -196,6 +139,19 @@ public class FabTransform extends Transition {
         if (!fromFab) fabIcon.setAlpha(0);
         view.getOverlay().add(fabIcon);
 
+        // Since the view that's being transition to always seems to be on the top (z-order), we have
+        // to make a copy of the "from" view and put it in the "to" view's overlay, then fade it out.
+        // There has to be another way to do this, right?
+        Drawable dialogView = null;
+        if (!fromFab) {
+            startValues.view.setDrawingCacheEnabled(true);
+            startValues.view.buildDrawingCache();
+            Bitmap viewBitmap = startValues.view.getDrawingCache();
+            dialogView = new BitmapDrawable(view.getResources(), viewBitmap);
+            dialogView.setBounds(0, 0, dialogBounds.width(), dialogBounds.height());
+            view.getOverlay().add(dialogView);
+        }
+
         // Circular clip from/to the FAB size
         final Animator circularReveal;
         if (fromFab) {
@@ -205,7 +161,7 @@ public class FabTransform extends Transition {
                     startBounds.width() / 2,
                     (float) Math.hypot(endBounds.width() / 2, endBounds.height() / 2));
             circularReveal.setInterpolator(
-                    AnimUtils.getFastOutLinearInInterpolator());
+                    AnimUtils.getFastOutLinearInInterpolator(sceneRoot.getContext()));
         } else {
             circularReveal = ViewAnimationUtils.createCircularReveal(view,
                     view.getWidth() / 2,
@@ -213,20 +169,44 @@ public class FabTransform extends Transition {
                     (float) Math.hypot(startBounds.width() / 2, startBounds.height() / 2),
                     endBounds.width() / 2);
             circularReveal.setInterpolator(
-                    AnimUtils.getLinearOutSlowInInterpolator());
+                    AnimUtils.getLinearOutSlowInInterpolator(sceneRoot.getContext()));
 
             // Persist the end clip i.e. stay at FAB size after the reveal has run
             circularReveal.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    final ViewOutlineProvider fabOutlineProvider = view.getOutlineProvider();
+
                     view.setOutlineProvider(new ViewOutlineProvider() {
+                        boolean hasRun = false;
+
                         @Override
-                        public void getOutline(View view, Outline outline) {
-                            final int left = (view.getWidth() - fabBounds.width()) / 2;
-                            final int top = (view.getHeight() - fabBounds.height()) / 2;
+                        public void getOutline(final View view, Outline outline) {
+                            final int left = (view.getWidth() - endBounds.width()) / 2;
+                            final int top = (view.getHeight() - endBounds.height()) / 2;
+
                             outline.setOval(
-                                    left, top, left + fabBounds.width(), top + fabBounds.height());
-                            view.setClipToOutline(true);
+                                    left, top, left + endBounds.width(), top + endBounds.height());
+
+                            if (!hasRun) {
+                                hasRun = true;
+                                view.setClipToOutline(true);
+
+                                // We have to remove this as soon as it's laid out so we can get the shadow back
+                                view.getViewTreeObserver().addOnPreDrawListener(new OnPreDrawListener() {
+                                    @Override
+                                    public boolean onPreDraw() {
+                                        if (view.getWidth() == endBounds.width() && view.getHeight() == endBounds.height()) {
+                                            view.setOutlineProvider(fabOutlineProvider);
+                                            view.setClipToOutline(false);
+                                            view.getViewTreeObserver().removeOnPreDrawListener(this);
+                                            return true;
+                                        }
+
+                                        return true;
+                                    }
+                                });
+                            }
                         }
                     });
                 }
@@ -274,30 +254,34 @@ public class FabTransform extends Transition {
         colorFade.setInterpolator(fastOutSlowInInterpolator);
         iconFade.setInterpolator(fastOutSlowInInterpolator);
 
-        // Work around issue with elevation shadows. At the end of the return transition the shared
-        // element's shadow is drawn twice (by each activity) which is jarring. This workaround
-        // still causes the shadow to snap, but it's better than seeing it double drawn.
-        Animator elevation = null;
-        if (!fromFab) {
-            elevation = ObjectAnimator.ofFloat(view, View.TRANSLATION_Z, -view.getElevation());
-            elevation.setDuration(duration);
-            elevation.setInterpolator(fastOutSlowInInterpolator);
-        }
-
         // Run all animations together
         final AnimatorSet transition = new AnimatorSet();
         transition.playTogether(circularReveal, translate, colorFade, iconFade);
         transition.playTogether(fadeContents);
-        if (elevation != null) transition.play(elevation);
-        if (fromFab) {
-            transition.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    // Clean up
-                    view.getOverlay().clear();
-                }
-            });
+        if (dialogView != null) {
+            final Animator dialogViewFade = ObjectAnimator.ofInt(dialogView, "alpha", 0).setDuration(twoThirdsDuration);
+            dialogViewFade.setInterpolator(fastOutSlowInInterpolator);
+            transition.playTogether(dialogViewFade);
         }
+        transition.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Clean up
+                view.getOverlay().clear();
+
+                if (!fromFab) {
+                    view.setTranslationX(0);
+                    view.setTranslationY(0);
+                    view.setTranslationZ(0);
+
+                    view.measure(
+                            makeMeasureSpec(196, View.MeasureSpec.EXACTLY),
+                            makeMeasureSpec(196, View.MeasureSpec.EXACTLY));
+                    view.layout(endBounds.left, endBounds.top, endBounds.right, endBounds.bottom);
+                }
+
+            }
+        });
         return new AnimUtils.NoPauseAnimator(transition);
     }
 
