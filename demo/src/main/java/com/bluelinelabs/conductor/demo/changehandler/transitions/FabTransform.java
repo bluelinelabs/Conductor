@@ -102,7 +102,7 @@ public class FabTransform extends Transition {
         final View view = endValues.view;
         final Rect dialogBounds = fromFab ? endBounds : startBounds;
         final Interpolator fastOutSlowInInterpolator =
-                AnimUtils.getFastOutSlowInInterpolator(sceneRoot.getContext());
+                AnimUtils.getFastOutSlowInInterpolator();
         final long duration = getDuration();
         final long halfDuration = duration / 2;
         final long twoThirdsDuration = duration * 2 / 3;
@@ -161,7 +161,7 @@ public class FabTransform extends Transition {
                     startBounds.width() / 2,
                     (float) Math.hypot(endBounds.width() / 2, endBounds.height() / 2));
             circularReveal.setInterpolator(
-                    AnimUtils.getFastOutLinearInInterpolator(sceneRoot.getContext()));
+                    AnimUtils.getFastOutLinearInInterpolator());
         } else {
             circularReveal = ViewAnimationUtils.createCircularReveal(view,
                     view.getWidth() / 2,
@@ -169,7 +169,7 @@ public class FabTransform extends Transition {
                     (float) Math.hypot(startBounds.width() / 2, startBounds.height() / 2),
                     endBounds.width() / 2);
             circularReveal.setInterpolator(
-                    AnimUtils.getLinearOutSlowInInterpolator(sceneRoot.getContext()));
+                    AnimUtils.getLinearOutSlowInInterpolator());
 
             // Persist the end clip i.e. stay at FAB size after the reveal has run
             circularReveal.addListener(new AnimatorListenerAdapter() {
@@ -275,8 +275,8 @@ public class FabTransform extends Transition {
                     view.setTranslationZ(0);
 
                     view.measure(
-                            makeMeasureSpec(196, View.MeasureSpec.EXACTLY),
-                            makeMeasureSpec(196, View.MeasureSpec.EXACTLY));
+                            makeMeasureSpec(endBounds.width(), View.MeasureSpec.EXACTLY),
+                            makeMeasureSpec(endBounds.height(), View.MeasureSpec.EXACTLY));
                     view.layout(endBounds.left, endBounds.top, endBounds.right, endBounds.bottom);
                 }
 

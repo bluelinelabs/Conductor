@@ -19,15 +19,16 @@ package com.bluelinelabs.conductor.demo.util;
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.transition.Transition;
 import android.util.ArrayMap;
 import android.util.FloatProperty;
 import android.util.IntProperty;
 import android.util.Property;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
@@ -47,28 +48,25 @@ public class AnimUtils {
     private static Interpolator linear;
 
     @NonNull
-    public static Interpolator getFastOutSlowInInterpolator(Context context) {
+    public static Interpolator getFastOutSlowInInterpolator() {
         if (fastOutSlowIn == null) {
-            fastOutSlowIn = AnimationUtils.loadInterpolator(context,
-                    android.R.interpolator.fast_out_slow_in);
+            fastOutSlowIn = new FastOutSlowInInterpolator();
         }
         return fastOutSlowIn;
     }
 
     @NonNull
-    public static Interpolator getFastOutLinearInInterpolator(Context context) {
+    public static Interpolator getFastOutLinearInInterpolator() {
         if (fastOutLinearIn == null) {
-            fastOutLinearIn = AnimationUtils.loadInterpolator(context,
-                    android.R.interpolator.fast_out_linear_in);
+            fastOutLinearIn = new FastOutLinearInInterpolator();
         }
         return fastOutLinearIn;
     }
 
     @NonNull
-    public static Interpolator getLinearOutSlowInInterpolator(Context context) {
+    public static Interpolator getLinearOutSlowInInterpolator() {
         if (linearOutSlowIn == null) {
-            linearOutSlowIn = AnimationUtils.loadInterpolator(context,
-                    android.R.interpolator.linear_out_slow_in);
+            linearOutSlowIn = new LinearOutSlowInInterpolator();
         }
         return linearOutSlowIn;
     }
