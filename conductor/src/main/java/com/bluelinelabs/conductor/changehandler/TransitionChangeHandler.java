@@ -3,6 +3,7 @@ package com.bluelinelabs.conductor.changehandler;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.transition.Transition;
 import android.transition.Transition.TransitionListener;
 import android.transition.TransitionManager;
@@ -23,23 +24,23 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
     /**
      * Should be overridden to return the Transition to use while replacing Views.
      *
-     * @param container The container these Views are hosted in.
-     * @param from The previous View in the container, if any.
-     * @param to The next View that should be put in the container, if any.
-     * @param isPush True if this is a push transaction, false if it's a pop.
+     * @param container The container these Views are hosted in
+     * @param from      The previous View in the container or {@code null} if there was no Controller before this transition
+     * @param to        The next View that should be put in the container or {@code null} if no Controller is being transitioned to
+     * @param isPush    True if this is a push transaction, false if it's a pop
      */
     @NonNull
-    protected abstract Transition getTransition(@NonNull ViewGroup container, View from, View to, boolean isPush);
+    protected abstract Transition getTransition(@NonNull ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush);
 
     @Override
-    public void onAbortPush(@NonNull ControllerChangeHandler newHandler, Controller newTop) {
+    public void onAbortPush(@NonNull ControllerChangeHandler newHandler, @Nullable Controller newTop) {
         super.onAbortPush(newHandler, newTop);
 
         canceled = true;
     }
 
     @Override
-    public void performChange(@NonNull final ViewGroup container, View from, View to, boolean isPush, @NonNull final ControllerChangeCompletedListener changeListener) {
+    public void performChange(@NonNull final ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush, @NonNull final ControllerChangeCompletedListener changeListener) {
         if (canceled) {
             changeListener.onChangeCompleted();
             return;
@@ -67,8 +68,41 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
             public void onTransitionResume(Transition transition) { }
         });
 
+        prepareForTransition(container, from, to, isPush);
+
         TransitionManager.beginDelayedTransition(container, transition);
-        if (from != null) {
+
+        executePropertyChanges(container, from, to, isPush);
+    }
+
+    @Override
+    public boolean removesFromViewOnPush() {
+        return true;
+    }
+
+    /**
+     * Called directly before a transition occurs. This can be used to reorder views, set their transition names, etc.
+     *
+     * @param container The container these Views are hosted in
+     * @param from      The previous View in the container or {@code null} if there was no Controller before this transition
+     * @param to        The next View that should be put in the container or {@code null} if no Controller is being transitioned to
+     * @param isPush    True if this is a push transaction, false if it's a pop
+     */
+    public void prepareForTransition(@NonNull ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush) {
+
+    }
+
+    /**
+     * This should set all view properties needed for the transition to work properly. By default it removes the "from" view
+     * and adds the "to" view.
+     *
+     * @param container The container these Views are hosted in
+     * @param from      The previous View in the container or {@code null} if there was no Controller before this transition
+     * @param to        The next View that should be put in the container or {@code null} if no Controller is being transitioned to
+     * @param isPush    True if this is a push transaction, false if it's a pop
+     */
+    public void executePropertyChanges(@NonNull ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush) {
+        if (from != null && (removesFromViewOnPush() || !isPush) && from.getParent() == container) {
             container.removeView(from);
         }
         if (to != null && to.getParent() == null) {
@@ -76,8 +110,4 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
         }
     }
 
-    @Override
-    public final boolean removesFromViewOnPush() {
-        return true;
-    }
 }

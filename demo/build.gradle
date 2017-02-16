@@ -15,7 +15,8 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     lintOptions {
-        abortOnError false
+        abortOnError true
+        ignore 'UnusedResources'
     }
 
     compileOptions {
@@ -37,6 +38,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 dependencies {
@@ -49,6 +54,7 @@ dependencies {
 
     compile project(':conductor-support')
     compile project(':conductor-rxlifecycle')
+    compile project(':conductor-rxlifecycle2')
 
     debugCompile rootProject.ext.leakCanary
     releaseCompile rootProject.ext.leakCanaryNoOp

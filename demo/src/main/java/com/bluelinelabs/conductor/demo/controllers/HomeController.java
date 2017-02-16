@@ -27,6 +27,7 @@ import com.bluelinelabs.conductor.ControllerChangeType;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.demo.R;
+import com.bluelinelabs.conductor.demo.controllers.NavigationDemoController.DisplayUpMode;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 
 import butterknife.BindView;
@@ -45,6 +46,8 @@ public class HomeController extends BaseController {
         MASTER_DETAIL("Master Detail", R.color.grey_300),
         DRAG_DISMISS("Drag Dismiss", R.color.lime_300),
         RX_LIFECYCLE("Rx Lifecycle", R.color.teal_300),
+        RX_LIFECYCLE_2("Rx Lifecycle 2", R.color.brown_300),
+        CUSTOM_TRANSITIONS("Custom Transitions", R.color.cyan_300),
         OVERLAY("Overlay Controller", R.color.purple_300);
 
         String title;
@@ -79,7 +82,7 @@ public class HomeController extends BaseController {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.home, menu);
     }
@@ -94,7 +97,7 @@ public class HomeController extends BaseController {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.about) {
             SpannableString details = new SpannableString("A small, yet full-featured framework that allows building View-based Android applications");
             details.setSpan(new AbsoluteSizeSpan(16, true), 0, details.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
@@ -115,7 +118,7 @@ public class HomeController extends BaseController {
             content.append("\n\n");
             content.append(link);
 
-            getChildRouter(overlayRoot, null)
+            getChildRouter(overlayRoot)
                     .setPopsLastView(true)
                     .setRoot(RouterTransaction.with(new OverlayController(content))
                             .pushChangeHandler(new FadeChangeHandler())
@@ -133,7 +136,7 @@ public class HomeController extends BaseController {
     void onModelRowClick(HomeDemoModel model) {
         switch (model) {
             case NAVIGATION:
-                getRouter().pushController(RouterTransaction.with(new NavigationDemoController(0, true))
+                getRouter().pushController(RouterTransaction.with(new NavigationDemoController(0, DisplayUpMode.SHOW_FOR_CHILDREN_ONLY))
                         .pushChangeHandler(new FadeChangeHandler())
                         .popChangeHandler(new FadeChangeHandler())
                         .tag(NavigationDemoController.TAG_UP_TRANSACTION)
@@ -159,7 +162,7 @@ public class HomeController extends BaseController {
                         .popChangeHandler(new FadeChangeHandler()));
                 break;
             case OVERLAY:
-                getChildRouter(overlayRoot, null)
+                getChildRouter(overlayRoot)
                         .setPopsLastView(true)
                         .setRoot(RouterTransaction.with(new OverlayController("I'm an overlay!"))
                                 .pushChangeHandler(new FadeChangeHandler())
@@ -172,6 +175,16 @@ public class HomeController extends BaseController {
                 break;
             case RX_LIFECYCLE:
                 getRouter().pushController(RouterTransaction.with(new RxLifecycleController())
+                        .pushChangeHandler(new FadeChangeHandler())
+                        .popChangeHandler(new FadeChangeHandler()));
+                break;
+            case RX_LIFECYCLE_2:
+                getRouter().pushController(RouterTransaction.with(new RxLifecycle2Controller())
+                        .pushChangeHandler(new FadeChangeHandler())
+                        .popChangeHandler(new FadeChangeHandler()));
+                break;
+            case CUSTOM_TRANSITIONS:
+                getRouter().pushController(RouterTransaction.with(new CustomTransitionDemoController())
                         .pushChangeHandler(new FadeChangeHandler())
                         .popChangeHandler(new FadeChangeHandler()));
                 break;

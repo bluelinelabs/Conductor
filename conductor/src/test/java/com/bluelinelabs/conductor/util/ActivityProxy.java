@@ -1,4 +1,4 @@
-package com.bluelinelabs.conductor;
+package com.bluelinelabs.conductor.util;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -45,14 +45,19 @@ public class ActivityProxy {
         return this;
     }
 
-    public ActivityProxy stop() {
+    public ActivityProxy stop(boolean detachView) {
         activityController.stop();
-        view.setAttached(false);
+
+        if (detachView) {
+            view.setAttached(false);
+        }
+
         return this;
     }
 
     public ActivityProxy destroy() {
         activityController.destroy();
+        view.setAttached(false);
         return this;
     }
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bluelinelabs.conductor.ChangeHandlerFrameLayout
+    android:id="@+id/dialog_window"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/immersive_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/dialog_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:elevation="@dimen/dialog_elevation"
+        android:minWidth="280dp"
+        android:transitionName="@string/fab_dialog_transition_name"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/dialog_bg"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            style="@style/Base.DialogWindowTitle.AppCompat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="24dp"
+            android:layout_marginLeft="24dp"
+            android:text="A small, yet full-featured framework that allows building View-based Android applications"/>
+
+        <Button
+            android:id="@+id/dismiss"
+            style="@android:style/Widget.Holo.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:minWidth="64dp"
+            android:text="@android:string/ok"
+            android:textColor="@color/colorAccent" />
+
+    </LinearLayout>
+</com.bluelinelabs.conductor.ChangeHandlerFrameLayout>

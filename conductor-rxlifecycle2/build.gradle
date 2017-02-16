@@ -1,0 +1,31 @@
+apply from: rootProject.file('dependencies.gradle')
+apply from: rootProject.file('gradle-mvn-push.gradle')
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME
+    }
+}
+
+dependencies {
+    compile rootProject.ext.rxJava2
+    compile rootProject.ext.rxLifecycle2
+    compile rootProject.ext.rxLifecycleAndroid2
+
+    compile project(':conductor')
+}
+
+ext.artifactId = 'conductor-rxlifecycle2'

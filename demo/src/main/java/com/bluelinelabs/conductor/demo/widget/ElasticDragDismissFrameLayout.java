@@ -16,6 +16,7 @@
 
 package com.bluelinelabs.conductor.demo.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
@@ -32,6 +33,7 @@ import java.util.List;
  * Applies an elasticity factor to reduce movement as you approach the given dismiss distance.
  * Optionally also scales down content during drag.
  */
+@TargetApi(21)
 public class ElasticDragDismissFrameLayout extends FrameLayout implements NestedScrollingParent {
 
     public static abstract class ElasticDragDismissCallback {

@@ -4,8 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.bluelinelabs.conductor.ControllerChangeHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +33,8 @@ public class VerticalChangeHandler extends AnimatorChangeHandler {
         super(duration, removesFromViewOnPush);
     }
 
-    @Override
-    protected Animator getAnimator(@NonNull ViewGroup container, View from, View to, boolean isPush, boolean toAddedToContainer) {
+    @Override @NonNull
+    protected Animator getAnimator(@NonNull ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush, boolean toAddedToContainer) {
         AnimatorSet animator = new AnimatorSet();
         List<Animator> viewAnimators = new ArrayList<>();
 
@@ -47,5 +50,10 @@ public class VerticalChangeHandler extends AnimatorChangeHandler {
 
     @Override
     protected void resetFromView(@NonNull View from) { }
+
+    @Override @NonNull
+    public ControllerChangeHandler copy() {
+        return new VerticalChangeHandler(getAnimationDuration(), removesFromViewOnPush());
+    }
 
 }

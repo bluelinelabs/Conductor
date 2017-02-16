@@ -2,6 +2,7 @@ package com.bluelinelabs.conductor.changehandler;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ public class SimpleSwapChangeHandler extends ControllerChangeHandler implements 
     }
 
     @Override
-    public void onAbortPush(@NonNull ControllerChangeHandler newHandler, Controller newTop) {
+    public void onAbortPush(@NonNull ControllerChangeHandler newHandler, @Nullable Controller newTop) {
         super.onAbortPush(newHandler, newTop);
 
         canceled = true;
@@ -62,7 +63,7 @@ public class SimpleSwapChangeHandler extends ControllerChangeHandler implements 
     }
 
     @Override
-    public void performChange(@NonNull ViewGroup container, View from, View to, boolean isPush, @NonNull ControllerChangeCompletedListener changeListener) {
+    public void performChange(@NonNull ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush, @NonNull ControllerChangeCompletedListener changeListener) {
         if (!canceled) {
             if (from != null && (!isPush || removesFromViewOnPush)) {
                 container.removeView(from);
@@ -89,7 +90,7 @@ public class SimpleSwapChangeHandler extends ControllerChangeHandler implements 
     }
 
     @Override
-    public void onViewAttachedToWindow(View v) {
+    public void onViewAttachedToWindow(@NonNull View v) {
         v.removeOnAttachStateChangeListener(this);
 
         if (changeListener != null) {
@@ -100,5 +101,15 @@ public class SimpleSwapChangeHandler extends ControllerChangeHandler implements 
     }
 
     @Override
-    public void onViewDetachedFromWindow(View v) { }
+    public void onViewDetachedFromWindow(@NonNull View v) { }
+
+    @Override @NonNull
+    public ControllerChangeHandler copy() {
+        return new SimpleSwapChangeHandler(removesFromViewOnPush());
+    }
+
+    @Override
+    public boolean isReusable() {
+        return true;
+    }
 }

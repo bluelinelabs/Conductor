@@ -1,8 +1,11 @@
 package com.bluelinelabs.conductor;
 
-import org.junit.Assert;
+import com.bluelinelabs.conductor.util.TestController;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class BackstackTests {
 
@@ -15,20 +18,20 @@ public class BackstackTests {
 
     @Test
     public void testPush() {
-        Assert.assertEquals(0, backstack.size());
+        assertEquals(0, backstack.size());
         backstack.push(RouterTransaction.with(new TestController()));
-        Assert.assertEquals(1, backstack.size());
+        assertEquals(1, backstack.size());
     }
 
     @Test
     public void testPop() {
         backstack.push(RouterTransaction.with(new TestController()));
         backstack.push(RouterTransaction.with(new TestController()));
-        Assert.assertEquals(2, backstack.size());
+        assertEquals(2, backstack.size());
         backstack.pop();
-        Assert.assertEquals(1, backstack.size());
+        assertEquals(1, backstack.size());
         backstack.pop();
-        Assert.assertEquals(0, backstack.size());
+        assertEquals(0, backstack.size());
     }
 
     @Test
@@ -37,13 +40,13 @@ public class BackstackTests {
         RouterTransaction transaction2 = RouterTransaction.with(new TestController());
 
         backstack.push(transaction1);
-        Assert.assertEquals(transaction1, backstack.peek());
+        assertEquals(transaction1, backstack.peek());
 
         backstack.push(transaction2);
-        Assert.assertEquals(transaction2, backstack.peek());
+        assertEquals(transaction2, backstack.peek());
 
         backstack.pop();
-        Assert.assertEquals(transaction1, backstack.peek());
+        assertEquals(transaction1, backstack.peek());
     }
 
     @Test
@@ -56,11 +59,11 @@ public class BackstackTests {
         backstack.push(transaction2);
         backstack.push(transaction3);
 
-        Assert.assertEquals(3, backstack.size());
+        assertEquals(3, backstack.size());
 
         backstack.popTo(transaction1);
 
-        Assert.assertEquals(1, backstack.size());
-        Assert.assertEquals(transaction1, backstack.peek());
+        assertEquals(1, backstack.size());
+        assertEquals(transaction1, backstack.peek());
     }
 }

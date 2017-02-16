@@ -3,12 +3,18 @@ package com.bluelinelabs.conductor;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
-import org.junit.Assert;
+import com.bluelinelabs.conductor.util.ActivityProxy;
+import com.bluelinelabs.conductor.util.MockChangeHandler;
+import com.bluelinelabs.conductor.util.TestController;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
@@ -34,21 +40,21 @@ public class TargetControllerTests {
         final TestController controllerA = new TestController();
         final TestController controllerB = new TestController();
 
-        Assert.assertNull(controllerA.getTargetController());
-        Assert.assertNull(controllerB.getTargetController());
+        assertNull(controllerA.getTargetController());
+        assertNull(controllerB.getTargetController());
 
         router.pushController(RouterTransaction.with(controllerA)
-                .pushChangeHandler(new MockChangeHandler())
-                .popChangeHandler(new MockChangeHandler()));
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
 
         controllerB.setTargetController(controllerA);
 
         router.pushController(RouterTransaction.with(controllerB)
-                .pushChangeHandler(new MockChangeHandler())
-                .popChangeHandler(new MockChangeHandler()));
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
 
-        Assert.assertNull(controllerA.getTargetController());
-        Assert.assertEquals(controllerA, controllerB.getTargetController());
+        assertNull(controllerA.getTargetController());
+        assertEquals(controllerA, controllerB.getTargetController());
     }
 
     @Test
@@ -56,22 +62,22 @@ public class TargetControllerTests {
         final TestController controllerA = new TestController();
         final TestController controllerB = new TestController();
 
-        Assert.assertNull(controllerA.getTargetController());
-        Assert.assertNull(controllerB.getTargetController());
+        assertNull(controllerA.getTargetController());
+        assertNull(controllerB.getTargetController());
 
         router.pushController(RouterTransaction.with(controllerA)
-                .pushChangeHandler(new MockChangeHandler())
-                .popChangeHandler(new MockChangeHandler()));
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
 
         controllerB.setTargetController(controllerA);
 
-        Router childRouter = controllerA.getChildRouter((ViewGroup)controllerA.getView().findViewById(TestController.VIEW_ID), null);
+        Router childRouter = controllerA.getChildRouter((ViewGroup)controllerA.getView().findViewById(TestController.VIEW_ID));
         childRouter.pushController(RouterTransaction.with(controllerB)
-                .pushChangeHandler(new MockChangeHandler())
-                .popChangeHandler(new MockChangeHandler()));
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
 
-        Assert.assertNull(controllerA.getTargetController());
-        Assert.assertEquals(controllerA, controllerB.getTargetController());
+        assertNull(controllerA.getTargetController());
+        assertEquals(controllerA, controllerB.getTargetController());
     }
 
     @Test
@@ -79,22 +85,22 @@ public class TargetControllerTests {
         final TestController controllerA = new TestController();
         final TestController controllerB = new TestController();
 
-        Assert.assertNull(controllerA.getTargetController());
-        Assert.assertNull(controllerB.getTargetController());
+        assertNull(controllerA.getTargetController());
+        assertNull(controllerB.getTargetController());
 
         router.pushController(RouterTransaction.with(controllerA)
-                .pushChangeHandler(new MockChangeHandler())
-                .popChangeHandler(new MockChangeHandler()));
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
 
         controllerA.setTargetController(controllerB);
 
-        Router childRouter = controllerA.getChildRouter((ViewGroup)controllerA.getView().findViewById(TestController.VIEW_ID), null);
+        Router childRouter = controllerA.getChildRouter((ViewGroup)controllerA.getView().findViewById(TestController.VIEW_ID));
         childRouter.pushController(RouterTransaction.with(controllerB)
-                .pushChangeHandler(new MockChangeHandler())
-                .popChangeHandler(new MockChangeHandler()));
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
 
-        Assert.assertNull(controllerB.getTargetController());
-        Assert.assertEquals(controllerB, controllerA.getTargetController());
+        assertNull(controllerB.getTargetController());
+        assertEquals(controllerB, controllerA.getTargetController());
     }
 
 }

@@ -120,7 +120,7 @@ public class CircularRevealChangeHandler extends AnimatorChangeHandler {
         this.cy = cy;
     }
 
-    @Override
+    @Override @NonNull
     protected Animator getAnimator(@NonNull ViewGroup container, View from, View to, boolean isPush, boolean toAddedToContainer) {
         final float radius = (float) Math.hypot(cx, cy);
         Animator animator = null;

@@ -8,9 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller;
+import com.bluelinelabs.conductor.Router;
+import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
-import com.bluelinelabs.conductor.support.ControllerPagerAdapter;
+import com.bluelinelabs.conductor.support.RouterPagerAdapter;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 
@@ -21,13 +25,16 @@ public class PagerController extends BaseController {
     @BindView(R.id.tab_layout) TabLayout tabLayout;
     @BindView(R.id.view_pager) ViewPager viewPager;
 
-    private final ControllerPagerAdapter pagerAdapter;
+    private final RouterPagerAdapter pagerAdapter;
 
     public PagerController() {
-        pagerAdapter = new ControllerPagerAdapter(this, false) {
+        pagerAdapter = new RouterPagerAdapter(this) {
             @Override
-            public Controller getItem(int position) {
-                return new ChildController(String.format("Child #%d (Swipe to see more)", position), PAGE_COLORS[position], true);
+            public void configureRouter(@NonNull Router router, int position) {
+                if (!router.hasRootController()) {
+                    Controller page = new ChildController(String.format(Locale.getDefault(), "Child #%d (Swipe to see more)", position), PAGE_COLORS[position], true);
+                    router.setRoot(RouterTransaction.with(page));
+                }
             }
 
             @Override
@@ -50,7 +57,7 @@ public class PagerController extends BaseController {
     }
 
     @Override
-    protected void onDestroyView(View view) {
+    protected void onDestroyView(@NonNull View view) {
         viewPager.setAdapter(null);
         super.onDestroyView(view);
     }

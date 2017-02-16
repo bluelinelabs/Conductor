@@ -7,30 +7,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bluelinelabs.conductor.ControllerChangeHandler;
+import com.bluelinelabs.conductor.ControllerChangeType;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
+import com.bluelinelabs.conductor.demo.ActionBarProvider;
+import com.bluelinelabs.conductor.demo.DemoApplication;
 import com.bluelinelabs.conductor.demo.R;
-import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 import com.bluelinelabs.conductor.rxlifecycle.ControllerEvent;
+import com.bluelinelabs.conductor.rxlifecycle.RxController;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
 // Shamelessly borrowed from the official RxLifecycle demo by Trello and adapted for Conductor Controllers
 // instead of Activities or Fragments.
-public class RxLifecycleController extends BaseController {
+public class RxLifecycleController extends RxController {
 
     private static final String TAG = "RxLifecycleController";
 
     @BindView(R.id.tv_title) TextView tvTitle;
 
-    public RxLifecycleController() {
+    private Unbinder unbinder;
+    private boolean hasExited;
 
+    public RxLifecycleController() {
         Observable.interval(1, TimeUnit.SECONDS)
                 .doOnUnsubscribe(new Action0() {
                     @Override
@@ -47,9 +55,13 @@ public class RxLifecycleController extends BaseController {
                 });
     }
 
+    @NonNull
     @Override
-    public void onViewBound(@NonNull View view) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         Log.i(TAG, "onCreateView() called");
+
+        View view = inflater.inflate(R.layout.controller_rxlifecycle, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
         tvTitle.setText(getResources().getString(R.string.rxlifecycle_title, TAG));
 
@@ -67,6 +79,8 @@ public class RxLifecycleController extends BaseController {
                         Log.i(TAG, "Started in onCreateView(), running until onDestroyView(): " + num);
                     }
                 });
+
+        return view;
     }
 
     @Override
@@ -74,6 +88,8 @@ public class RxLifecycleController extends BaseController {
         super.onAttach(view);
 
         Log.i(TAG, "onAttach() called");
+
+        (((ActionBarProvider)getActivity()).getSupportActionBar()).setTitle("RxLifecycle Demo");
 
         Observable.interval(1, TimeUnit.SECONDS)
                 .doOnUnsubscribe(new Action0() {
@@ -92,10 +108,13 @@ public class RxLifecycleController extends BaseController {
     }
 
     @Override
-    protected void onDestroyView(View view) {
+    protected void onDestroyView(@NonNull View view) {
         super.onDestroyView(view);
 
         Log.i(TAG, "onDestroyView() called");
+
+        unbinder.unbind();
+        unbinder = null;
     }
 
     @Override
@@ -110,17 +129,20 @@ public class RxLifecycleController extends BaseController {
         super.onDestroy();
 
         Log.i(TAG, "onDestroy() called");
+
+        if (hasExited) {
+            DemoApplication.refWatcher.watch(this);
+        }
     }
 
     @Override
-    protected String getTitle() {
-        return "RxLifecycle Demo";
-    }
+    protected void onChangeEnded(@NonNull ControllerChangeHandler changeHandler, @NonNull ControllerChangeType changeType) {
+        super.onChangeEnded(changeHandler, changeType);
 
-    @NonNull
-    @Override
-    protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
-        return inflater.inflate(R.layout.controller_rxlifecycle, container, false);
+        hasExited = !changeType.isEnter;
+        if (isDestroyed()) {
+            DemoApplication.refWatcher.watch(this);
+        }
     }
 
     @OnClick(R.id.btn_next_release_view) void onNextWithReleaseClicked() {

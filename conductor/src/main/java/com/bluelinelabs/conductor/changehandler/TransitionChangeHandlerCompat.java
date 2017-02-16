@@ -3,6 +3,7 @@ package com.bluelinelabs.conductor.changehandler;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,13 +16,10 @@ import com.bluelinelabs.conductor.internal.ClassUtils;
  */
 public class TransitionChangeHandlerCompat extends ControllerChangeHandler {
 
-    private static final String KEY_TRANSITION_HANDLER_CLASS = "TransitionChangeHandlerCompat.transitionChangeHandler.class";
-    private static final String KEY_FALLBACK_HANDLER_CLASS = "TransitionChangeHandlerCompat.fallbackChangeHandler.class";
-    private static final String KEY_TRANSITION_HANDLER_STATE = "TransitionChangeHandlerCompat.transitionChangeHandler.state";
-    private static final String KEY_FALLBACK_HANDLER_STATE = "TransitionChangeHandlerCompat.fallbackChangeHandler.state";
+    private static final String KEY_CHANGE_HANDLER_CLASS = "TransitionChangeHandlerCompat.changeHandler.class";
+    private static final String KEY_HANDLER_STATE = "TransitionChangeHandlerCompat.changeHandler.state";
 
-    private TransitionChangeHandler transitionChangeHandler;
-    private ControllerChangeHandler fallbackChangeHandler;
+    private ControllerChangeHandler changeHandler;
 
     public TransitionChangeHandlerCompat() { }
 
@@ -32,57 +30,52 @@ public class TransitionChangeHandlerCompat extends ControllerChangeHandler {
      * @param transitionChangeHandler The change handler that will be used on API 21 and above
      * @param fallbackChangeHandler The change handler that will be used on APIs below 21
      */
-    public TransitionChangeHandlerCompat(TransitionChangeHandler transitionChangeHandler, ControllerChangeHandler fallbackChangeHandler) {
-        this.transitionChangeHandler = transitionChangeHandler;
-        this.fallbackChangeHandler = fallbackChangeHandler;
+    public TransitionChangeHandlerCompat(@NonNull TransitionChangeHandler transitionChangeHandler, @NonNull ControllerChangeHandler fallbackChangeHandler) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            changeHandler = transitionChangeHandler;
+        } else {
+            changeHandler = fallbackChangeHandler;
+        }
     }
 
     @Override
-    public void performChange(@NonNull final ViewGroup container, View from, View to, boolean isPush, @NonNull final ControllerChangeCompletedListener changeListener) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            transitionChangeHandler.performChange(container, from, to, isPush, changeListener);
-        } else {
-            fallbackChangeHandler.performChange(container, from, to, isPush, changeListener);
-        }
+    public void performChange(@NonNull final ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush, @NonNull final ControllerChangeCompletedListener changeListener) {
+        changeHandler.performChange(container, from, to, isPush, changeListener);
     }
 
     @Override
     public void saveToBundle(@NonNull Bundle bundle) {
         super.saveToBundle(bundle);
 
-        bundle.putString(KEY_TRANSITION_HANDLER_CLASS, transitionChangeHandler.getClass().getName());
-        bundle.putString(KEY_FALLBACK_HANDLER_CLASS, fallbackChangeHandler.getClass().getName());
+        bundle.putString(KEY_CHANGE_HANDLER_CLASS, changeHandler.getClass().getName());
 
-        Bundle transitionBundle = new Bundle();
-        transitionChangeHandler.saveToBundle(transitionBundle);
-        bundle.putBundle(KEY_TRANSITION_HANDLER_STATE, transitionBundle);
-
-        Bundle fallbackBundle = new Bundle();
-        fallbackChangeHandler.saveToBundle(fallbackBundle);
-        bundle.putBundle(KEY_FALLBACK_HANDLER_STATE, fallbackBundle);
+        Bundle stateBundle = new Bundle();
+        changeHandler.saveToBundle(stateBundle);
+        bundle.putBundle(KEY_HANDLER_STATE, stateBundle);
     }
 
     @Override
     public void restoreFromBundle(@NonNull Bundle bundle) {
         super.restoreFromBundle(bundle);
 
-        String transitionClassName = bundle.getString(KEY_TRANSITION_HANDLER_CLASS);
-        transitionChangeHandler = ClassUtils.newInstance(transitionClassName);
+        String className = bundle.getString(KEY_CHANGE_HANDLER_CLASS);
+        changeHandler = ClassUtils.newInstance(className);
         //noinspection ConstantConditions
-        transitionChangeHandler.restoreFromBundle(bundle.getBundle(KEY_TRANSITION_HANDLER_STATE));
-
-        String fallbackClassName = bundle.getString(KEY_FALLBACK_HANDLER_CLASS);
-        fallbackChangeHandler = ClassUtils.newInstance(fallbackClassName);
-        //noinspection ConstantConditions
-        fallbackChangeHandler.restoreFromBundle(bundle.getBundle(KEY_FALLBACK_HANDLER_STATE));
+        changeHandler.restoreFromBundle(bundle.getBundle(KEY_HANDLER_STATE));
     }
 
     @Override
     public boolean removesFromViewOnPush() {
+        return changeHandler.removesFromViewOnPush();
+    }
+
+    @Override @NonNull
+    public ControllerChangeHandler copy() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return transitionChangeHandler.removesFromViewOnPush();
+            return new TransitionChangeHandlerCompat((TransitionChangeHandler)changeHandler.copy(), null);
         } else {
-            return fallbackChangeHandler.removesFromViewOnPush();
+            return new TransitionChangeHandlerCompat(null, changeHandler.copy());
         }
     }
+
 }

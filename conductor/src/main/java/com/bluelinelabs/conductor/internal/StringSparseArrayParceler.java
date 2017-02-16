@@ -2,17 +2,18 @@ package com.bluelinelabs.conductor.internal;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 public class StringSparseArrayParceler implements Parcelable {
 
     private final SparseArray<String> stringSparseArray;
 
-    public StringSparseArrayParceler(SparseArray<String> stringSparseArray) {
+    public StringSparseArrayParceler(@NonNull SparseArray<String> stringSparseArray) {
         this.stringSparseArray = stringSparseArray;
     }
 
-    private StringSparseArrayParceler(Parcel in) {
+    private StringSparseArrayParceler(@NonNull Parcel in) {
         stringSparseArray = new SparseArray<>();
 
         final int size = in.readInt();
@@ -22,14 +23,17 @@ public class StringSparseArrayParceler implements Parcelable {
         }
     }
 
+    @NonNull
     public SparseArray<String> getStringSparseArray() {
         return stringSparseArray;
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel out, int flags) {
         final int size = stringSparseArray.size();
 
@@ -44,10 +48,12 @@ public class StringSparseArrayParceler implements Parcelable {
     }
 
     public static final Parcelable.Creator<StringSparseArrayParceler> CREATOR = new Parcelable.Creator<StringSparseArrayParceler>() {
+        @Override
         public StringSparseArrayParceler createFromParcel(Parcel in) {
             return new StringSparseArrayParceler(in);
         }
 
+        @Override
         public StringSparseArrayParceler[] newArray(int size) {
             return new StringSparseArrayParceler[size];
         }

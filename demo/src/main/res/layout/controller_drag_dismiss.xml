@@ -17,6 +17,7 @@
             android:textSize="22sp"
             android:padding="16dp"
             android:text="@string/drag_to_dismiss"
+            android:clickable="true"
             />
 
         <android.support.v4.widget.NestedScrollView

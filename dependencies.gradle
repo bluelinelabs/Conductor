@@ -4,27 +4,45 @@ ext {
     targetSdkVersion = 25
     buildToolsVersion = '25.0.0'
 
-    supportV4 = 'com.android.support:support-v4:25.0.0'
-    supportDesign = 'com.android.support:design:25.0.0'
-    supportAnnotations = 'com.android.support:support-annotations:25.0.0'
-    supportAppCompat = 'com.android.support:appcompat-v7:25.0.0'
+    supportVersion = '25.0.0'
+    butterknifeVersion = '8.4.0'
+    picassoVersion = '2.5.2'
+    leakCanaryVersion = '1.5'
+    rxJavaVersion = '1.2.1'
+    rxJava2Version = '2.0.1'
+    rxLifecycleVersion = '0.8.0'
+    rxLifecycle2Version = '2.0'
+    junitVersion = '4.11'
+    roboelectricVersion = '3.0'
+    lintVersion = '25.2.0'
 
-    butterknife = 'com.jakewharton:butterknife:8.4.0'
-    butterknifeCompiler = 'com.jakewharton:butterknife-compiler:8.4.0'
+    supportV4 = "com.android.support:support-v4:$supportVersion"
+    supportDesign = "com.android.support:design:$supportVersion"
+    supportAnnotations = "com.android.support:support-annotations:$supportVersion"
+    supportAppCompat = "com.android.support:appcompat-v7:$supportVersion"
 
-    picasso = 'com.squareup.picasso:picasso:2.5.2'
+    butterknife = "com.jakewharton:butterknife:$butterknifeVersion"
+    butterknifeCompiler = "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
-    leakCanary = 'com.squareup.leakcanary:leakcanary-android:1.5'
-    leakCanaryNoOp = 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    picasso = "com.squareup.picasso:picasso:$picassoVersion"
 
-    rxJava = 'io.reactivex:rxjava:1.2.1'
-    rxAndroid = 'io.reactivex:rxandroid:1.2.1'
-    rxLifecycle = 'com.trello:rxlifecycle:0.8.0'
-    rxLifecycleAndroid = 'com.trello:rxlifecycle-android:0.8.0'
+    leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    leakCanaryNoOp = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
-    junit = 'junit:junit:4.12'
-    roboelectric = 'org.robolectric:robolectric:3.1.2'
+    rxJava = "io.reactivex:rxjava:$rxJavaVersion"
+    rxJava2 = "io.reactivex.rxjava2:rxjava:$rxJava2Version"
 
-    lintapi = 'com.android.tools.lint:lint-api:25.2.0'
-    lintchecks = 'com.android.tools.lint:lint-checks:25.2.0'
+    rxLifecycle = "com.trello:rxlifecycle:$rxLifecycleVersion"
+    rxLifecycleAndroid = "com.trello:rxlifecycle-android:$rxLifecycleVersion"
+
+    rxLifecycle2 = "com.trello.rxlifecycle2:rxlifecycle:$rxLifecycle2Version"
+    rxLifecycleAndroid2 = "com.trello.rxlifecycle2:rxlifecycle-android:$rxLifecycle2Version"
+
+    junit = "junit:junit:$junitVersion"
+    roboelectric = "org.robolectric:robolectric:$roboelectricVersion"
+
+    lintapi = "com.android.tools.lint:lint-api:$lintVersion"
+    lintchecks = "com.android.tools.lint:lint-checks:$lintVersion"
+    lint = "com.android.tools.lint:lint:$lintVersion"
+    lintTests = "com.android.tools.lint:lint-tests:$lintVersion"
 }

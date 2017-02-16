@@ -1,16 +1,13 @@
 package com.bluelinelabs.conductor.internal;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 public class ClassUtils {
 
-    @SuppressWarnings("unchecked")
-    public static <T> Class<? extends T> classForName(String className) {
-        return classForName(className, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> Class<? extends T> classForName(String className, boolean allowEmptyName) {
+    @Nullable @SuppressWarnings("unchecked")
+    public static <T> Class<? extends T> classForName(@NonNull String className, boolean allowEmptyName) {
         if (allowEmptyName && TextUtils.isEmpty(className)) {
             return null;
         }
@@ -22,10 +19,10 @@ public class ClassUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T newInstance(String className) {
+    @Nullable @SuppressWarnings("unchecked")
+    public static <T> T newInstance(@NonNull String className) {
         try {
-            Class<? extends T> cls = classForName(className);
+            Class<? extends T> cls = classForName(className, true);
             return cls != null ? cls.newInstance() : null;
         } catch (Exception e) {
             throw new RuntimeException("An exception occurred while creating a new instance of " + className + ". " + e.getMessage());

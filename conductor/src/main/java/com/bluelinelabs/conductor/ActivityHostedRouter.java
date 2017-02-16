@@ -4,16 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.ControllerChangeHandler.ControllerChangeListener;
 import com.bluelinelabs.conductor.internal.LifecycleHandler;
+import com.bluelinelabs.conductor.internal.TransactionIndexer;
 
 import java.util.List;
 
 public class ActivityHostedRouter extends Router {
 
     private LifecycleHandler lifecycleHandler;
+    private final TransactionIndexer transactionIndexer = new TransactionIndexer();
 
     public final void setHost(@NonNull LifecycleHandler lifecycleHandler, @NonNull ViewGroup container) {
         if (this.lifecycleHandler != lifecycleHandler || this.container != container) {
@@ -31,12 +34,26 @@ public class ActivityHostedRouter extends Router {
     }
 
     @Override
+    public void saveInstanceState(@NonNull Bundle outState) {
+        super.saveInstanceState(outState);
+
+        transactionIndexer.saveInstanceState(outState);
+    }
+
+    @Override
+    public void restoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.restoreInstanceState(savedInstanceState);
+
+        transactionIndexer.restoreInstanceState(savedInstanceState);
+    }
+
+    @Override @Nullable
     public Activity getActivity() {
         return lifecycleHandler != null ? lifecycleHandler.getLifecycleActivity() : null;
     }
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
+    public void onActivityDestroyed(@NonNull Activity activity) {
         super.onActivityDestroyed(activity);
         lifecycleHandler = null;
     }
@@ -49,37 +66,37 @@ public class ActivityHostedRouter extends Router {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         lifecycleHandler.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
-    void startActivity(Intent intent) {
+    void startActivity(@NonNull Intent intent) {
         lifecycleHandler.startActivity(intent);
     }
 
     @Override
-    void startActivityForResult(String instanceId, Intent intent, int requestCode) {
+    void startActivityForResult(@NonNull String instanceId, @NonNull Intent intent, int requestCode) {
         lifecycleHandler.startActivityForResult(instanceId, intent, requestCode);
     }
 
     @Override
-    void startActivityForResult(String instanceId, Intent intent, int requestCode, Bundle options) {
+    void startActivityForResult(@NonNull String instanceId, @NonNull Intent intent, int requestCode, @Nullable Bundle options) {
         lifecycleHandler.startActivityForResult(instanceId, intent, requestCode, options);
     }
 
     @Override
-    void registerForActivityResult(String instanceId, int requestCode) {
+    void registerForActivityResult(@NonNull String instanceId, int requestCode) {
         lifecycleHandler.registerForActivityResult(instanceId, requestCode);
     }
 
     @Override
-    void unregisterForActivityResults(String instanceId) {
+    void unregisterForActivityResults(@NonNull String instanceId) {
         lifecycleHandler.unregisterForActivityResults(instanceId);
     }
 
     @Override
-    void requestPermissions(String instanceId, @NonNull String[] permissions, int requestCode) {
+    void requestPermissions(@NonNull String instanceId, @NonNull String[] permissions, int requestCode) {
         lifecycleHandler.requestPermissions(instanceId, permissions, requestCode);
     }
 
@@ -88,13 +105,18 @@ public class ActivityHostedRouter extends Router {
         return lifecycleHandler != null;
     }
 
-    @Override
+    @Override @NonNull
     List<Router> getSiblingRouters() {
         return lifecycleHandler.getRouters();
     }
 
-    @Override
+    @Override @NonNull
     Router getRootRouter() {
         return this;
+    }
+
+    @Override @Nullable
+    TransactionIndexer getTransactionIndexer() {
+        return transactionIndexer;
     }
 }

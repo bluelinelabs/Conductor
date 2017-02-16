@@ -1,7 +1,8 @@
-package com.bluelinelabs.conductor;
+package com.bluelinelabs.conductor.util;
 
 import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
+import android.view.ViewGroup;
 
 import org.robolectric.util.ReflectionHelpers;
 
@@ -10,6 +11,10 @@ import java.util.List;
 public class ViewUtils {
 
     public static void reportAttached(View view, boolean attached) {
+        reportAttached(view, attached, true);
+    }
+
+    public static void reportAttached(View view, boolean attached, boolean propogateToChildren) {
         if (view instanceof AttachFakingFrameLayout) {
             ((AttachFakingFrameLayout)view).setAttached(attached, false);
         }
@@ -35,6 +40,14 @@ public class ViewUtils {
                 listener.onViewAttachedToWindow(view);
             } else {
                 listener.onViewDetachedFromWindow(view);
+            }
+        }
+
+        if (propogateToChildren && view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup)view;
+            int childCount = viewGroup.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                reportAttached(viewGroup.getChildAt(i), attached, true);
             }
         }
 

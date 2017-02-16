@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +51,8 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         setHasOptionsMenu(true);
     }
 
-    private static LifecycleHandler findInActivity(Activity activity) {
+    @Nullable
+    private static LifecycleHandler findInActivity(@NonNull Activity activity) {
         LifecycleHandler lifecycleHandler = (LifecycleHandler)activity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (lifecycleHandler != null) {
             lifecycleHandler.registerActivityListener(activity);
@@ -58,7 +60,8 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         return lifecycleHandler;
     }
 
-    public static LifecycleHandler install(Activity activity) {
+    @NonNull
+    public static LifecycleHandler install(@NonNull Activity activity) {
         LifecycleHandler lifecycleHandler = findInActivity(activity);
         if (lifecycleHandler == null) {
             lifecycleHandler = new LifecycleHandler();
@@ -68,7 +71,8 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         return lifecycleHandler;
     }
 
-    public Router getRouter(ViewGroup container, Bundle savedInstanceState) {
+    @NonNull
+    public Router getRouter(@NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
         ActivityHostedRouter router = routerMap.get(getRouterHashKey(container));
         if (router == null) {
             router = new ActivityHostedRouter();
@@ -88,19 +92,21 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         return router;
     }
 
+    @NonNull
     public List<Router> getRouters() {
         return new ArrayList<Router>(routerMap.values());
     }
 
+    @Nullable
     public Activity getLifecycleActivity() {
         return activity;
     }
 
-    private static int getRouterHashKey(ViewGroup viewGroup) {
+    private static int getRouterHashKey(@NonNull ViewGroup viewGroup) {
         return viewGroup.getId();
     }
 
-    private void registerActivityListener(Activity activity) {
+    private void registerActivityListener(@NonNull Activity activity) {
         this.activity = activity;
 
         if (!hasRegisteredCallbacks) {
@@ -255,11 +261,11 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         return super.onOptionsItemSelected(item);
     }
 
-    public void registerForActivityResult(String instanceId, int requestCode) {
+    public void registerForActivityResult(@NonNull String instanceId, int requestCode) {
         activityRequestMap.put(requestCode, instanceId);
     }
 
-    public void unregisterForActivityResults(String instanceId) {
+    public void unregisterForActivityResults(@NonNull String instanceId) {
         for (int i = activityRequestMap.size() - 1; i >= 0; i--) {
             if (instanceId.equals(activityRequestMap.get(activityRequestMap.keyAt(i)))) {
                 activityRequestMap.removeAt(i);
@@ -267,18 +273,18 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         }
     }
 
-    public void startActivityForResult(String instanceId, Intent intent, int requestCode) {
+    public void startActivityForResult(@NonNull String instanceId, @NonNull Intent intent, int requestCode) {
         registerForActivityResult(instanceId, requestCode);
         startActivityForResult(intent, requestCode);
     }
 
-    public void startActivityForResult(String instanceId, Intent intent, int requestCode, Bundle options) {
+    public void startActivityForResult(@NonNull String instanceId, @NonNull Intent intent, int requestCode, @Nullable Bundle options) {
         registerForActivityResult(instanceId, requestCode);
         startActivityForResult(intent, requestCode, options);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    public void requestPermissions(String instanceId, String[] permissions, int requestCode) {
+    public void requestPermissions(@NonNull String instanceId, @NonNull String[] permissions, int requestCode) {
         if (attached) {
             permissionRequestMap.put(requestCode, instanceId);
             requestPermissions(permissions, requestCode);
@@ -349,7 +355,7 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         final String[] permissions;
         final int requestCode;
 
-        public PendingPermissionRequest(String instanceId, String[] permissions, int requestCode) {
+        PendingPermissionRequest(@NonNull String instanceId, @NonNull String[] permissions, int requestCode) {
             this.instanceId = instanceId;
             this.permissions = permissions;
             this.requestCode = requestCode;
@@ -361,10 +367,12 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
             requestCode = in.readInt();
         }
 
+        @Override
         public int describeContents() {
             return 0;
         }
 
+        @Override
         public void writeToParcel(Parcel out, int flags) {
             out.writeString(instanceId);
             out.writeStringArray(permissions);
@@ -372,10 +380,12 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         }
 
         public static final Parcelable.Creator<PendingPermissionRequest> CREATOR = new Parcelable.Creator<PendingPermissionRequest>() {
+            @Override
             public PendingPermissionRequest createFromParcel(Parcel in) {
                 return new PendingPermissionRequest(in);
             }
 
+            @Override
             public PendingPermissionRequest[] newArray(int size) {
                 return new PendingPermissionRequest[size];
             }

@@ -4,10 +4,11 @@ import android.os.Bundle;
 
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
-
-import junit.framework.Assert;
+import com.bluelinelabs.conductor.util.TestController;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ControllerTransactionTests {
 
@@ -22,10 +23,10 @@ public class ControllerTransactionTests {
 
         RouterTransaction restoredTransaction = new RouterTransaction(bundle);
 
-        Assert.assertEquals(transaction.controller.getClass(), restoredTransaction.controller.getClass());
-        Assert.assertEquals(transaction.pushChangeHandler().getClass(), restoredTransaction.pushChangeHandler().getClass());
-        Assert.assertEquals(transaction.popChangeHandler().getClass(), restoredTransaction.popChangeHandler().getClass());
-        Assert.assertEquals(transaction.tag(), restoredTransaction.tag());
+        assertEquals(transaction.controller.getClass(), restoredTransaction.controller.getClass());
+        assertEquals(transaction.pushChangeHandler().getClass(), restoredTransaction.pushChangeHandler().getClass());
+        assertEquals(transaction.popChangeHandler().getClass(), restoredTransaction.popChangeHandler().getClass());
+        assertEquals(transaction.tag(), restoredTransaction.tag());
     }
 
 }

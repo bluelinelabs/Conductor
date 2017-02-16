@@ -1,4 +1,4 @@
-package com.bluelinelabs.conductor;
+package com.bluelinelabs.conductor.util;
 
 import android.content.Context;
 import android.os.IBinder;

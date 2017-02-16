@@ -37,4 +37,7 @@
     <!-- Master/Detail Demo -->
     <string name="rotate_for_two_pane">Rotate your device for a two pane view.</string>
 
+    <!-- Custom transition Demo -->
+    <string name="fab_dialog_transition_name">com.bluelinelabs.conductor.demo.fab_transition_name</string>
+
 </resources>

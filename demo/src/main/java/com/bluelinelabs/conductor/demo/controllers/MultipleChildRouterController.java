@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.demo.R;
+import com.bluelinelabs.conductor.demo.controllers.NavigationDemoController.DisplayUpMode;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 
 import butterknife.BindViews;
@@ -26,9 +27,9 @@ public class MultipleChildRouterController extends BaseController {
         super.onViewBound(view);
 
         for (ViewGroup childContainer : childContainers) {
-            Router childRouter = getChildRouter(childContainer, null).setPopsLastView(false);
+            Router childRouter = getChildRouter(childContainer).setPopsLastView(false);
             if (!childRouter.hasRootController()) {
-                childRouter.setRoot(RouterTransaction.with(new NavigationDemoController(0, false)));
+                childRouter.setRoot(RouterTransaction.with(new NavigationDemoController(0, DisplayUpMode.HIDE)));
             }
         }
     }

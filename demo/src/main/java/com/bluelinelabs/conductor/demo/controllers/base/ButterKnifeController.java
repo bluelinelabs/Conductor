@@ -6,12 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bluelinelabs.conductor.rxlifecycle.RxController;
+import com.bluelinelabs.conductor.Controller;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public abstract class ButterKnifeController extends RxController {
+public abstract class ButterKnifeController extends Controller {
 
     private Unbinder unbinder;
 
@@ -34,7 +34,7 @@ public abstract class ButterKnifeController extends RxController {
     protected void onViewBound(@NonNull View view) { }
 
     @Override
-    protected void onDestroyView(View view) {
+    protected void onDestroyView(@NonNull View view) {
         super.onDestroyView(view);
         unbinder.unbind();
         unbinder = null;

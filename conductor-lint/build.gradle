@@ -1,5 +1,8 @@
 apply plugin: 'java'
 
+targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_7
+
 configurations {
     lintChecks
 }
@@ -7,6 +10,9 @@ configurations {
 dependencies {
     compile rootProject.ext.lintapi
     compile rootProject.ext.lintchecks
+
+    testCompile rootProject.ext.lint
+    testCompile rootProject.ext.lintTests
 
     lintChecks files(jar)
 }

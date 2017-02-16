@@ -52,7 +52,7 @@ public class FlipChangeHandler extends AnimatorChangeHandler {
         this.animationDuration = animationDuration;
     }
 
-    @Override
+    @Override @NonNull
     protected Animator getAnimator(@NonNull ViewGroup container, View from, View to, boolean isPush, boolean toAddedToContainer) {
         AnimatorSet animatorSet = new AnimatorSet();
 

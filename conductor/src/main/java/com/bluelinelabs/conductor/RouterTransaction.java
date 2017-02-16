@@ -2,16 +2,22 @@ package com.bluelinelabs.conductor;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.bluelinelabs.conductor.internal.TransactionIndexer;
 
 /**
  * Metadata used for adding {@link Controller}s to a {@link Router}.
  */
 public class RouterTransaction {
 
+    private static int INVALID_INDEX = -1;
+
     private static final String KEY_VIEW_CONTROLLER_BUNDLE = "RouterTransaction.controller.bundle";
     private static final String KEY_PUSH_TRANSITION = "RouterTransaction.pushControllerChangeHandler";
     private static final String KEY_POP_TRANSITION = "RouterTransaction.popControllerChangeHandler";
     private static final String KEY_TAG = "RouterTransaction.tag";
+    private static final String KEY_INDEX = "RouterTransaction.transactionIndex";
     private static final String KEY_ATTACHED_TO_ROUTER = "RouterTransaction.attachedToRouter";
 
     @NonNull final Controller controller;
@@ -20,7 +26,9 @@ public class RouterTransaction {
     private ControllerChangeHandler pushControllerChangeHandler;
     private ControllerChangeHandler popControllerChangeHandler;
     private boolean attachedToRouter;
+    int transactionIndex = INVALID_INDEX;
 
+    @NonNull
     public static RouterTransaction with(@NonNull Controller controller) {
         return new RouterTransaction(controller);
     }
@@ -34,6 +42,7 @@ public class RouterTransaction {
         pushControllerChangeHandler = ControllerChangeHandler.fromBundle(bundle.getBundle(KEY_PUSH_TRANSITION));
         popControllerChangeHandler = ControllerChangeHandler.fromBundle(bundle.getBundle(KEY_POP_TRANSITION));
         tag = bundle.getString(KEY_TAG);
+        transactionIndex = bundle.getInt(KEY_INDEX);
         attachedToRouter = bundle.getBoolean(KEY_ATTACHED_TO_ROUTER);
     }
 
@@ -41,15 +50,18 @@ public class RouterTransaction {
         attachedToRouter = true;
     }
 
+    @NonNull
     public Controller controller() {
         return controller;
     }
 
+    @Nullable
     public String tag() {
         return tag;
     }
 
-    public RouterTransaction tag(String tag) {
+    @NonNull
+    public RouterTransaction tag(@Nullable String tag) {
         if (!attachedToRouter) {
             this.tag = tag;
             return this;
@@ -58,6 +70,7 @@ public class RouterTransaction {
         }
     }
 
+    @Nullable
     public ControllerChangeHandler pushChangeHandler() {
         ControllerChangeHandler handler = controller.getOverriddenPushHandler();
         if (handler == null) {
@@ -66,7 +79,8 @@ public class RouterTransaction {
         return handler;
     }
 
-    public RouterTransaction pushChangeHandler(ControllerChangeHandler handler) {
+    @NonNull
+    public RouterTransaction pushChangeHandler(@Nullable ControllerChangeHandler handler) {
         if (!attachedToRouter) {
             pushControllerChangeHandler = handler;
             return this;
@@ -75,6 +89,7 @@ public class RouterTransaction {
         }
     }
 
+    @Nullable
     public ControllerChangeHandler popChangeHandler() {
         ControllerChangeHandler handler = controller.getOverriddenPopHandler();
         if (handler == null) {
@@ -83,7 +98,8 @@ public class RouterTransaction {
         return handler;
     }
 
-    public RouterTransaction popChangeHandler(ControllerChangeHandler handler) {
+    @NonNull
+    public RouterTransaction popChangeHandler(@Nullable ControllerChangeHandler handler) {
         if (!attachedToRouter) {
             popControllerChangeHandler = handler;
             return this;
@@ -92,9 +108,19 @@ public class RouterTransaction {
         }
     }
 
+    void ensureValidIndex(@Nullable TransactionIndexer indexer) {
+        if (indexer == null) {
+            throw new RuntimeException();
+        }
+        if (transactionIndex == INVALID_INDEX && indexer != null) {
+            transactionIndex = indexer.nextIndex();
+        }
+    }
+
     /**
      * Used to serialize this transaction into a Bundle
      */
+    @NonNull
     public Bundle saveInstanceState() {
         Bundle bundle = new Bundle();
 
@@ -108,6 +134,7 @@ public class RouterTransaction {
         }
 
         bundle.putString(KEY_TAG, tag);
+        bundle.putInt(KEY_INDEX, transactionIndex);
         bundle.putBoolean(KEY_ATTACHED_TO_ROUTER, attachedToRouter);
 
         return bundle;

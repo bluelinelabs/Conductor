@@ -1,4 +1,4 @@
-package com.bluelinelabs.conductor;
+package com.bluelinelabs.conductor.util;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.bluelinelabs.conductor.Controller;
+import com.bluelinelabs.conductor.ControllerChangeHandler;
+import com.bluelinelabs.conductor.ControllerChangeType;
+
 public class TestController extends Controller {
 
     @IdRes public static final int VIEW_ID = 2342;
@@ -19,11 +23,8 @@ public class TestController extends Controller {
 
     private static final String KEY_CALL_STATE = "TestController.currentCallState";
 
-    public CallState currentCallState;
-
-    public TestController() {
-        currentCallState = new CallState();
-    }
+    public CallState currentCallState = new CallState();
+    public ChangeHandlerHistory changeHandlerHistory = new ChangeHandlerHistory();
 
     @NonNull
     @Override
@@ -32,11 +33,11 @@ public class TestController extends Controller {
         FrameLayout view = new AttachFakingFrameLayout(inflater.getContext());
         view.setId(VIEW_ID);
 
-        FrameLayout childContainer1 = new FrameLayout(inflater.getContext());
+        FrameLayout childContainer1 = new AttachFakingFrameLayout(inflater.getContext());
         childContainer1.setId(CHILD_VIEW_ID_1);
         view.addView(childContainer1);
 
-        FrameLayout childContainer2 = new FrameLayout(inflater.getContext());
+        FrameLayout childContainer2 = new AttachFakingFrameLayout(inflater.getContext());
         childContainer2.setId(CHILD_VIEW_ID_2);
         view.addView(childContainer2);
 
@@ -53,6 +54,13 @@ public class TestController extends Controller {
     protected void onChangeEnded(@NonNull ControllerChangeHandler changeHandler, @NonNull ControllerChangeType changeType) {
         super.onChangeEnded(changeHandler, changeType);
         currentCallState.changeEndCalls++;
+
+        if (changeHandler instanceof MockChangeHandler) {
+            MockChangeHandler mockHandler = (MockChangeHandler)changeHandler;
+            changeHandlerHistory.addEntry(mockHandler.from, mockHandler.to, changeType.isPush, mockHandler);
+        } else {
+            changeHandlerHistory.isValidHistory = false;
+        }
     }
 
     @Override
@@ -68,7 +76,7 @@ public class TestController extends Controller {
     }
 
     @Override
-    protected void onDestroyView(View view) {
+    protected void onDestroyView(@NonNull View view) {
         super.onDestroyView(view);
         currentCallState.destroyViewCalls++;
     }

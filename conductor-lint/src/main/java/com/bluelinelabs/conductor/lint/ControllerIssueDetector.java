@@ -1,8 +1,7 @@
 package com.bluelinelabs.conductor.lint;
 
 import com.android.SdkConstants;
-import com.android.annotations.NonNull;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
+import com.android.tools.lint.client.api.JavaEvaluator;
 import com.android.tools.lint.detector.api.Category;
 import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Implementation;
@@ -10,21 +9,14 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.Node;
-import lombok.ast.NormalTypeBody;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.TypeMember;
-import lombok.ast.VariableDefinition;
-
-public final class ControllerIssueDetector extends Detector implements Detector.JavaScanner, Detector.ClassScanner {
+public final class ControllerIssueDetector extends Detector implements Detector.JavaPsiScanner {
 
     public static final Issue ISSUE =
             Issue.create("ValidController", "Controller not instantiatable",
@@ -35,74 +27,56 @@ public final class ControllerIssueDetector extends Detector implements Detector.
 
     public ControllerIssueDetector() { }
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     @Override
     public List<String> applicableSuperClasses() {
         return Collections.singletonList("com.bluelinelabs.conductor.Controller");
     }
 
     @Override
-    public void checkClass(@NonNull JavaContext context, ClassDeclaration node,
-                           @NonNull Node declarationOrAnonymous, @NonNull ResolvedClass cls) {
-
-        if (node == null) {
+    public void checkClass(JavaContext context, PsiClass declaration) {
+        final JavaEvaluator evaluator = context.getEvaluator();
+        if (evaluator.isAbstract(declaration)) {
             return;
         }
 
-        final int flags = node.astModifiers().getEffectiveModifierFlags();
-        if ((flags & Modifier.ABSTRACT) != 0) {
+        if (!evaluator.isPublic(declaration)) {
+            String message = String.format("This Controller class should be public (%1$s)", declaration.getQualifiedName());
+            context.report(ISSUE, declaration, context.getLocation(declaration), message);
             return;
         }
 
-        if ((flags & Modifier.PUBLIC) == 0) {
-            String message = String.format("This Controller class should be public (%1$s)", cls.getName());
-            context.report(ISSUE, node, context.getLocation(node.astName()), message);
+        if (declaration.getContainingClass() != null && !evaluator.isStatic(declaration)) {
+            String message = String.format("This Controller inner class should be static (%1$s)", declaration.getQualifiedName());
+            context.report(ISSUE, declaration, context.getLocation(declaration), message);
             return;
         }
 
-        if (cls.getContainingClass() != null && (flags & Modifier.STATIC) == 0) {
-            String message = String.format("This Controller inner class should be static (%1$s)", cls.getName());
-            context.report(ISSUE, node, context.getLocation(node.astName()), message);
-            return;
-        }
 
-        boolean hasConstructor = false;
         boolean hasDefaultConstructor = false;
         boolean hasBundleConstructor = false;
-        NormalTypeBody body = node.astBody();
-        if (body != null) {
-            for (TypeMember member : body.astMembers()) {
-                if (member instanceof ConstructorDeclaration) {
-                    hasConstructor = true;
-                    ConstructorDeclaration constructor = (ConstructorDeclaration)member;
+        PsiMethod[] constructors = declaration.getConstructors();
+        for (PsiMethod constructor : constructors) {
+            if (evaluator.isPublic(constructor)) {
+                PsiParameter[] parameters = constructor.getParameterList().getParameters();
 
-                    if (constructor.astModifiers().isPublic()) {
-                        StrictListAccessor<VariableDefinition, ConstructorDeclaration> params = constructor.astParameters();
-                        if (params.isEmpty()) {
-                            hasDefaultConstructor = true;
-                            break;
-                        } else if (params.size() == 1 &&
-                                (params.first().astTypeReference().getTypeName().equals(SdkConstants.CLASS_BUNDLE)) ||
-                                params.first().astTypeReference().getTypeName().equals("Bundle")) {
-                            hasBundleConstructor = true;
-                            break;
-                        }
-                    }
+                if (parameters.length == 0) {
+                    hasDefaultConstructor = true;
+                    break;
+                } else if (parameters.length == 1 &&
+                        parameters[0].getType().equalsToText(SdkConstants.CLASS_BUNDLE) ||
+                        parameters[0].getType().equalsToText("Bundle")) {
+                    hasBundleConstructor = true;
+                    break;
                 }
             }
         }
 
-        if (hasConstructor && !hasDefaultConstructor && !hasBundleConstructor) {
+        if (constructors.length > 0 && !hasDefaultConstructor && !hasBundleConstructor) {
             String message = String.format(
                     "This Controller needs to have either a public default constructor or a" +
                             " public single-argument constructor that takes a Bundle. (`%1$s`)",
-                    cls.getName());
-            context.report(ISSUE, node, context.getLocation(node.astName()), message);
+                    declaration.getQualifiedName());
+            context.report(ISSUE, declaration, context.getLocation(declaration), message);
         }
     }
 }
