@@ -163,7 +163,7 @@ public class HomeController extends BaseController {
                             .popChangeHandler(popHandler));
         } else {
             new AlertDialogController("Conductor", description)
-                    .showDialog(getRouter());
+                    .showDialog(getRouter(), "about_dialog_tag");
         }
 
     }

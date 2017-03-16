@@ -23,7 +23,9 @@ public abstract class DialogController extends Controller {
     private Dialog mDialog;
     private boolean mDismissed;
 
-    public DialogController(@Nullable Bundle args) {super(args);}
+    public DialogController(@Nullable Bundle args) {
+        super(args);
+    }
 
     @NonNull
     @Override
@@ -77,11 +79,17 @@ public abstract class DialogController extends Controller {
         mDialog = null;
     }
 
-    public void showDialog(@NonNull Router router) {
+    /**
+     * Display the dialog, create a transaction and pushing the controller.
+     * @param router The router on which the transaction will be applied
+     * @param tag The tag for this controller
+     */
+    public void showDialog(@NonNull Router router, @Nullable String tag) {
         mDismissed = false;
         router.pushController(RouterTransaction.with(this)
                 .pushChangeHandler(new FadeChangeHandler(false))
-                .popChangeHandler(new FadeChangeHandler()));
+                .popChangeHandler(new FadeChangeHandler())
+                .tag(tag));
     }
 
     public void dismissDialog() {
