@@ -13,15 +13,17 @@ import android.view.ViewGroup;
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 
 /**
- * @author Dmitriy Gorbunov
+ * A controller that displays a dialog window, floating on top of its activity's window.
+ * This is a wrapper over {@link Dialog} object like {@link android.app.DialogFragment}.
+ *
+ * <p>Implementations should override this class and implement {@link #onCreateDialog(Context context)} to create a custom dialog, such as an {@link android.app.AlertDialog}
  */
-
 public abstract class DialogController extends Controller {
 
     private static final String SAVED_DIALOG_STATE_TAG = "android:savedDialogState";
 
-    private Dialog mDialog;
-    private boolean mDismissed;
+    private Dialog dialog;
+    private boolean dismissed;
 
     public DialogController(@Nullable Bundle args) {
         super(args);
@@ -30,9 +32,9 @@ public abstract class DialogController extends Controller {
     @NonNull
     @Override
     final protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
-        mDialog = onCreateDialog(getActivity());
-        mDialog.setOwnerActivity(getActivity());
-        mDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        dialog = onCreateDialog(getActivity());
+        dialog.setOwnerActivity(getActivity());
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 dismissDialog();
@@ -46,15 +48,15 @@ public abstract class DialogController extends Controller {
         super.onRestoreInstanceState(savedInstanceState);
         Bundle dialogState = savedInstanceState.getBundle(SAVED_DIALOG_STATE_TAG);
         if (dialogState != null) {
-            mDialog.onRestoreInstanceState(dialogState);
+            dialog.onRestoreInstanceState(dialogState);
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mDialog != null) {
-            Bundle dialogState = mDialog.onSaveInstanceState();
+        if (dialog != null) {
+            Bundle dialogState = dialog.onSaveInstanceState();
             outState.putBundle(SAVED_DIALOG_STATE_TAG, dialogState);
         }
     }
@@ -62,21 +64,21 @@ public abstract class DialogController extends Controller {
     @Override
     protected void onAttach(@NonNull View view) {
         super.onAttach(view);
-        mDialog.show();
+        dialog.show();
     }
 
     @Override
     protected void onDetach(@NonNull View view) {
         super.onDetach(view);
-        mDialog.hide();
+        dialog.hide();
     }
 
     @Override
     protected void onDestroyView(@NonNull View view) {
         super.onDestroyView(view);
-        mDialog.setOnDismissListener(null);
-        mDialog.dismiss();
-        mDialog = null;
+        dialog.setOnDismissListener(null);
+        dialog.dismiss();
+        dialog = null;
     }
 
     /**
@@ -85,21 +87,35 @@ public abstract class DialogController extends Controller {
      * @param tag The tag for this controller
      */
     public void showDialog(@NonNull Router router, @Nullable String tag) {
-        mDismissed = false;
+        dismissed = false;
         router.pushController(RouterTransaction.with(this)
                 .pushChangeHandler(new FadeChangeHandler(false))
                 .popChangeHandler(new FadeChangeHandler())
                 .tag(tag));
     }
 
+    /**
+     * Dismiss the dialog and pop this controller
+     */
     public void dismissDialog() {
-        if (mDismissed) {
+        if (dismissed) {
             return;
         }
         getRouter().popCurrentController();
-        mDismissed = true;
+        dismissed = true;
     }
 
+    @Nullable
+    protected Dialog getDialog() {
+        return dialog;
+    }
+
+    /**
+     * Build your own custom Dialog container such as an {@link android.app.AlertDialog}
+     *
+     * @param context The context
+     * @return Return a new Dialog instance to be displayed by the Controller
+     */
     @NonNull
     protected abstract Dialog onCreateDialog(@NonNull Context context);
 }

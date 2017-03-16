@@ -12,9 +12,6 @@ import android.widget.TextView;
 import com.bluelinelabs.conductor.DialogController;
 import com.bluelinelabs.conductor.demo.util.BundleBuilder;
 
-/**
- * @author Dmitriy Gorbunov
- */
 public class AlertDialogController extends DialogController {
 
     private static final String KEY_TITLE = "DialogController.title";
@@ -45,7 +42,7 @@ public class AlertDialogController extends DialogController {
             public void onShow(DialogInterface dialog) {
                 TextView messageTextView = ((TextView) alertDialog.findViewById(android.R.id.message));
                 if (messageTextView != null) {
-                    //Make the textview clickable
+                    //Make links clickable in textview
                     messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
             }
