@@ -101,7 +101,7 @@ public abstract class DialogController extends Controller {
         if (dismissed) {
             return;
         }
-        getRouter().popCurrentController();
+        getRouter().popController(this);
         dismissed = true;
     }
 
