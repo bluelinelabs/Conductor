@@ -54,6 +54,7 @@ dependencies {
     compile rootProject.ext.picasso
 
     compile project(':conductor-support')
+    compile project(':conductor-transitionseverywhere')
     compile project(':conductor-rxlifecycle')
     compile project(':conductor-rxlifecycle2')
 

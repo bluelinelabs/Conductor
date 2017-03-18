@@ -12,6 +12,7 @@ ext {
     rxJava2Version = '2.0.1'
     rxLifecycleVersion = '0.8.0'
     rxLifecycle2Version = '2.0'
+    transistionsEverywhereVersion = '1.7.0'
     junitVersion = '4.11'
     roboelectricVersion = '3.0'
     lintVersion = '25.2.0'
@@ -37,6 +38,8 @@ ext {
 
     rxLifecycle2 = "com.trello.rxlifecycle2:rxlifecycle:$rxLifecycle2Version"
     rxLifecycleAndroid2 = "com.trello.rxlifecycle2:rxlifecycle-android:$rxLifecycle2Version"
+
+    transistionsEverywhere = "com.andkulikov:transitionseverywhere:$transistionsEverywhereVersion"
 
     junit = "junit:junit:$junitVersion"
     roboelectric = "org.robolectric:robolectric:$roboelectricVersion"
