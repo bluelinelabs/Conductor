@@ -44,21 +44,19 @@ public abstract class DialogController extends Controller {
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Bundle dialogState = savedInstanceState.getBundle(SAVED_DIALOG_STATE_TAG);
+    protected void onRestoreViewState(@NonNull View view, @NonNull Bundle savedViewState) {
+        super.onRestoreViewState(view, savedViewState);
+        Bundle dialogState = savedViewState.getBundle(SAVED_DIALOG_STATE_TAG);
         if (dialogState != null) {
             dialog.onRestoreInstanceState(dialogState);
         }
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (dialog != null) {
-            Bundle dialogState = dialog.onSaveInstanceState();
-            outState.putBundle(SAVED_DIALOG_STATE_TAG, dialogState);
-        }
+    protected void onSaveViewState(@NonNull View view, @NonNull Bundle outState) {
+        super.onSaveViewState(view, outState);
+        Bundle dialogState = dialog.onSaveInstanceState();
+        outState.putBundle(SAVED_DIALOG_STATE_TAG, dialogState);
     }
 
     @Override
