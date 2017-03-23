@@ -1,7 +1,6 @@
 package com.bluelinelabs.conductor;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,9 +15,9 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
  * A controller that displays a dialog window, floating on top of its activity's window.
  * This is a wrapper over {@link Dialog} object like {@link android.app.DialogFragment}.
  *
- * <p>Implementations should override this class and implement {@link #onCreateDialog(Context context)} to create a custom dialog, such as an {@link android.app.AlertDialog}
+ * <p>Implementations should override this class and implement {@link #onCreateDialog(Bundle)} to create a custom dialog, such as an {@link android.app.AlertDialog}
  */
-public abstract class DialogController extends Controller {
+public abstract class DialogController extends RestoreViewOnCreateController {
 
     private static final String SAVED_DIALOG_STATE_TAG = "android:savedDialogState";
 
@@ -31,8 +30,9 @@ public abstract class DialogController extends Controller {
 
     @NonNull
     @Override
-    final protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
-        dialog = onCreateDialog(getActivity());
+    final protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
+        dialog = onCreateDialog(savedViewState);
+        //noinspection ConstantConditions
         dialog.setOwnerActivity(getActivity());
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -40,16 +40,13 @@ public abstract class DialogController extends Controller {
                 dismissDialog();
             }
         });
-        return new View(getActivity());//stub view
-    }
-
-    @Override
-    protected void onRestoreViewState(@NonNull View view, @NonNull Bundle savedViewState) {
-        super.onRestoreViewState(view, savedViewState);
-        Bundle dialogState = savedViewState.getBundle(SAVED_DIALOG_STATE_TAG);
-        if (dialogState != null) {
-            dialog.onRestoreInstanceState(dialogState);
+        if (savedViewState != null) {
+            Bundle dialogState = savedViewState.getBundle(SAVED_DIALOG_STATE_TAG);
+            if (dialogState != null) {
+                dialog.onRestoreInstanceState(dialogState);
+            }
         }
+        return new View(getActivity());//stub view
     }
 
     @Override
@@ -111,9 +108,9 @@ public abstract class DialogController extends Controller {
     /**
      * Build your own custom Dialog container such as an {@link android.app.AlertDialog}
      *
-     * @param context The context
+     * @param savedViewState A bundle for the view's state, which would have been created in {@link #onSaveViewState(View, Bundle)} or {@code null} if no saved state exists.
      * @return Return a new Dialog instance to be displayed by the Controller
      */
     @NonNull
-    protected abstract Dialog onCreateDialog(@NonNull Context context);
+    protected abstract Dialog onCreateDialog(@Nullable Bundle savedViewState);
 }

@@ -1,10 +1,10 @@
 package com.bluelinelabs.conductor.demo.controllers;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
@@ -30,8 +30,9 @@ public class AlertDialogController extends DialogController {
 
     @NonNull
     @Override
-    protected Dialog onCreateDialog(@NonNull Context context) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(context)
+    protected Dialog onCreateDialog(@Nullable Bundle savedViewState) {
+        //noinspection ConstantConditions
+        final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(getArgs().getCharSequence(KEY_TITLE))
                 .setMessage(getArgs().getCharSequence(KEY_DESCRIPTION))
                 .setPositiveButton(android.R.string.ok, null)
