@@ -24,7 +24,19 @@ public abstract class DialogController extends RestoreViewOnCreateController {
     private Dialog dialog;
     private boolean dismissed;
 
-    public DialogController(@Nullable Bundle args) {
+    /**
+     * Convenience constructor for use when no arguments are needed.
+     */
+    protected DialogController() {
+        super(null);
+    }
+
+    /**
+     * Constructor that takes arguments that need to be retained across restarts.
+     *
+     * @param args Any arguments that need to be retained.
+     */
+    protected DialogController(@Nullable Bundle args) {
         super(args);
     }
 
