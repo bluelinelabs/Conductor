@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
+import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
 
 /**
  * A controller that displays a dialog window, floating on top of its activity's window.
@@ -96,8 +96,8 @@ public abstract class DialogController extends RestoreViewOnCreateController {
     public void showDialog(@NonNull Router router, @Nullable String tag) {
         dismissed = false;
         router.pushController(RouterTransaction.with(this)
-                .pushChangeHandler(new FadeChangeHandler(false))
-                .popChangeHandler(new FadeChangeHandler())
+                .pushChangeHandler(new SimpleSwapChangeHandler(false))
+                .popChangeHandler(new SimpleSwapChangeHandler(false))
                 .tag(tag));
     }
 
