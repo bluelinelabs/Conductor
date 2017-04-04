@@ -55,7 +55,7 @@ public abstract class Controller {
     private static final String KEY_OVERRIDDEN_PUSH_HANDLER = "Controller.overriddenPushHandler";
     private static final String KEY_OVERRIDDEN_POP_HANDLER = "Controller.overriddenPopHandler";
     private static final String KEY_VIEW_STATE_HIERARCHY = "Controller.viewState.hierarchy";
-    private static final String KEY_VIEW_STATE_BUNDLE = "Controller.viewState.bundle";
+    static final String KEY_VIEW_STATE_BUNDLE = "Controller.viewState.bundle";
     private static final String KEY_RETAIN_VIEW_MODE = "Controller.retainViewMode";
 
     private final Bundle args;

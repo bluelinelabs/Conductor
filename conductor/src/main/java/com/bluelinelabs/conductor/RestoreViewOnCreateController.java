@@ -32,7 +32,7 @@ abstract public class RestoreViewOnCreateController extends Controller {
 
     @Override @NonNull
     protected final View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
-        return onCreateView(inflater, container, viewState);
+        return onCreateView(inflater, container, viewState == null ? null : viewState.getBundle(KEY_VIEW_STATE_BUNDLE));
     }
 
     /**
