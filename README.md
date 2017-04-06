@@ -20,7 +20,7 @@ Conductor is architecture-agnostic and does not try to force any design decision
 ## Installation
 
 ```gradle
-compile 'com.bluelinelabs:conductor:2.1.1'
+compile 'com.bluelinelabs:conductor:2.1.2'
 
 // If you want the components that go along with
 // Android's support libraries (currently just a PagerAdapter):
