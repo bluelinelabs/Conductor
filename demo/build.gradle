@@ -1,14 +1,4 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    }
-}
-
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -44,7 +34,7 @@ dependencies {
     compile rootProject.ext.supportV4
     compile rootProject.ext.supportDesign
 
-    apt rootProject.ext.butterknifeCompiler
+    annotationProcessor rootProject.ext.butterknifeCompiler
     compile rootProject.ext.butterknife
     compile rootProject.ext.picasso
 
