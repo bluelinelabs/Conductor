@@ -84,7 +84,7 @@ public class CityDetailController extends BaseController {
         private final String textViewTransitionName;
         private final String[] details;
 
-        public CityDetailAdapter(LayoutInflater inflater, @DrawableRes String title, int imageDrawableRes, String[] details, String transitionNameBase) {
+        public CityDetailAdapter(LayoutInflater inflater, String title, @DrawableRes int imageDrawableRes, String[] details, String transitionNameBase) {
             this.inflater = inflater;
             this.title = title;
             this.imageDrawableRes = imageDrawableRes;
