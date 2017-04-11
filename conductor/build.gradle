@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'de.mobilej.unmock:UnMockPlugin:0.3.6'
+        classpath 'de.mobilej.unmock:UnMockPlugin:0.6.0'
     }
 }
 
@@ -39,11 +39,11 @@ dependencies {
     compile rootProject.ext.supportAnnotations
 
     lintChecks project(path: ':conductor-lint', configuration: 'lintChecks')
+
+    unmock 'org.robolectric:android-all:4.3_r2-robolectric-0'
 }
 
 unMock {
-    downloadFrom 'https://oss.sonatype.org/content/groups/public/org/robolectric/android-all/4.3_r2-robolectric-0/android-all-4.3_r2-robolectric-0.jar'
-
     keep "android.os.Bundle"
     keep "android.os.BaseBundle"
     keep "android.text.TextUtils"
