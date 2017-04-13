@@ -614,7 +614,7 @@ public abstract class Controller {
      *
      * @param lifecycleListener The listener to be removed
      */
-    public void removeLifecycleListener(@NonNull LifecycleListener lifecycleListener) {
+    public final void removeLifecycleListener(@NonNull LifecycleListener lifecycleListener) {
         lifecycleListeners.remove(lifecycleListener);
     }
 
