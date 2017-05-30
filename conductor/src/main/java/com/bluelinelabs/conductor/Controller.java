@@ -283,6 +283,14 @@ public abstract class Controller {
     }
 
     /**
+     * Convenience method equivalent to calling {@link #getActivity()}
+     */
+    @Nullable
+    public final Context getContext() {
+        return getActivity();
+    }
+
+    /**
      * Returns the Resources from the host Activity or {@code null} if this Controller has not
      * yet been attached to an Activity or if the Activity has been destroyed.
      */
