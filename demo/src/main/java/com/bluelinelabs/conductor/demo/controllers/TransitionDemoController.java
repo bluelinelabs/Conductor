@@ -39,8 +39,8 @@ public class TransitionDemoController extends BaseController {
         FADE("Fade Animation", R.layout.controller_transition_demo, R.color.blue_300),
         FLIP("Flip Animation", R.layout.controller_transition_demo, R.color.deep_orange_300),
         HORIZONTAL("Horizontal Slide Animation", R.layout.controller_transition_demo, R.color.green_300),
-        ARC_FADE("Arc/Fade Shared Element Transition (on Lollipop and above, else Fade)", R.layout.controller_transition_demo_shared, 0),
-        ARC_FADE_RESET("Arc/Fade Shared Element Transition (on Lollipop and above, else Fade)", R.layout.controller_transition_demo, R.color.pink_300);
+        ARC_FADE("Arc/Fade Shared Element Transition", R.layout.controller_transition_demo_shared, 0),
+        ARC_FADE_RESET("Arc/Fade Shared Element Transition", R.layout.controller_transition_demo, R.color.pink_300);
 
         String title;
         int layoutId;
