@@ -34,7 +34,7 @@ public class ControllerScopeProvider implements LifecycleScopeProvider<Controlle
 
     @NonNull private final BehaviorSubject<ControllerEvent> lifecycleSubject;
 
-    public static LifecycleScopeProvider from(@NonNull Controller controller) {
+    public static ControllerScopeProvider from(@NonNull Controller controller) {
         return new ControllerScopeProvider(controller);
     }
 
