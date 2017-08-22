@@ -398,9 +398,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
 
     void callSharedElementStartEnd(@Nullable ArrayMap<String, View> sharedElements, boolean isStart) {
         if (enterTransitionCallback != null) {
-            List<View> views = new ArrayList<>();
-            List<String> names = new ArrayList<>();
             final int count = sharedElements == null ? 0 : sharedElements.size();
+            List<View> views = new ArrayList<>(count);
+            List<String> names = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 names.add(sharedElements.keyAt(i));
                 views.add(sharedElements.valueAt(i));

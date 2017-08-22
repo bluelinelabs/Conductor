@@ -379,7 +379,7 @@ public abstract class Router {
      */
     @NonNull
     public List<RouterTransaction> getBackstack() {
-        List<RouterTransaction> list = new ArrayList<>();
+        List<RouterTransaction> list = new ArrayList<>(backstack.size());
         Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
         while (backstackIterator.hasNext()) {
             list.add(backstackIterator.next());
@@ -706,7 +706,7 @@ public abstract class Router {
 
     @NonNull
     final List<Controller> getControllers() {
-        List<Controller> controllers = new ArrayList<>();
+        List<Controller> controllers = new ArrayList<>(backstack.size());
 
         Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
         while (backstackIterator.hasNext()) {
@@ -849,10 +849,10 @@ public abstract class Router {
         }
     }
 
-    // Swap around transaction indicies to ensure they don't get thrown out of order by the
+    // Swap around transaction indices to ensure they don't get thrown out of order by the
     // developer rearranging the backstack at runtime.
     private void ensureOrderedTransactionIndices(List<RouterTransaction> backstack) {
-        List<Integer> indices = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>(backstack.size());
         for (RouterTransaction transaction : backstack) {
             transaction.ensureValidIndex(getTransactionIndexer());
             indices.add(transaction.transactionIndex);

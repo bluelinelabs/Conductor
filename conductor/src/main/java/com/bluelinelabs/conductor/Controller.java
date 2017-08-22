@@ -1155,7 +1155,7 @@ public abstract class Controller {
             outState.putBundle(KEY_OVERRIDDEN_POP_HANDLER, overriddenPopHandler.toBundle());
         }
 
-        ArrayList<Bundle> childBundles = new ArrayList<>();
+        ArrayList<Bundle> childBundles = new ArrayList<>(childRouters.size());
         for (ControllerHostedRouter childRouter : childRouters) {
             Bundle routerBundle = new Bundle();
             childRouter.saveInstanceState(routerBundle);
