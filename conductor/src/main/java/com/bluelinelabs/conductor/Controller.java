@@ -352,10 +352,8 @@ public abstract class Controller {
      */
     @NonNull
     public final List<Router> getChildRouters() {
-        List<Router> routers = new ArrayList<>();
-        for (Router router : childRouters) {
-            routers.add(router);
-        }
+        List<Router> routers = new ArrayList<>(childRouters.size());
+        routers.addAll(childRouters);
         return routers;
     }
 
