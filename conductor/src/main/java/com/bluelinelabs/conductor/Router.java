@@ -744,7 +744,7 @@ public abstract class Router {
         performControllerChange(to, from, isPush, changeHandler);
     }
 
-    private void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush, @Nullable ControllerChangeHandler changeHandler) {
+    void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush, @Nullable ControllerChangeHandler changeHandler) {
         Controller toController = to != null ? to.controller : null;
         Controller fromController = from != null ? from.controller : null;
         boolean forceDetachDestroy = false;

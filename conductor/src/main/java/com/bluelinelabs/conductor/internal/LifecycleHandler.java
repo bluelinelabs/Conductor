@@ -390,7 +390,7 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
             this.requestCode = requestCode;
         }
 
-        private PendingPermissionRequest(Parcel in) {
+        PendingPermissionRequest(Parcel in) {
             instanceId = in.readString();
             permissions = in.createStringArray();
             requestCode = in.readInt();

@@ -23,11 +23,11 @@ public class ViewAttachHandler implements OnAttachStateChangeListener {
     }
 
     private boolean rootAttached = false;
-    private boolean childrenAttached = false;
+    boolean childrenAttached = false;
     private boolean activityStopped = false;
     private ReportedState reportedState = ReportedState.VIEW_DETACHED;
     private ViewAttachListener attachListener;
-    private OnAttachStateChangeListener childOnAttachStateChangeListener;
+    OnAttachStateChangeListener childOnAttachStateChangeListener;
 
     public ViewAttachHandler(ViewAttachListener attachListener) {
         this.attachListener = attachListener;
@@ -81,7 +81,7 @@ public class ViewAttachHandler implements OnAttachStateChangeListener {
         reportDetached(true);
     }
 
-    private void reportAttached() {
+    void reportAttached() {
         if (rootAttached && childrenAttached && !activityStopped && reportedState != ReportedState.ATTACHED) {
             reportedState = ReportedState.ATTACHED;
             attachListener.onAttached();

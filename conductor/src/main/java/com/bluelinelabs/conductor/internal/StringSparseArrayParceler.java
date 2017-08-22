@@ -13,7 +13,7 @@ public class StringSparseArrayParceler implements Parcelable {
         this.stringSparseArray = stringSparseArray;
     }
 
-    private StringSparseArrayParceler(@NonNull Parcel in) {
+    StringSparseArrayParceler(@NonNull Parcel in) {
         stringSparseArray = new SparseArray<>();
 
         final int size = in.readInt();

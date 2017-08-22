@@ -67,17 +67,17 @@ public abstract class Controller {
     private boolean attached;
     private boolean hasOptionsMenu;
     private boolean optionsMenuHidden;
-    private boolean viewIsAttached;
-    private boolean viewWasDetached;
-    private Router router;
-    private View view;
+    boolean viewIsAttached;
+    boolean viewWasDetached;
+    Router router;
+    View view;
     private Controller parentController;
-    private String instanceId;
+    String instanceId;
     private String targetInstanceId;
     private boolean needsAttach;
     private boolean attachedToUnownedParent;
     private boolean hasSavedViewState;
-    private boolean isDetachFrozen;
+    boolean isDetachFrozen;
     private ControllerChangeHandler overriddenPushHandler;
     private ControllerChangeHandler overriddenPopHandler;
     private RetainViewMode retainViewMode = RetainViewMode.RELEASE_DETACH;
@@ -875,7 +875,7 @@ public abstract class Controller {
         }
     }
 
-    private void attach(@NonNull View view) {
+    void attach(@NonNull View view) {
         attachedToUnownedParent = router == null || view.getParent() != router.container;
         if (attachedToUnownedParent) {
             return;

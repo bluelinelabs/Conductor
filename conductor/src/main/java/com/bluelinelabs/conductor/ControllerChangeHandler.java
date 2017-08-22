@@ -24,9 +24,9 @@ public abstract class ControllerChangeHandler {
     private static final String KEY_CLASS_NAME = "ControllerChangeHandler.className";
     private static final String KEY_SAVED_STATE = "ControllerChangeHandler.savedState";
 
-    private static final Map<String, ChangeHandlerData> inProgressChangeHandlers = new HashMap<>();
+    static final Map<String, ChangeHandlerData> inProgressChangeHandlers = new HashMap<>();
 
-    private boolean forceRemoveViewOnPush;
+    boolean forceRemoveViewOnPush;
     private boolean hasBeenUsed;
 
     /**

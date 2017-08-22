@@ -25,11 +25,11 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
     public static final long DEFAULT_ANIMATION_DURATION = -1;
 
     private long animationDuration;
-    private boolean removesFromViewOnPush;
-    private boolean canceled;
-    private boolean needsImmediateCompletion;
+    boolean removesFromViewOnPush;
+    boolean canceled;
+    boolean needsImmediateCompletion;
     private boolean completed;
-    private Animator animator;
+    Animator animator;
     private OnAnimationReadyOrAbortedListener onAnimationReadyOrAbortedListener;
 
     @SuppressWarnings("WeakerAccess")
@@ -140,7 +140,7 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
         }
     }
 
-    private void complete(@NonNull ControllerChangeCompletedListener changeListener, @Nullable AnimatorListener animatorListener) {
+    void complete(@NonNull ControllerChangeCompletedListener changeListener, @Nullable AnimatorListener animatorListener) {
         if (!completed) {
             completed = true;
             changeListener.onChangeCompleted();
@@ -157,7 +157,9 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
         onAnimationReadyOrAbortedListener = null;
     }
 
-    private void performAnimation(@NonNull final ViewGroup container, @Nullable final View from, @Nullable final View to, final boolean isPush, final boolean toAddedToContainer, @NonNull final ControllerChangeCompletedListener changeListener) {
+    void performAnimation(
+      @NonNull final ViewGroup container,
+      @Nullable final View from, @Nullable final View to, final boolean isPush, final boolean toAddedToContainer, @NonNull final ControllerChangeCompletedListener changeListener) {
         if (canceled) {
             complete(changeListener, null);
             return;

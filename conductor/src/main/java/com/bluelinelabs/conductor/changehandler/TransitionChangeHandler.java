@@ -23,7 +23,7 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
         void onPrepared();
     }
 
-    private boolean canceled;
+    boolean canceled;
     private boolean needsImmediateCompletion;
 
     /**

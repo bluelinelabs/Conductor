@@ -12,7 +12,7 @@ import com.bluelinelabs.conductor.Controller.LifecycleListener;
 
 public class ControllerLifecycleRegistryOwner extends LifecycleListener implements LifecycleRegistryOwner {
 
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     public ControllerLifecycleRegistryOwner(Controller controller) {
         lifecycleRegistry.handleLifecycleEvent(Event.ON_CREATE);

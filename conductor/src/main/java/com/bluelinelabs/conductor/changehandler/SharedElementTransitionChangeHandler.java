@@ -31,14 +31,14 @@ import java.util.List;
 public abstract class SharedElementTransitionChangeHandler extends TransitionChangeHandler {
 
     // A map of from -> to names. Generally these will be the same.
-    @NonNull private final ArrayMap<String, String> sharedElementNames = new ArrayMap<>();
+    @NonNull  final ArrayMap<String, String> sharedElementNames = new ArrayMap<>();
 
-    @NonNull private final List<String> waitForTransitionNames = new ArrayList<>();
-    @NonNull private final List<ViewParentPair> removedViews = new ArrayList<>();
+    @NonNull  final List<String> waitForTransitionNames = new ArrayList<>();
+    @NonNull  final List<ViewParentPair> removedViews = new ArrayList<>();
 
-    @Nullable private Transition exitTransition;
-    @Nullable private Transition enterTransition;
-    @Nullable private Transition sharedElementTransition;
+    @Nullable Transition exitTransition;
+    @Nullable Transition enterTransition;
+    @Nullable Transition sharedElementTransition;
     @Nullable private SharedElementCallback exitTransitionCallback;
     @Nullable private SharedElementCallback enterTransitionCallback;
 
@@ -100,7 +100,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         removedViews.clear();
     }
 
-    private void configureTransition(@NonNull final ViewGroup container, @Nullable View from, @Nullable View to, @NonNull final Transition transition, boolean isPush) {
+    void configureTransition(@NonNull final ViewGroup container, @Nullable View from, @Nullable View to, @NonNull final Transition transition, boolean isPush) {
         final View nonExistentView = new View(container.getContext());
 
         List<View> fromSharedElements = new ArrayList<>();
@@ -155,7 +155,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         to.getViewTreeObserver().addOnPreDrawListener(onPreDrawListener);
     }
 
-    private void waitOnChildTransitionNames(@NonNull final View to, @NonNull List<View> foundViews, @NonNull final OnPreDrawListener parentPreDrawListener, @NonNull final OnTransitionPreparedListener onTransitionPreparedListener) {
+    void waitOnChildTransitionNames(
+      @NonNull final View to,
+      @NonNull List<View> foundViews, @NonNull final OnPreDrawListener parentPreDrawListener, @NonNull final OnTransitionPreparedListener onTransitionPreparedListener) {
         for (final View view : foundViews) {
             OneShotPreDrawListener.add(true, view, new Runnable() {
                 @Override
@@ -210,8 +212,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         }
     }
 
-    @NonNull
-    private List<View> configureEnteringExitingViews(@NonNull Transition transition, @Nullable View view, @NonNull List<View> sharedElements, @NonNull View nonExistentView) {
+    @NonNull List<View> configureEnteringExitingViews(@NonNull Transition transition, @Nullable View view, @NonNull List<View> sharedElements, @NonNull View nonExistentView) {
         List<View> viewList = new ArrayList<>();
         if (view != null) {
             captureTransitioningViews(viewList, view);
@@ -290,8 +291,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         });
     }
 
-    @Nullable
-    private View getToEpicenterView(@Nullable ArrayMap<String, View> toSharedElements) {
+    @Nullable View getToEpicenterView(@Nullable ArrayMap<String, View> toSharedElements) {
         if (enterTransition != null && sharedElementNames.size() > 0 && toSharedElements != null) {
             return toSharedElements.get(sharedElementNames.valueAt(0));
         }
@@ -312,8 +312,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         }
     }
 
-    @Nullable
-    private ArrayMap<String, View> captureToSharedElements(@Nullable final View to, boolean isPush) {
+    @Nullable ArrayMap<String, View> captureToSharedElements(@Nullable final View to, boolean isPush) {
         if (sharedElementNames.isEmpty() || sharedElementTransition == null || to == null) {
             sharedElementNames.clear();
             return null;
@@ -356,8 +355,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         return toSharedElements;
     }
 
-    @Nullable
-    private String findKeyForValue(@NonNull ArrayMap<String, String> map, @NonNull String value) {
+    @Nullable String findKeyForValue(@NonNull ArrayMap<String, String> map, @NonNull String value) {
         final int numElements = map.size();
         for (int i = 0; i < numElements; i++) {
             if (value.equals(map.valueAt(i))) {
@@ -398,7 +396,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         return fromSharedElements;
     }
 
-    private void callSharedElementStartEnd(@Nullable ArrayMap<String, View> sharedElements, boolean isStart) {
+    void callSharedElementStartEnd(@Nullable ArrayMap<String, View> sharedElements, boolean isStart) {
         if (enterTransitionCallback != null) {
             List<View> views = new ArrayList<>();
             List<String> names = new ArrayList<>();
