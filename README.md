@@ -39,16 +39,15 @@ compile 'com.bluelinelabs:conductor-autodispose:2.1.4'
 compile 'com.bluelinelabs:conductor-archlifecycle:0.1.1'
 ```
 
-SNAPSHOT:
+**SNAPSHOT**
 
-Just use `2.1.5-SNAPSHOT` as your version number in any of the above dependencies and add the url to the snapshot repository:
+Just use `2.1.5-SNAPSHOT` as your version number in any of the dependencies above and add the url to the snapshot repository:
 
 ```gradle
 allprojects {
   repositories {
-    ...
-
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  }
 }
 ```
 
