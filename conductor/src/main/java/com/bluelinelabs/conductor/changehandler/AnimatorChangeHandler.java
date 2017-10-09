@@ -157,9 +157,7 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
         onAnimationReadyOrAbortedListener = null;
     }
 
-    void performAnimation(
-      @NonNull final ViewGroup container,
-      @Nullable final View from, @Nullable final View to, final boolean isPush, final boolean toAddedToContainer, @NonNull final ControllerChangeCompletedListener changeListener) {
+    void performAnimation(@NonNull final ViewGroup container, @Nullable final View from, @Nullable final View to, final boolean isPush, final boolean toAddedToContainer, @NonNull final ControllerChangeCompletedListener changeListener) {
         if (canceled) {
             complete(changeListener, null);
             return;

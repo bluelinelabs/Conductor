@@ -155,9 +155,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         to.getViewTreeObserver().addOnPreDrawListener(onPreDrawListener);
     }
 
-    void waitOnChildTransitionNames(
-      @NonNull final View to,
-      @NonNull List<View> foundViews, @NonNull final OnPreDrawListener parentPreDrawListener, @NonNull final OnTransitionPreparedListener onTransitionPreparedListener) {
+    void waitOnChildTransitionNames(@NonNull final View to, @NonNull List<View> foundViews, @NonNull final OnPreDrawListener parentPreDrawListener, @NonNull final OnTransitionPreparedListener onTransitionPreparedListener) {
         for (final View view : foundViews) {
             OneShotPreDrawListener.add(true, view, new Runnable() {
                 @Override
