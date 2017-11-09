@@ -21,7 +21,7 @@ android {
 }
 
 dependencies {
-    compile rootProject.ext.archComopnentsLifecycle
+    compile rootProject.ext.archComponentsLifecycleRuntime
 
     compile project(':conductor')
 }
