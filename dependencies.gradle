@@ -12,8 +12,10 @@ ext {
     rxJava2Version = '2.0.1'
     rxLifecycleVersion = '0.8.0'
     rxLifecycle2Version = '2.0'
+
+    // autodispose implicitly targets arch components 1.0.0-rc1 for now but that is compatible with released 1.0.0
     autodisposeVersion = '0.4.0'
-    archComponentsVersion = '1.0.0-alpha3'
+    archComponentsRuntimeVersion = '1.0.3'
     junitVersion = '4.11'
     roboelectricVersion = '3.0'
     lintVersion = '25.2.0'
@@ -42,7 +44,7 @@ ext {
 
     autodispose = "com.uber.autodispose:autodispose:$autodisposeVersion"
 
-    archComopnentsLifecycle = "android.arch.lifecycle:runtime:$archComponentsVersion"
+    archComponentsLifecycleRuntime = "android.arch.lifecycle:runtime:$archComponentsRuntimeVersion"
 
     junit = "junit:junit:$junitVersion"
     roboelectric = "org.robolectric:robolectric:$roboelectricVersion"

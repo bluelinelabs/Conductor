@@ -2,15 +2,15 @@ package com.bluelinelabs.conductor.archlifecycle;
 
 import android.arch.lifecycle.Lifecycle.Event;
 import android.arch.lifecycle.Lifecycle.State;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.Controller.LifecycleListener;
 
-public class ControllerLifecycleRegistryOwner extends LifecycleListener implements LifecycleRegistryOwner {
+public class ControllerLifecycleRegistryOwner extends LifecycleListener implements LifecycleOwner {
 
     final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
@@ -72,6 +72,7 @@ public class ControllerLifecycleRegistryOwner extends LifecycleListener implemen
     }
 
     @Override
+    @NonNull
     public LifecycleRegistry getLifecycle() {
         return lifecycleRegistry;
     }
