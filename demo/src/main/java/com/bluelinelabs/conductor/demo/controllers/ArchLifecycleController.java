@@ -2,7 +2,9 @@ package com.bluelinelabs.conductor.demo.controllers;
 
 import android.arch.lifecycle.Lifecycle.Event;
 import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.OnLifecycleEvent;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -35,47 +37,28 @@ public class ArchLifecycleController extends LifecycleController {
     private boolean hasExited;
 
     public ArchLifecycleController() {
-        LifecycleObserver lifecycleObserver = new LifecycleObserver() {
-            @OnLifecycleEvent(Event.ON_CREATE)
-            void onCreate() {
-                Log.d(TAG, "LifecycleObserver onCreate() called");
+        Log.i(TAG, "Conductor: Constructor called");
+
+        getLifecycle().addObserver(new LifecycleObserver() {
+            @OnLifecycleEvent(Event.ON_ANY)
+            void onLifecycleEvent(@NonNull LifecycleOwner source, @NonNull Event event) {
+                Log.d(TAG, "Lifecycle: " + source.getClass().getSimpleName() + " emitted event " + event + " and is now in state " + source.getLifecycle().getCurrentState());
             }
+        });
 
-            @OnLifecycleEvent(Event.ON_START)
-            void onStart() {
-                Log.d(TAG, "LifecycleObserver onStart() called");
-            }
+        Log.d(TAG, "Lifecycle: " + getClass().getSimpleName() + " is now in state " + getLifecycle().getCurrentState());
+    }
 
-            @OnLifecycleEvent(Event.ON_RESUME)
-            void onResume() {
-                Log.d(TAG, "LifecycleObserver onResume() called");
-            }
-
-            @OnLifecycleEvent(Event.ON_PAUSE)
-            void onPause() {
-                Log.d(TAG, "LifecycleObserver onPause() called");
-            }
-
-            @OnLifecycleEvent(Event.ON_STOP)
-            void onStop() {
-                Log.d(TAG, "LifecycleObserver onStop() called");
-            }
-
-            @OnLifecycleEvent(Event.ON_DESTROY)
-            void onDestroy() {
-                Log.d(TAG, "LifecycleObserver onDestroy() called");
-            }
-        };
-
-        Log.i(TAG, "constructor called");
-
-        getLifecycle().addObserver(lifecycleObserver);
+    @Override
+    protected void onContextAvailable(@NonNull Context context) {
+        Log.i(TAG, "Conductor: onContextAvailable() called");
+        super.onContextAvailable(context);
     }
 
     @NonNull
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
-        Log.i(TAG, "onCreateView() called");
+        Log.i(TAG, "Conductor: onCreateView() called");
 
         View view = inflater.inflate(R.layout.controller_lifecycle, container, false);
         view.setBackgroundColor(ContextCompat.getColor(container.getContext(), R.color.orange_300));
@@ -88,35 +71,37 @@ public class ArchLifecycleController extends LifecycleController {
 
     @Override
     protected void onAttach(@NonNull View view) {
+        Log.i(TAG, "Conductor: onAttach() called");
         super.onAttach(view);
-
-        Log.i(TAG, "onAttach() called");
 
         (((ActionBarProvider) getActivity()).getSupportActionBar()).setTitle("Arch Components Lifecycle Demo");
     }
 
     @Override
-    protected void onDestroyView(@NonNull View view) {
-        super.onDestroyView(view);
+    protected void onDetach(@NonNull View view) {
+        Log.i(TAG, "Conductor: onDetach() called");
+        super.onDetach(view);
+    }
 
-        Log.i(TAG, "onDestroyView() called");
+    @Override
+    protected void onDestroyView(@NonNull View view) {
+        Log.i(TAG, "Conductor: onDestroyView() called");
+        super.onDestroyView(view);
 
         unbinder.unbind();
         unbinder = null;
     }
 
     @Override
-    protected void onDetach(@NonNull View view) {
-        super.onDetach(view);
-
-        Log.i(TAG, "onDetach() called");
+    protected void onContextUnavailable() {
+        Log.i(TAG, "Conductor: onContextUnavailable() called");
+        super.onContextUnavailable();
     }
 
     @Override
     public void onDestroy() {
+        Log.i(TAG, "Conductor: onDestroy() called");
         super.onDestroy();
-
-        Log.i(TAG, "onDestroy() called");
 
         if (hasExited) {
             DemoApplication.refWatcher.watch(this);
