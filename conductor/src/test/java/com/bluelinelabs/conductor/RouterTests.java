@@ -126,6 +126,35 @@ public class RouterTests {
     }
 
     @Test
+    public void testPopControllerConcurrentModificationException()
+    {
+        int step = 1;
+        for(int i = 0; i < 10; i++, step++)
+        {
+            router.pushController(RouterTransaction.with(new TestController()).tag("1"));
+            router.pushController(RouterTransaction.with(new TestController()).tag("2"));
+            router.pushController(RouterTransaction.with(new TestController()).tag("3"));
+
+            String tag;
+            if (step == 1) {
+                tag = "1";
+            }
+            else if (step == 2) {
+                tag = "2";
+            }
+            else {
+                tag = "3";
+                step = 0;
+            }
+            Controller control = router.getControllerWithTag(tag);
+            if (control != null) {
+                router.popController(control);
+            }
+            router.popToRoot();
+        }
+    }
+
+    @Test
     public void testPopToTag() {
         String controller1Tag = "controller1";
         String controller2Tag = "controller2";
