@@ -2,7 +2,7 @@ ext {
     minSdkVersion = 16
     compileSdkVersion = 25
     targetSdkVersion = 25
-    buildToolsVersion = '25.0.3'
+    buildToolsVersion = '27.0.3'
 
     supportVersion = '25.3.1'
     butterknifeVersion = '8.4.0'
@@ -12,8 +12,8 @@ ext {
     rxJava2Version = '2.0.1'
     rxLifecycleVersion = '0.8.0'
     rxLifecycle2Version = '2.0'
-    autodisposeVersion = '0.2.0'
-    archComponentsVersion = '1.0.3'
+    autodisposeVersion = '0.8.0'
+    archComponentsVersion = '1.1.1'
     junitVersion = '4.11'
     roboelectricVersion = '3.0'
     lintVersion = '25.2.0'

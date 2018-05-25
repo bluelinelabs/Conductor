@@ -21,11 +21,11 @@ android {
 }
 
 dependencies {
-    compile rootProject.ext.rxJava
-    compile rootProject.ext.rxLifecycle
-    compile rootProject.ext.rxLifecycleAndroid
+    api rootProject.ext.rxJava
+    api rootProject.ext.rxLifecycle
+    api rootProject.ext.rxLifecycleAndroid
 
-    compile project(':conductor')
+    implementation project(':conductor')
 }
 
 ext.artifactId = 'conductor-rxlifecycle'

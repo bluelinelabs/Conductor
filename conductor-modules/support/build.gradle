@@ -28,11 +28,11 @@ android {
 }
 
 dependencies {
-    testCompile rootProject.ext.junit
-    testCompile rootProject.ext.roboelectric
+    testImplementation rootProject.ext.junit
+    testImplementation rootProject.ext.roboelectric
 
-    compile rootProject.ext.supportAppCompat
-    compile project(':conductor')
+    implementation rootProject.ext.supportAppCompat
+    implementation project(':conductor')
 
     unmock 'org.robolectric:android-all:4.3_r2-robolectric-0'
 }

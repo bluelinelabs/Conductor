@@ -137,12 +137,14 @@ public abstract class Router {
         } else {
             RouterTransaction removedTransaction = null;
             RouterTransaction nextTransaction = null;
-            for (RouterTransaction transaction : backstack) {
+            Iterator<RouterTransaction> iterator = backstack.iterator();
+            while (iterator.hasNext()) {
+                RouterTransaction transaction = iterator.next();
                 if (transaction.controller == controller) {
                     if (controller.isAttached()) {
                         trackDestroyingController(transaction);
                     }
-                    backstack.remove(transaction);
+                    iterator.remove();
                     removedTransaction = transaction;
                 } else if (removedTransaction != null) {
                     if (!transaction.controller.isAttached()) {

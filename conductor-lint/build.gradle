@@ -8,11 +8,11 @@ configurations {
 }
 
 dependencies {
-    compile rootProject.ext.lintapi
-    compile rootProject.ext.lintchecks
+    implementation rootProject.ext.lintapi
+    implementation rootProject.ext.lintchecks
 
-    testCompile rootProject.ext.lint
-    testCompile rootProject.ext.lintTests
+    testImplementation rootProject.ext.lint
+    testImplementation rootProject.ext.lintTests
 
     lintChecks files(jar)
 }

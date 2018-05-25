@@ -33,10 +33,10 @@ configurations {
 }
 
 dependencies {
-    testCompile rootProject.ext.junit
-    testCompile rootProject.ext.roboelectric
+    testImplementation rootProject.ext.junit
+    testImplementation rootProject.ext.roboelectric
 
-    compile rootProject.ext.supportAnnotations
+    api rootProject.ext.supportAnnotations
 
     lintChecks project(path: ':conductor-lint', configuration: 'lintChecks')
 

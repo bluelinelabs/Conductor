@@ -31,20 +31,21 @@ android {
 }
 
 dependencies {
-    compile rootProject.ext.supportV4
-    compile rootProject.ext.supportDesign
+    implementation rootProject.ext.supportV4
+    implementation rootProject.ext.supportDesign
 
     annotationProcessor rootProject.ext.butterknifeCompiler
-    compile rootProject.ext.butterknife
-    compile rootProject.ext.picasso
+    implementation rootProject.ext.butterknife
+    implementation rootProject.ext.picasso
 
-    compile project(':conductor-modules:support')
-    compile project(':conductor-modules:rxlifecycle')
-    compile project(':conductor-modules:rxlifecycle2')
-    compile project(':conductor-modules:autodispose')
-    compile project(':conductor-modules:arch-components-lifecycle')
+    implementation project(':conductor')
+    implementation project(':conductor-modules:support')
+    implementation project(':conductor-modules:rxlifecycle')
+    implementation project(':conductor-modules:rxlifecycle2')
+    implementation project(':conductor-modules:autodispose')
+    implementation project(':conductor-modules:arch-components-lifecycle')
 
-    debugCompile rootProject.ext.leakCanary
-    releaseCompile rootProject.ext.leakCanaryNoOp
-    testCompile rootProject.ext.leakCanaryNoOp
+    debugImplementation rootProject.ext.leakCanary
+    releaseImplementation rootProject.ext.leakCanaryNoOp
+    testImplementation rootProject.ext.leakCanaryNoOp
 }

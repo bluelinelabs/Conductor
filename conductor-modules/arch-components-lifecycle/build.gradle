@@ -21,9 +21,9 @@ android {
 }
 
 dependencies {
-    compile rootProject.ext.archComopnentsLifecycle
+    api rootProject.ext.archComopnentsLifecycle
 
-    compile project(':conductor')
+    implementation project(':conductor')
 }
 
 ext.artifactId = 'conductor-arch-components-lifecycle'
