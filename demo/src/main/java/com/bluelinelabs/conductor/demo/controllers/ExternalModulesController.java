@@ -18,6 +18,7 @@ import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
+import com.bluelinelabs.conductor.demo.controllers.viewmodel.ViewModelDemoController;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +30,8 @@ public class ExternalModulesController extends BaseController {
         RX_LIFECYCLE("Rx Lifecycle", R.color.red_300),
         RX_LIFECYCLE_2("Rx Lifecycle 2", R.color.blue_grey_300),
         AUTODISPOSE("Autodispose", R.color.purple_300),
-        ARCH_LIFECYCLE("Arch Components Lifecycle", R.color.orange_300);
+        ARCH_LIFECYCLE("Arch Components Lifecycle", R.color.orange_300),
+        ARCH_VIEWMODEL("Arch Components ViewModel", R.color.green_300);
 
         String title;
         @ColorRes int color;
@@ -88,6 +90,11 @@ public class ExternalModulesController extends BaseController {
                 break;
             case ARCH_LIFECYCLE:
                 getRouter().pushController(RouterTransaction.with(new ArchLifecycleController())
+                        .pushChangeHandler(new FadeChangeHandler())
+                        .popChangeHandler(new FadeChangeHandler()));
+                break;
+            case ARCH_VIEWMODEL:
+                getRouter().pushController(RouterTransaction.with(new ViewModelDemoController())
                         .pushChangeHandler(new FadeChangeHandler())
                         .popChangeHandler(new FadeChangeHandler()));
                 break;

@@ -13,7 +13,7 @@ ext {
     rxLifecycleVersion = '0.8.0'
     rxLifecycle2Version = '2.0'
     autodisposeVersion = '0.2.0'
-    archComponentsVersion = '1.0.0-alpha3'
+    archComponentsVersion = '1.1.0'
     junitVersion = '4.11'
     roboelectricVersion = '3.0'
     lintVersion = '25.2.0'
@@ -42,7 +42,7 @@ ext {
 
     autodispose = "com.uber.autodispose:autodispose:$autodisposeVersion"
 
-    archComopnentsLifecycle = "android.arch.lifecycle:runtime:$archComponentsVersion"
+    archComponentsLifecycleExtensions = "android.arch.lifecycle:extensions:$archComponentsVersion"
 
     junit = "junit:junit:$junitVersion"
     roboelectric = "org.robolectric:robolectric:$roboelectricVersion"

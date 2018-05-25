@@ -132,6 +132,15 @@ The lifecycle of a Controller is significantly simpler to understand than that o
 ### RxJava Lifecycle
 If the RxLifecycle dependency has been added, there is an `RxController` available that can be used along with the standard [RxLifecycle library](https://github.com/trello/RxLifecycle). There is also a `ControllerLifecycleProvider` available if you do not wish to use this subclass.
 
+### Architecture Components
+If the Architecture Components dependency has been added, there is an `LifecycleController` 
+available which implements a `LifecycleRegistryOwner`, that can be used to provide lifecycle events
+for the Android Architecture Components classes.
+
+As well, there is a `ViewModelController` available that provides a `ViewModelStore` and a 
+`viewModelProvider()` factory method that can be used to manage `ViewModel` instances on the
+`Controller` lifecycle.
+
 ## License
 ```
 Copyright 2016 BlueLine Labs, Inc.
