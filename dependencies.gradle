@@ -2,7 +2,6 @@ ext {
     minSdkVersion = 16
     compileSdkVersion = 27
     targetSdkVersion = 27
-    buildToolsVersion = '27.0.3'
 
     supportVersion = '25.3.1'
     butterknifeVersion = '8.4.0'
