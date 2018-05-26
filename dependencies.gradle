@@ -15,7 +15,7 @@ ext {
     archComponentsVersion = '1.1.1'
     junitVersion = '4.12'
     roboelectricVersion = '3.8'
-    lintVersion = '25.2.0'
+    lintVersion = '26.1.2'
 
     supportV4 = "com.android.support:support-v4:$supportVersion"
     supportDesign = "com.android.support:design:$supportVersion"
