@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 
 import org.robolectric.Robolectric;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 public class ActivityProxy {
 

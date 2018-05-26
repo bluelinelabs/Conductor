@@ -3,18 +3,18 @@ ext {
     compileSdkVersion = 27
     targetSdkVersion = 27
 
-    supportVersion = '25.3.1'
-    butterknifeVersion = '8.4.0'
+    supportVersion = '27.1.1'
+    butterknifeVersion = '8.8.1'
     picassoVersion = '2.5.2'
-    leakCanaryVersion = '1.5'
-    rxJavaVersion = '1.2.1'
-    rxJava2Version = '2.0.1'
-    rxLifecycleVersion = '0.8.0'
-    rxLifecycle2Version = '2.0'
+    leakCanaryVersion = '1.5.4'
+    rxJavaVersion = '1.3.8'
+    rxJava2Version = '2.1.14'
+    rxLifecycleVersion = '1.0'
+    rxLifecycle2Version = '2.2.1'
     autodisposeVersion = '0.8.0'
     archComponentsVersion = '1.1.1'
-    junitVersion = '4.11'
-    roboelectricVersion = '3.0'
+    junitVersion = '4.12'
+    roboelectricVersion = '3.8'
     lintVersion = '25.2.0'
 
     supportV4 = "com.android.support:support-v4:$supportVersion"
