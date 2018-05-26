@@ -40,10 +40,10 @@ public final class ControllerIssueDetector extends Detector implements Detector.
 
     @Override
     public UElementHandler createUastHandler(final JavaContext context) {
-        final JavaEvaluator evaluator = context.getEvaluator();
         return new UElementHandler() {
             @Override
             public void visitClass(UClass node) {
+                final JavaEvaluator evaluator = context.getEvaluator();
                 if (evaluator.isAbstract(node)) {
                     return;
                 }
