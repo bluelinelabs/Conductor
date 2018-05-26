@@ -40,26 +40,26 @@ public final class ControllerChangeHandlerIssueDetector extends Detector impleme
     public UElementHandler createUastHandler(final JavaContext context) {
         return new UElementHandler() {
             @Override
-            public void visitClass(UClass declaration) {
+            public void visitClass(UClass node) {
                 final JavaEvaluator evaluator = context.getEvaluator();
-                if (evaluator.isAbstract(declaration)) {
+                if (evaluator.isAbstract(node)) {
                     return;
                 }
 
-                if (!evaluator.isPublic(declaration)) {
-                    String message = String.format("This ControllerChangeHandler class should be public (%1$s)", declaration.getQualifiedName());
-                    context.report(ISSUE, declaration, context.getLocation((UElement) declaration), message);
+                if (!evaluator.isPublic(node)) {
+                    String message = String.format("This ControllerChangeHandler class should be public (%1$s)", node.getQualifiedName());
+                    context.report(ISSUE, node, context.getLocation((UElement) node), message);
                     return;
                 }
 
-                if (declaration.getContainingClass() != null && !evaluator.isStatic(declaration)) {
-                    String message = String.format("This ControllerChangeHandler inner class should be static (%1$s)", declaration.getQualifiedName());
-                    context.report(ISSUE, declaration, context.getLocation((UElement) declaration), message);
+                if (node.getContainingClass() != null && !evaluator.isStatic(node)) {
+                    String message = String.format("This ControllerChangeHandler inner class should be static (%1$s)", node.getQualifiedName());
+                    context.report(ISSUE, node, context.getLocation((UElement) node), message);
                     return;
                 }
 
                 boolean hasDefaultConstructor = false;
-                PsiMethod[] constructors = declaration.getConstructors();
+                PsiMethod[] constructors = node.getConstructors();
                 for (PsiMethod constructor : constructors) {
                     if (evaluator.isPublic(constructor)) {
                         if (constructor.getParameterList().getParametersCount() == 0) {
@@ -71,8 +71,8 @@ public final class ControllerChangeHandlerIssueDetector extends Detector impleme
 
                 if (constructors.length > 0 && !hasDefaultConstructor) {
                     String message = String.format(
-                            "This ControllerChangeHandler needs to have a public default constructor (`%1$s`)", declaration.getQualifiedName());
-                    context.report(ISSUE, declaration, context.getLocation((UElement) declaration), message);
+                            "This ControllerChangeHandler needs to have a public default constructor (`%1$s`)", node.getQualifiedName());
+                    context.report(ISSUE, node, context.getLocation((UElement) node), message);
                 }
             }
         };
