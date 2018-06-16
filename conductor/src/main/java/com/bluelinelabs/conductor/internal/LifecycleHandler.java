@@ -298,12 +298,18 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         startActivityForResult(intent, requestCode, options);
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
     public void startIntentSenderForResult(@NonNull String instanceId, @NonNull IntentSender intent, int requestCode,
                                            @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags,
                                            @Nullable Bundle options) throws IntentSender.SendIntentException {
         registerForActivityResult(instanceId, requestCode);
-        startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
+        } else {
+            if (activity == null) {
+                throw new IllegalStateException("Activity not attached");
+            }
+            activity.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
