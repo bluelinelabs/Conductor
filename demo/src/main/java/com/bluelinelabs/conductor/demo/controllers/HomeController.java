@@ -156,10 +156,15 @@ public class HomeController extends BaseController {
         ControllerChangeHandler pushHandler = fromFab ? new TransitionChangeHandlerCompat(new FabToDialogTransitionChangeHandler(), new FadeChangeHandler(false)) : new FadeChangeHandler(false);
         ControllerChangeHandler popHandler = fromFab ? new TransitionChangeHandlerCompat(new FabToDialogTransitionChangeHandler(), new FadeChangeHandler()) : new FadeChangeHandler();
 
-        getRouter()
-                .pushController(RouterTransaction.with(new DialogController("Conductor", description))
-                        .pushChangeHandler(pushHandler)
-                        .popChangeHandler(popHandler));
+        if (fromFab) {
+            getRouter()
+                    .pushController(RouterTransaction.with(new DialogController("Conductor", description))
+                            .pushChangeHandler(pushHandler)
+                            .popChangeHandler(popHandler));
+        } else {
+            new AlertDialogController("Conductor", description)
+                    .showDialog(getRouter(), "about_dialog_tag");
+        }
 
     }
 
