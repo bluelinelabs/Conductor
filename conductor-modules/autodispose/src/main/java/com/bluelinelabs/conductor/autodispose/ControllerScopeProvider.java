@@ -3,18 +3,20 @@ package com.bluelinelabs.conductor.autodispose;
 import android.support.annotation.NonNull;
 
 import com.bluelinelabs.conductor.Controller;
-import com.uber.autodispose.LifecycleScopeProvider;
-import com.uber.autodispose.OutsideLifecycleException;
+import com.uber.autodispose.OutsideScopeException;
+import com.uber.autodispose.lifecycle.LifecycleScopeProvider;
+import com.uber.autodispose.lifecycle.LifecycleScopes;
+import com.uber.autodispose.lifecycle.CorrespondingEventsFunction;
 
+import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class ControllerScopeProvider implements LifecycleScopeProvider<ControllerEvent> {
-    private static final CorrespondingEventsFunction CORRESPONDING_EVENTS =
-            new CorrespondingEventsFunction() {
+    private static final CorrespondingEventsFunction<ControllerEvent> CORRESPONDING_EVENTS =
+            new CorrespondingEventsFunction<ControllerEvent>() {
                 @Override
-                public ControllerEvent apply(ControllerEvent lastEvent) throws OutsideLifecycleException {
+                public ControllerEvent apply(ControllerEvent lastEvent) throws OutsideScopeException {
                     switch (lastEvent) {
                         case CREATE:
                             return ControllerEvent.DESTROY;
@@ -27,20 +29,20 @@ public class ControllerScopeProvider implements LifecycleScopeProvider<Controlle
                         case DETACH:
                             return ControllerEvent.DESTROY;
                         default:
-                            throw new OutsideLifecycleException("Cannot bind to Controller lifecycle when outside of it.");
+                            throw new OutsideScopeException("Cannot bind to Controller lifecycle when outside of it.");
                     }
                 }
             };
 
     @NonNull private final BehaviorSubject<ControllerEvent> lifecycleSubject;
-    @NonNull private final Function<ControllerEvent, ControllerEvent> correspondingEventsFunction;
+    @NonNull private final CorrespondingEventsFunction<ControllerEvent> correspondingEventsFunction;
 
     public static ControllerScopeProvider from(@NonNull Controller controller) {
         return new ControllerScopeProvider(controller, CORRESPONDING_EVENTS);
     }
 
     public static ControllerScopeProvider from(@NonNull Controller controller, @NonNull final ControllerEvent untilEvent) {
-        return new ControllerScopeProvider(controller, new CorrespondingEventsFunction() {
+        return new ControllerScopeProvider(controller, new CorrespondingEventsFunction<ControllerEvent>() {
             @Override
             public ControllerEvent apply(ControllerEvent controllerEvent) {
                 return untilEvent;
@@ -48,11 +50,11 @@ public class ControllerScopeProvider implements LifecycleScopeProvider<Controlle
         });
     }
 
-    public static ControllerScopeProvider from(@NonNull Controller controller, @NonNull final CorrespondingEventsFunction correspondingEventsFunction) {
+    public static ControllerScopeProvider from(@NonNull Controller controller, @NonNull final CorrespondingEventsFunction<ControllerEvent> correspondingEventsFunction) {
         return new ControllerScopeProvider(controller, correspondingEventsFunction);
     }
 
-    private ControllerScopeProvider(@NonNull Controller controller, @NonNull CorrespondingEventsFunction correspondingEventsFunction) {
+    private ControllerScopeProvider(@NonNull Controller controller, @NonNull CorrespondingEventsFunction<ControllerEvent> correspondingEventsFunction) {
         lifecycleSubject = ControllerLifecycleSubjectHelper.create(controller);
         this.correspondingEventsFunction = correspondingEventsFunction;
     }
@@ -63,12 +65,17 @@ public class ControllerScopeProvider implements LifecycleScopeProvider<Controlle
     }
 
     @Override
-    public Function<ControllerEvent, ControllerEvent> correspondingEvents() {
+    public com.uber.autodispose.lifecycle.CorrespondingEventsFunction<ControllerEvent> correspondingEvents() {
         return correspondingEventsFunction;
     }
 
     @Override
     public ControllerEvent peekLifecycle() {
         return lifecycleSubject.getValue();
+    }
+
+    @Override
+    public CompletableSource requestScope() throws Exception {
+        return LifecycleScopes.resolveScopeFromLifecycle(this);
     }
 }

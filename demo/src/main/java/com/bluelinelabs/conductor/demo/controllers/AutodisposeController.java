@@ -17,8 +17,8 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.demo.ActionBarProvider;
 import com.bluelinelabs.conductor.demo.DemoApplication;
 import com.bluelinelabs.conductor.demo.R;
-import com.uber.autodispose.LifecycleScopeProvider;
-import com.uber.autodispose.ObservableScoper;
+import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.lifecycle.LifecycleScopeProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +50,7 @@ public class AutodisposeController extends Controller {
                         Log.i(TAG, "Disposing from constructor");
                     }
                 })
-                .to(new ObservableScoper<Long>(scopeProvider))
+                .as(AutoDispose.<Long>autoDisposable((scopeProvider)))
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long num) {
@@ -77,7 +77,7 @@ public class AutodisposeController extends Controller {
                         Log.i(TAG, "Disposing from onCreateView()");
                     }
                 })
-                .to(new ObservableScoper<Long>(scopeProvider))
+                .as(AutoDispose.<Long>autoDisposable((scopeProvider)))
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long num) {
@@ -103,7 +103,7 @@ public class AutodisposeController extends Controller {
                         Log.i(TAG, "Disposing from onAttach()");
                     }
                 })
-                .to(new ObservableScoper<Long>(scopeProvider))
+                .as(AutoDispose.<Long>autoDisposable((scopeProvider)))
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long num) {
