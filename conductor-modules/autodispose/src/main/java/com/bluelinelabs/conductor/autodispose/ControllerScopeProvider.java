@@ -65,7 +65,7 @@ public class ControllerScopeProvider implements LifecycleScopeProvider<Controlle
     }
 
     @Override
-    public com.uber.autodispose.lifecycle.CorrespondingEventsFunction<ControllerEvent> correspondingEvents() {
+    public CorrespondingEventsFunction<ControllerEvent> correspondingEvents() {
         return correspondingEventsFunction;
     }
 
