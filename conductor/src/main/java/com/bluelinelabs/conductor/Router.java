@@ -37,7 +37,7 @@ public abstract class Router {
     private static final String KEY_POPS_LAST_VIEW = "Router.popsLastView";
 
     final Backstack backstack = new Backstack();
-    private final List<ControllerChangeListener> changeListeners = new ArrayList<>();
+    private final List<ChangeListenerData> changeListeners = new ArrayList<>();
     private final List<ChangeTransaction> pendingControllerChanges = new ArrayList<>();
     final List<Controller> destroyingControllers = new ArrayList<>();
 
@@ -511,8 +511,20 @@ public abstract class Router {
      */
     @SuppressWarnings("WeakerAccess")
     public void addChangeListener(@NonNull ControllerChangeListener changeListener) {
-        if (!changeListeners.contains(changeListener)) {
-            changeListeners.add(changeListener);
+        addChangeListener(changeListener, false);
+    }
+
+    /**
+     * Adds a listener for all of this Router's {@link Controller} change events
+     *
+     * @param changeListener The listener
+     * @param recursive {@code true} if the listener should be recursively set on all child routers, else {@code false}
+     */
+    @SuppressWarnings("WeakerAccess")
+    public void addChangeListener(@NonNull ControllerChangeListener changeListener, boolean recursive) {
+        final List<ControllerChangeListener> allChangeListeners = getAllChangeListeners(false);
+        if (!allChangeListeners.contains(changeListener)) {
+            changeListeners.add(new ChangeListenerData(changeListener, recursive));
         }
     }
 
@@ -523,7 +535,13 @@ public abstract class Router {
      */
     @SuppressWarnings("WeakerAccess")
     public void removeChangeListener(@NonNull ControllerChangeListener changeListener) {
-        changeListeners.remove(changeListener);
+        final Iterator<ChangeListenerData> iterator = changeListeners.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().changeListener == changeListener) {
+                iterator.remove();
+                break;
+            }
+        }
     }
 
     /**
@@ -795,7 +813,7 @@ public abstract class Router {
             throw new IllegalStateException("Trying to push a controller that has already been destroyed. (" + to.getClass().getSimpleName() + ")");
         }
 
-        final ChangeTransaction transaction = new ChangeTransaction(to, from, isPush, container, changeHandler, new ArrayList<>(changeListeners));
+        final ChangeTransaction transaction = new ChangeTransaction(to, from, isPush, container, changeHandler, getAllChangeListeners(false));
 
         if (pendingControllerChanges.size() > 0) {
             // If we already have changes queued up (awaiting full container attach), queue this one up as well so they don't happen
@@ -950,6 +968,16 @@ public abstract class Router {
         controller.onContextAvailable();
     }
 
+    List<ControllerChangeListener> getAllChangeListeners(boolean recursiveOnly) {
+        final List<ControllerChangeListener> changeListeners = new ArrayList<>();
+        for (ChangeListenerData changeListener : this.changeListeners) {
+            if (!recursiveOnly || changeListener.recursive) {
+                changeListeners.add(changeListener.changeListener);
+            }
+        }
+        return changeListeners;
+    }
+
     abstract void invalidateOptionsMenu();
     abstract void startActivity(@NonNull Intent intent);
     abstract void startActivityForResult(@NonNull String instanceId, @NonNull Intent intent, int requestCode);
@@ -964,4 +992,13 @@ public abstract class Router {
     @NonNull abstract Router getRootRouter();
     @NonNull abstract TransactionIndexer getTransactionIndexer();
 
+    static class ChangeListenerData {
+        final ControllerChangeListener changeListener;
+        final boolean recursive;
+
+        ChangeListenerData(ControllerChangeListener changeListener, boolean recursive) {
+            this.changeListener = changeListener;
+            this.recursive = recursive;
+        }
+    }
 }

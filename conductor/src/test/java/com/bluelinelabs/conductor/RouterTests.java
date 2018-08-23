@@ -1,13 +1,16 @@
 package com.bluelinelabs.conductor;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller.LifecycleListener;
+import com.bluelinelabs.conductor.ControllerChangeHandler.ControllerChangeListener;
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.util.ActivityProxy;
+import com.bluelinelabs.conductor.util.EmptyChangeListener;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
 
@@ -492,4 +495,33 @@ public class RouterTests {
         assertTrue(controller3.isBeingDestroyed());
     }
 
+    @Test
+    public void testRecursivelySettingChangeListener() {
+        final ControllerChangeListener routerRecursiveListener = new EmptyChangeListener();
+        final ControllerChangeListener routerNonRecursiveListener = new EmptyChangeListener();
+
+        Controller controller1 = new TestController();
+        router.addChangeListener(routerRecursiveListener, true);
+        router.addChangeListener(routerNonRecursiveListener);
+        router.setRoot(RouterTransaction.with(controller1));
+
+        final ControllerChangeListener childRouterRecursiveListener = new EmptyChangeListener();
+        final ControllerChangeListener childRouterNonRecursiveListener = new EmptyChangeListener();
+
+        Router childRouter = controller1.getChildRouter((ViewGroup) controller1.getView().findViewById(TestController.VIEW_ID));
+        assertTrue(childRouter.getAllChangeListeners(false).contains(routerRecursiveListener));
+        assertFalse(childRouter.getAllChangeListeners(false).contains(routerNonRecursiveListener));
+
+        Controller controller2 = new TestController();
+        childRouter.addChangeListener(childRouterRecursiveListener, true);
+        childRouter.addChangeListener(childRouterNonRecursiveListener);
+        childRouter.setRoot(RouterTransaction.with(controller2));
+
+        Router childRouter2 = controller2.getChildRouter((ViewGroup) controller2.getView().findViewById(TestController.VIEW_ID));
+        Controller controller3 = new TestController();
+        childRouter2.pushController(RouterTransaction.with(controller3));
+        assertTrue(childRouter2.getAllChangeListeners(false).contains(routerRecursiveListener));
+        assertTrue(childRouter2.getAllChangeListeners(false).contains(childRouterRecursiveListener));
+        assertFalse(childRouter2.getAllChangeListeners(false).contains(childRouterNonRecursiveListener));
+    }
 }

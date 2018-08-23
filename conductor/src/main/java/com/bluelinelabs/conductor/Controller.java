@@ -528,7 +528,7 @@ public abstract class Controller {
      * Calls startIntentSenderForResult(IntentSender, int, Intent, int, int, int, Bundle) from this Controller's host Activity.
      */
     public final void startIntentSenderForResult(@NonNull final IntentSender intent, final int requestCode, @Nullable final Intent fillInIntent, final int flagsMask,
-                                                 final int flagsValues, final int extraFlags, @Nullable final Bundle options) throws IntentSender.SendIntentException {
+        final int flagsValues, final int extraFlags, @Nullable final Bundle options) throws IntentSender.SendIntentException {
         router.startIntentSenderForResult(instanceId, intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
     }
 
@@ -846,7 +846,7 @@ public abstract class Controller {
 
     final void activityStopped(@NonNull Activity activity) {
         final boolean attached = this.attached;
-        
+
         if (viewAttachHandler != null) {
             viewAttachHandler.onActivityStopped();
         }
