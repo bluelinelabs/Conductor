@@ -17,6 +17,7 @@ import com.bluelinelabs.conductor.Controller.LifecycleListener;
 import com.bluelinelabs.conductor.ControllerChangeHandler.ChangeTransaction;
 import com.bluelinelabs.conductor.ControllerChangeHandler.ControllerChangeListener;
 import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
+import com.bluelinelabs.conductor.changehandler.SwapTabChangeHandler;
 import com.bluelinelabs.conductor.internal.NoOpControllerChangeHandler;
 import com.bluelinelabs.conductor.internal.ThreadUtils;
 import com.bluelinelabs.conductor.internal.TransactionIndexer;
@@ -497,6 +498,44 @@ public abstract class Router {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
+    @UiThread
+    public void switchTabRouter(@Nullable RouterTransaction from) {
+        ThreadUtils.ensureMainThread();
+
+        Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
+        while (backstackIterator.hasNext()) {
+            RouterTransaction transaction = backstackIterator.next();
+
+            if (transaction.controller.getNeedsAttach()) {
+                ControllerChangeHandler handler = new SwapTabChangeHandler();
+                performControllerChange(transaction, from, true, handler);
+            }
+        }
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @UiThread
+    public void setRootForTab(@NonNull RouterTransaction rootTransaction) {
+        ThreadUtils.ensureMainThread();
+
+        rootTransaction.controller.setNeedsAttach(true);
+        List<RouterTransaction> rootTransactions = Collections.singletonList(rootTransaction);
+
+        removeAllExceptVisibleAndUnowned();
+        ensureOrderedTransactionIndices(rootTransactions);
+
+        backstack.setBackstack(rootTransactions);
+
+        // Ensure all new controllers have a valid router set
+        Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
+        while (backstackIterator.hasNext()) {
+            RouterTransaction transaction = backstackIterator.next();
+            transaction.onAttachedToRouter();
+            setControllerRouter(transaction.controller);
+        }
+    }
+
     /**
      * Returns whether or not this Router has a root {@link Controller}
      */
@@ -616,6 +655,14 @@ public abstract class Router {
         }
 
         container = null;
+    }
+
+    public void prepareForHostTabAttach() {
+        RouterTransaction transaction = backstack.peek();
+        if (transaction != null){
+            transaction.controller.setNeedsAttach(true);
+            transaction.controller.prepareForHostDetach();
+        }
     }
 
     public void prepareForHostDetach() {

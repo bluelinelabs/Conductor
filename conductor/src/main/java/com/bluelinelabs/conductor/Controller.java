@@ -238,6 +238,65 @@ public abstract class Controller {
         return childRouter;
     }
 
+    public interface TabControllerFactory {
+        RouterTransaction getRootControllerForTab();
+    }
+
+    private ControllerHostedRouter previousTabRouter = null;
+
+    @NonNull
+    public final Router switchChildRouterForTab(
+      @NonNull ViewGroup container,
+      @Nullable String tag,
+      TabControllerFactory controllerFactory) {
+
+        @IdRes final int containerId = container.getId();
+
+        ControllerHostedRouter currentRouter = null;
+        for (ControllerHostedRouter router : childRouters) {
+            if (router.getHostId() == containerId && TextUtils.equals(tag, router.getTag())) {
+                currentRouter = router;
+                break;
+            }
+        }
+
+        if (currentRouter == null) {
+            currentRouter = new ControllerHostedRouter(container.getId(), tag);
+            currentRouter.setHost(this, container);
+            childRouters.add(currentRouter);
+
+            if (isPerformingExitTransition) {
+                currentRouter.setDetachFrozen(true);
+            }
+
+        } else {
+            currentRouter.prepareForHostTabAttach();
+
+            if (!currentRouter.hasHost()) {
+                currentRouter.setHost(this, container);
+            }
+        }
+
+        if (!currentRouter.hasRootController()) {
+            currentRouter.setRootForTab(controllerFactory.getRootControllerForTab());
+        }
+
+        currentRouter.switchTabRouter(previousTabRouter == null ? null : previousTabRouter.backstack.peek());
+
+
+        if (previousTabRouter != null) {
+            container.post(new Runnable() {
+                @Override
+                public void run() {
+                    previousTabRouter.removeHost();
+                }
+            });
+        }
+
+        previousTabRouter = currentRouter;
+        return currentRouter;
+    }
+
     /**
      * Removes a child {@link Router} from this Controller. When removed, all Controllers currently managed by
      * the {@link Router} will be destroyed.

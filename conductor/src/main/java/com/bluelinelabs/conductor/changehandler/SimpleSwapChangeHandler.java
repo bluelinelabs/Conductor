@@ -19,10 +19,10 @@ public class SimpleSwapChangeHandler extends ControllerChangeHandler implements 
 
     private boolean removesFromViewOnPush;
 
-    private boolean canceled;
+    protected boolean canceled;
 
-    private ViewGroup container;
-    private ControllerChangeCompletedListener changeListener;
+    protected ViewGroup container;
+    protected ControllerChangeCompletedListener changeListener;
 
     public SimpleSwapChangeHandler() {
         this(true);
