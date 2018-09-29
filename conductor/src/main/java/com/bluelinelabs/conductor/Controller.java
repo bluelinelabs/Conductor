@@ -280,6 +280,15 @@ public abstract class Controller {
         return view;
     }
 
+    @NonNull
+    public final View requireView() {
+        final View view = getView();
+        if (view == null) {
+            throw new IllegalStateException("View for controller " + this + " has either not yet been created or has been destroyed.");
+        }
+        return view;
+    }
+
     /**
      * Returns the host Activity of this Controller's {@link Router} or {@code null} if this
      * Controller has not yet been attached to an Activity or if the Activity has been destroyed.
@@ -287,6 +296,21 @@ public abstract class Controller {
     @Nullable
     public final Activity getActivity() {
         return router != null ? router.getActivity() : null;
+    }
+
+    /**
+     * Returns the {@link Activity} this controller is currently associated with.
+     *
+     * @throws IllegalStateException if not currently attached to an activity.
+     * @see #getActivity()
+     */
+    @NonNull
+    public final Activity requireActivity() {
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Controller " + this + " not attached to an activity.");
+        }
+        return activity;
     }
 
     /**
@@ -300,6 +324,21 @@ public abstract class Controller {
     }
 
     /**
+     * Returns the {@link Resources} derived from the host activity.
+     *
+     * @throws IllegalStateException if not currently attached to an activity.
+     * @see #getResources()
+     */
+    @NonNull
+    public final Resources requireResources() {
+        final Resources resources = getResources();
+        if (resources == null) {
+            throw new IllegalStateException("Controller " + this + " not attached to an activity.");
+        }
+        return resources;
+    }
+
+    /**
      * Returns the Application Context derived from the host Activity or {@code null} if this Controller
      * has not yet been attached to an Activity or if the Activity has been destroyed.
      */
@@ -310,12 +349,42 @@ public abstract class Controller {
     }
 
     /**
+     * Returns the application context derived from the host activity.
+     *
+     * @throws IllegalStateException if not currently attached to an activity.
+     * @see #getApplicationContext()
+     */
+    @NonNull
+    public final Context requireApplicationContext() {
+        final Context context = getApplicationContext();
+        if (context == null) {
+            throw new IllegalStateException("Controller " + this + " not attached to an activity.");
+        }
+        return context;
+    }
+
+    /**
      * Returns this Controller's parent Controller if it is a child Controller or {@code null} if
      * it has no parent.
      */
     @Nullable
     public final Controller getParentController() {
         return parentController;
+    }
+
+    /**
+     * Returns this Controller's parent controller.
+     *
+     * @throws IllegalStateException if this controller does not have a parent controller.
+     * @see #getParentController()
+     */
+    @NonNull
+    public final Controller requireParentController() {
+        final Controller controller = getParentController();
+        if (controller == null) {
+            throw new IllegalStateException("Controller " + this + " does not have a parent controller.");
+        }
+        return controller;
     }
 
     /**
@@ -385,6 +454,22 @@ public abstract class Controller {
             return router.getRootRouter().getControllerWithInstanceId(targetInstanceId);
         }
         return null;
+    }
+
+    /**
+     * Returns the target Controller that was set with the {@link #setTargetController(Controller)}
+     * method.
+     *
+     * @throws IllegalStateException if this controller does not have a target controller.
+     * @see #getTargetController()
+     */
+    @NonNull
+    public final Controller requireTargetController() {
+        final Controller controller = getTargetController();
+        if (controller == null) {
+            throw new IllegalStateException("Controller " + this + " does not have a target controller.");
+        }
+        return controller;
     }
 
     /**
@@ -575,7 +660,7 @@ public abstract class Controller {
      * @param permission A permission this Controller has requested
      */
     public boolean shouldShowRequestPermissionRationale(@NonNull String permission) {
-        return Build.VERSION.SDK_INT >= 23 && getActivity().shouldShowRequestPermissionRationale(permission);
+        return Build.VERSION.SDK_INT >= 23 && requireActivity().shouldShowRequestPermissionRationale(permission);
     }
 
     /**
@@ -1071,7 +1156,7 @@ public abstract class Controller {
         if (isContextAvailable) {
             List<LifecycleListener> listeners = new ArrayList<>(lifecycleListeners);
             for (LifecycleListener lifecycleListener : listeners) {
-                lifecycleListener.preContextUnavailable(this, getActivity());
+                lifecycleListener.preContextUnavailable(this, requireActivity());
             }
 
             isContextAvailable = false;
