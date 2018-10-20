@@ -16,6 +16,7 @@ ext {
     junitVersion = '4.12'
     roboelectricVersion = '3.8'
     lintVersion = '26.1.2'
+    kotlinVersion = '1.2.71'
 
     supportV4 = "com.android.support:support-v4:$supportVersion"
     supportDesign = "com.android.support:design:$supportVersion"
@@ -52,4 +53,6 @@ ext {
     lintchecks = "com.android.tools.lint:lint-checks:$lintVersion"
     lint = "com.android.tools.lint:lint:$lintVersion"
     lintTests = "com.android.tools.lint:lint-tests:$lintVersion"
+
+    kotlin = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }

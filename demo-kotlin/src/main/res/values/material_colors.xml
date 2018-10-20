@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="mdcolor_300">
+        <item name="md_red_300" type="color">@color/red_300</item>
+        <item name="md_light_green_300" type="color">@color/light_green_300</item>
+        <item name="md_teal_300" type="color">@color/teal_300</item>
+        <item name="md_pink_300" type="color">@color/pink_300</item>
+        <item name="md_brown_300" type="color">@color/brown_300</item>
+        <item name="md_purple_300" type="color">@color/purple_300</item>
+        <item name="md_lime_300" type="color">@color/lime_300</item>
+        <item name="md_blue_grey_300" type="color">@color/blue_grey_300</item>
+        <item name="md_deep_purple_300" type="color">@color/deep_purple_300</item>
+        <item name="md_green_300" type="color">@color/green_300</item>
+        <item name="md_indigo_300" type="color">@color/indigo_300</item>
+        <item name="md_yellow_300" type="color">@color/yellow_300</item>
+        <item name="md_blue_300" type="color">@color/blue_300</item>
+        <item name="md_orange_300" type="color">@color/orange_300</item>
+        <item name="md_light_blue_300" type="color">@color/light_blue_300</item>
+        <item name="md_deep_orange_300" type="color">@color/deep_orange_300</item>
+        <item name="md_cyan_300" type="color">@color/cyan_300</item>
+        <item name="md_grey_300" type="color">@color/grey_300</item>
+    </array>
+</resources>

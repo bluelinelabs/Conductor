@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:id="@+id/dialog_window"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/dialog_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/immersive_background"
+        />
+
+    <LinearLayout
+        android:id="@+id/dialog_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:elevation="@dimen/dialog_elevation"
+        android:minWidth="280dp"
+        android:transitionName="@string/fab_dialog_transition_name"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/dialog_bg"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            style="@style/Base.DialogWindowTitle.AppCompat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="24dp"
+            android:layout_marginLeft="24dp"
+            />
+
+        <Button
+            android:id="@+id/dismiss"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:minWidth="64dp"
+            android:text="@android:string/ok"
+            />
+
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    defaultConfig {
+        applicationId "com.bluelinelabs.conductor.demo.kotlin"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0.0"
+        vectorDrawables.useSupportLibrary true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+}
+
+dependencies {
+    implementation rootProject.ext.kotlin
+
+    implementation rootProject.ext.supportV4
+    implementation rootProject.ext.supportDesign
+
+    implementation rootProject.ext.archComponentsLiveDataCore // Fix duplicate classes
+
+    annotationProcessor rootProject.ext.butterknifeCompiler
+    implementation rootProject.ext.butterknife
+    implementation rootProject.ext.picasso
+
+    implementation project(':conductor')
+    implementation project(':conductor-modules:support')
+    implementation project(':conductor-modules:rxlifecycle')
+    implementation project(':conductor-modules:rxlifecycle2')
+    implementation project(':conductor-modules:autodispose')
+    implementation project(':conductor-modules:arch-components-lifecycle')
+
+    debugImplementation rootProject.ext.leakCanary
+    releaseImplementation rootProject.ext.leakCanaryNoOp
+    testImplementation rootProject.ext.leakCanaryNoOp
+}

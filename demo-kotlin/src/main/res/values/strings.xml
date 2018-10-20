@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Conductor Demo</string>
+
+    <!-- Home Controller -->
+    <string name="about">About</string>
+
+    <!-- Additional Modules Controller -->
+    <string name="additional_modules_explanation">The following modules are provided as additional dependencies, and are not a part of the core library. If you\'ve made a module you want to see included, let us know!</string>
+
+    <!-- Navigation Demo -->
+    <string name="pop_to_root">Pop to Root</string>
+    <string name="go_up">Go Up</string>
+    <string name="next_controller">Next Controller</string>
+    <string name="navigation_title">Controller #%1$d</string>
+
+    <!-- Transitions Demo -->
+    <string name="next">Next</string>
+
+    <!-- Parent Controller Demo -->
+    <string name="parent_controller">Parent Controller</string>
+    <string name="go_to_next_parent">Go to next parent</string>
+
+    <!-- Target Demo -->
+    <string name="pick_title">Pick Title (From another Controller)</string>
+    <string name="pick_image">Pick Image (From Gallery)</string>
+    <string name="enter_title">Enter Title</string>
+    <string name="use_title">Use Title</string>
+
+    <!-- Drag Dismiss Demo -->
+    <string name="drag_to_dismiss">Elastic scrolling view - scroll past bounds to dismiss.</string>
+
+    <!-- RxLifecycle Demo -->
+    <string name="rxlifecycle_title">Watch tag %1$s on logcat for a demo.</string>
+    <string name="next_controller_retain">Push Controller, retaining this View</string>
+    <string name="next_controller_release">Push Controller, releasing this View</string>
+
+    <!-- Master/Detail Demo -->
+    <string name="rotate_for_two_pane">Rotate your device for a two pane view.</string>
+
+    <!-- Transitions -->
+    <string name="fab_dialog_transition_name">transition.fab</string>
+    <string name="transition_tag_dot">transition.dot</string>
+    <string name="transition_tag_title">transition.title</string>
+    <string name="transition_tag_dot_indexed">transition.dot%1$d</string>
+    <string name="transition_tag_title_indexed">transition.title%1$d</string>
+    <string name="transition_tag_image_named">transition.image%1$s</string>
+    <string name="transition_tag_title_named">transition.title%1$s</string>
+
+    <!-- Placeholder data -->
+    <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, volutpat lacus egestas integer vitae, tempus potenti posuere dolore, elit cras ut vulputate pede eros. Pharetra curabitur, cum ultrices nisi nulla, non a est diamlorem in pede. Feugiat vivamus id, leo massa, pede ligula libero wisi, posuere nec interdum risus. Mauris eros. Scelerisque etiam dignissim, sem odio magna posuere libero in. Eget non posuere, rutrum nunc ut, ipsum ornare, vestibulum nisl turpis, urna interdum. Arcu mi velit. Sem dolor amet sed hymenaeos tempor. Cras felis.\n" +
+                "Tempus risus vehicula, mauris nulla interdum purus sodales suspendisse, morbi ultrices tempus vitae vestibulum porttitor, vel mus enim tellus non massa in, quis nec fermentum scelerisque sem congue dolores. Accumsan lacinia urna eu feugiat, habitasse wisi cras id nonummy sapien, a pede. Turpis ac donec, adipiscing ut faucibus, odio ut morbi, habitant volutpat lacinia. At vitae ipsum, porttitor wisi hendrerit pellentesque sapien, suspendisse pellentesque praesent sit tellus varius. At in ligula neque imperdiet eget, viverra lectus risus est sem feugiat. Diam amet non phasellus, sed enim ante etiam lorem id at, feugiat eu urna, urna posuere. Amet vel, vehicula ac in fermentum id, elit mauris dolor, eget orci in nec non in vestibulum. Tortor risus mattis, massa vel condimentum non ornare, pede nunc curabitur dui, eu dolorum luctus duis pellentesque. Nec in imperdiet ac tortor pulvinar bibendum. Parturient lacus luctus posuere, quis luctus sociis tellus iaculis.\n" +
+                "Eu nec, nulla ut neque ac suspendisse, ac purus mattis pretium orci orci, penatibus sollicitudin pellentesque massa, felis et molestie natoque justo vitae. Laoreet nunc nulla augue semper, nulla ridiculus elit in quis bibendum ultrices, integer duis. Dolor ut donec ligula vehicula odio, in lacinia mattis ut quos, semper libero nulla, et euismod ut, nec curabitur turpis aliquet mauris sit a. Tellus interdum dignissim felis. Ultrices dignissim ut, enim urna adipiscing, nunc accumsan justo odio fringilla magna penatibus. Amet integer metus sollicitudin tristique libero dolor, augue nulla pellentesque, massa in suspendisse, adipiscing donec neque nunc. Malesuada non, luctus vestibulum, et at taciti orci felis. Aliquam dolor nibh erat in tincidunt in, risus suscipit integer, quis dolor quis quam. Ultrices dictum, dignissim interdum aenean pede ornare pretium, vehicula adipiscing enim nec magna mollis duis. Imperdiet dolor velit phasellus, laoreet sed ridiculus sollicitudin sit viverra metus, integer sit nunc fusce nonummy augue. Maecenas adipiscing porttitor eu risus nunc malesuada, quo vitae blandit amet feugiat nunc. Pede hac duis in.\n" +
+                "Lorem posuere ridiculus donec, volutpat vehicula erat nunc ut, justo occaecati vivamus aliquam massa, felis etiam, sed feugiat molestie eu. Et leo non dignissim nam. Fringilla pretium suspendisse vitae nascetur massa hymenaeos, lectus ut senectus amet, a enim. Pellentesque integer erat, mauris morbi pellentesque, sodales phasellus turpis purus nulla porta, massa vulputate consectetuer habitasse malesuada pulvinar, vehicula in elit eros interdum ut. Et enim vulputate, aliquam donec ullamcorper et, vel consequat tincidunt. Ipsum quam sed ante quis at, ultrices eget. Rutrum qui et velit possimus in, odio amet ut adipiscing sed nec, a tellus ut, quam molestie. Nisl adipiscing euismod nec, eget facilisis ac sit. Suspendisse elit amet consequat dolor senectus vivamus, at scelerisque erat, odio doloribus velit et felis neque, turpis adipiscing, arcu varius placerat leo."</string>
+</resources>
