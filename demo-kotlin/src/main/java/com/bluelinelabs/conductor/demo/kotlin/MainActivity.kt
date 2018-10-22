@@ -10,23 +10,22 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var router: Router? = null
+    private lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        controller_container
         router = Conductor.attachRouter(this, controller_container, savedInstanceState)
 
-        if (!router!!.hasRootController()) {
-            router!!.setRoot(RouterTransaction.with(HomeController()))
+        if (router.hasRootController().not()) {
+            router.setRoot(RouterTransaction.with(HomeController()))
         }
     }
 
     override fun onBackPressed() {
-        if (!router!!.handleBack()) {
+        if (router.handleBack().not()) {
             super.onBackPressed()
         }
     }
