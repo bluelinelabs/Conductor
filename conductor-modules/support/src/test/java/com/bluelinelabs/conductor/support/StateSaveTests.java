@@ -2,7 +2,7 @@ package com.bluelinelabs.conductor.support;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.SparseArray;
 import android.widget.FrameLayout;
 

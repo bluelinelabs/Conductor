@@ -2,16 +2,16 @@ package com.bluelinelabs.conductor.demo.controllers;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import androidx.annotation.ColorRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import butterknife.BindView;
+import butterknife.OnClick;
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.ControllerChangeHandler;
 import com.bluelinelabs.conductor.RouterTransaction;
@@ -24,10 +24,7 @@ import com.bluelinelabs.conductor.demo.changehandler.CircularRevealChangeHandler
 import com.bluelinelabs.conductor.demo.changehandler.FlipChangeHandler;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 import com.bluelinelabs.conductor.demo.util.BundleBuilder;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class TransitionDemoController extends BaseController {
 
@@ -45,6 +42,7 @@ public class TransitionDemoController extends BaseController {
         String title;
         int layoutId;
         int colorId;
+
         TransitionDemo(String title, @LayoutRes int layoutId, @ColorRes int colorId) {
             this.title = title;
             this.layoutId = layoutId;
@@ -82,8 +80,7 @@ public class TransitionDemoController extends BaseController {
     @Override
     protected void onViewBound(@NonNull View view) {
         super.onViewBound(view);
-
-        View bgView = ButterKnife.findById(view, R.id.bg_view);
+        View bgView = view.findViewById(R.id.bg_view);
         if (transitionDemo.colorId != 0 && bgView != null) {
             bgView.setBackgroundColor(ContextCompat.getColor(getActivity(), transitionDemo.colorId));
         }
@@ -121,7 +118,7 @@ public class TransitionDemoController extends BaseController {
             case VERTICAL:
                 return new VerticalChangeHandler();
             case CIRCULAR:
-                TransitionDemoController demoController = (TransitionDemoController)from;
+                TransitionDemoController demoController = (TransitionDemoController) from;
                 return new CircularRevealChangeHandlerCompat(demoController.btnNext, demoController.containerView);
             case FADE:
                 return new FadeChangeHandler();
