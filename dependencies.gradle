@@ -1,9 +1,9 @@
 ext {
     minSdkVersion = 16
-    compileSdkVersion = 27
-    targetSdkVersion = 27
+    compileSdkVersion = 28
+    targetSdkVersion = 28
 
-    supportVersion = '27.1.1'
+    supportVersion = '28.0.0'
     butterknifeVersion = '8.8.1'
     picassoVersion = '2.5.2'
     leakCanaryVersion = '1.5.4'
