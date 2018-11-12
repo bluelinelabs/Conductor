@@ -20,6 +20,7 @@ public class TransitionChangeHandlerCompat extends ControllerChangeHandler {
     private static final String KEY_CHANGE_HANDLER_CLASS = "TransitionChangeHandlerCompat.changeHandler.class";
     private static final String KEY_HANDLER_STATE = "TransitionChangeHandlerCompat.changeHandler.state";
 
+    @Nullable 
     private ControllerChangeHandler changeHandler;
 
     public TransitionChangeHandlerCompat() { }
@@ -41,17 +42,23 @@ public class TransitionChangeHandlerCompat extends ControllerChangeHandler {
 
     @Override
     public void performChange(@NonNull final ViewGroup container, @Nullable View from, @Nullable View to, boolean isPush, @NonNull final ControllerChangeCompletedListener changeListener) {
-        changeHandler.performChange(container, from, to, isPush, changeListener);
+        if (changeHandler != null) {
+            changeHandler.performChange(container, from, to, isPush, changeListener);
+        }
     }
 
     @Override
     public void saveToBundle(@NonNull Bundle bundle) {
         super.saveToBundle(bundle);
 
-        bundle.putString(KEY_CHANGE_HANDLER_CLASS, changeHandler.getClass().getName());
+        if (changeHandler != null) {
+            bundle.putString(KEY_CHANGE_HANDLER_CLASS, changeHandler.getClass().getName());
+        }
 
         Bundle stateBundle = new Bundle();
-        changeHandler.saveToBundle(stateBundle);
+        if (changeHandler != null) {
+            changeHandler.saveToBundle(stateBundle);
+        }
         bundle.putBundle(KEY_HANDLER_STATE, stateBundle);
     }
 
@@ -67,7 +74,10 @@ public class TransitionChangeHandlerCompat extends ControllerChangeHandler {
 
     @Override
     public boolean removesFromViewOnPush() {
-        return changeHandler.removesFromViewOnPush();
+        if (changeHandler != null) {
+            return changeHandler.removesFromViewOnPush();
+        }
+        return true;
     }
 
     @Override @NonNull
@@ -81,17 +91,27 @@ public class TransitionChangeHandlerCompat extends ControllerChangeHandler {
 
     @Override
     public void onAbortPush(@NonNull ControllerChangeHandler newHandler, @Nullable Controller newTop) {
-        changeHandler.onAbortPush(newHandler, newTop);
+        if (changeHandler != null) {
+            changeHandler.onAbortPush(newHandler, newTop);
+        }
     }
 
     @Override
     public void completeImmediately() {
+      if (changeHandler != null) {
         changeHandler.completeImmediately();
+      }
     }
 
     @Override
     public void setForceRemoveViewOnPush(boolean force) {
+      if (changeHandler != null) {
         changeHandler.setForceRemoveViewOnPush(force);
+      }
     }
 
+    @Override 
+    protected void onEnd() {
+        changeHandler = null;
+    }
 }

@@ -51,8 +51,12 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
         needsImmediateCompletion = true;
     }
 
+    @Nullable
+    private ControllerChangeCompletedListener listener;
+
     @Override
     public void performChange(@NonNull final ViewGroup container, @Nullable final View from, @Nullable final View to, final boolean isPush, @NonNull final ControllerChangeCompletedListener changeListener) {
+        listener = changeListener;
         if (canceled) {
             changeListener.onChangeCompleted();
             return;
@@ -70,12 +74,14 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
 
             @Override
             public void onTransitionEnd(Transition transition) {
-                changeListener.onChangeCompleted();
+                listener.onChangeCompleted();
+                listener = null;
             }
 
             @Override
             public void onTransitionCancel(Transition transition) {
-                changeListener.onChangeCompleted();
+                listener.onChangeCompleted();
+                listener = null;
             }
 
             @Override

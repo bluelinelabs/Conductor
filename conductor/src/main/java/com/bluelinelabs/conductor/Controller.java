@@ -1281,6 +1281,8 @@ public abstract class Controller {
             }
             destroyedView = null;
         }
+
+        changeHandler.onEnd();
     }
 
     final void setDetachFrozen(boolean frozen) {

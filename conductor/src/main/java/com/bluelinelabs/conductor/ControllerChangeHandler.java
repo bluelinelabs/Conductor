@@ -232,6 +232,8 @@ public abstract class ControllerChangeHandler {
         }
     }
 
+    protected void onEnd(){ }
+
     public boolean removesFromViewOnPush() {
         return true;
     }
