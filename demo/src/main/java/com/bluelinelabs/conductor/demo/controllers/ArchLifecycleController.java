@@ -70,6 +70,12 @@ public class ArchLifecycleController extends LifecycleController {
     }
 
     @Override
+    protected void onViewCreated(@NonNull View view) {
+        super.onViewCreated(view);
+        Log.i(TAG, "Conductor: onViewCreated() called");
+    }
+
+    @Override
     protected void onAttach(@NonNull View view) {
         Log.i(TAG, "Conductor: onAttach() called");
         super.onAttach(view);

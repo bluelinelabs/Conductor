@@ -8,6 +8,7 @@ public class CallState implements Parcelable {
     public int changeStartCalls;
     public int changeEndCalls;
     public int createViewCalls;
+    public int onViewCreatedCalls;
     public int attachCalls;
     public int destroyViewCalls;
     public int detachCalls;

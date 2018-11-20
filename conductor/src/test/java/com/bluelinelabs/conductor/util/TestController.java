@@ -46,6 +46,12 @@ public class TestController extends Controller {
     }
 
     @Override
+    protected void onViewCreated(@NonNull View view) {
+        super.onViewCreated(view);
+        currentCallState.onViewCreatedCalls++;
+    }
+
+    @Override
     protected void onChangeStarted(@NonNull ControllerChangeHandler changeHandler, @NonNull ControllerChangeType changeType) {
         super.onChangeStarted(changeHandler, changeType);
         currentCallState.changeStartCalls++;
