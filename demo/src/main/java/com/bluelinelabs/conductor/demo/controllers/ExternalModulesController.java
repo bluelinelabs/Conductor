@@ -28,8 +28,9 @@ public class ExternalModulesController extends BaseController {
     private enum DemoModel {
         RX_LIFECYCLE("Rx Lifecycle", R.color.red_300),
         RX_LIFECYCLE_2("Rx Lifecycle 2", R.color.blue_grey_300),
-        AUTODISPOSE("Autodispose", R.color.purple_300),
-        ARCH_LIFECYCLE("Arch Components Lifecycle", R.color.orange_300);
+        RX_LIFECYCLE_3("Rx Lifecycle 3", R.color.purple_300),
+        AUTODISPOSE("Autodispose", R.color.orange_300),
+        ARCH_LIFECYCLE("Arch Components Lifecycle", R.color.green_300);
 
         String title;
         @ColorRes int color;
@@ -78,6 +79,11 @@ public class ExternalModulesController extends BaseController {
                 break;
             case RX_LIFECYCLE_2:
                 getRouter().pushController(RouterTransaction.with(new RxLifecycle2Controller())
+                        .pushChangeHandler(new FadeChangeHandler())
+                        .popChangeHandler(new FadeChangeHandler()));
+                break;
+            case RX_LIFECYCLE_3:
+                getRouter().pushController(RouterTransaction.with(new RxLifecycle3Controller())
                         .pushChangeHandler(new FadeChangeHandler())
                         .popChangeHandler(new FadeChangeHandler()));
                 break;
