@@ -1,6 +1,6 @@
 package com.bluelinelabs.conductor.autodispose;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.bluelinelabs.conductor.Controller;
 import com.uber.autodispose.OutsideScopeException;

@@ -18,8 +18,8 @@ package com.bluelinelabs.conductor.demo.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.support.v4.view.NestedScrollingParent;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import androidx.core.view.NestedScrollingParent;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;

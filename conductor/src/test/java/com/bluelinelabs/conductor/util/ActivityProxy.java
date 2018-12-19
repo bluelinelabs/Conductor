@@ -1,7 +1,7 @@
 package com.bluelinelabs.conductor.util;
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;

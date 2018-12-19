@@ -20,28 +20,28 @@ Conductor is architecture-agnostic and does not try to force any design decision
 ## Installation
 
 ```gradle
-implementation 'com.bluelinelabs:conductor:2.1.5'
+implementation 'com.bluelinelabs:conductor:3.0.0-rc1'
 
 // If you want the components that go along with
 // Android's support libraries (currently just a PagerAdapter):
-implementation 'com.bluelinelabs:conductor-support:2.1.5'
+implementation 'com.bluelinelabs:conductor-support:3.0.0-rc1'
 
 // If you want RxJava lifecycle support:
-implementation 'com.bluelinelabs:conductor-rxlifecycle:2.1.5'
+implementation 'com.bluelinelabs:conductor-rxlifecycle:3.0.0-rc1'
 
 // If you want RxJava2 lifecycle support:
-implementation 'com.bluelinelabs:conductor-rxlifecycle2:2.1.5'
+implementation 'com.bluelinelabs:conductor-rxlifecycle2:3.0.0-rc1'
 
 // If you want RxJava2 Autodispose support:
-implementation 'com.bluelinelabs:conductor-autodispose:2.1.5'
+implementation 'com.bluelinelabs:conductor-autodispose:3.0.0-rc1'
 
 // If you want Controllers that are Lifecycle-aware (architecture components):
-implementation 'com.bluelinelabs:conductor-archlifecycle:2.1.5'
+implementation 'com.bluelinelabs:conductor-archlifecycle:3.0.0-rc1'
 ```
 
 **SNAPSHOT**
 
-Just use `2.1.6-SNAPSHOT` as your version number in any of the dependencies above and add the url to the snapshot repository:
+Just use `3.0.1-SNAPSHOT` as your version number in any of the dependencies above and add the url to the snapshot repository:
 
 ```gradle
 allprojects {
@@ -131,6 +131,14 @@ The lifecycle of a Controller is significantly simpler to understand than that o
 
 ### RxJava Lifecycle
 If the AutoDispose dependency has been added, there is a `ControllerScopeProvider` available that can be used along with the standard [AutoDispose library](https://github.com/uber/AutoDispose).
+
+## Community Projects
+The community has provided several helpful modules to make developing apps with Conductor even easier. Here's a collection of helpful libraries:
+
+* [ConductorGlide](https://github.com/MkhytarMkhoian/ConductorGlide) - Adds Glide lifecycle support to Controllers
+* [ConductorDialog](https://github.com/MkhytarMkhoian/ConductorDialog) - Adds a helpful DialogController (a Conductor version of DialogFragment)
+* [Mosby-Conductor](https://github.com/sockeqwe/mosby-conductor) - A plugin to integrate Mosby, an MVP/MVI library
+
 
 ## License
 ```

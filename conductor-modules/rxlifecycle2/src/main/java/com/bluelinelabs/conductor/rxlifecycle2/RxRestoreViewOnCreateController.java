@@ -1,8 +1,8 @@
 package com.bluelinelabs.conductor.rxlifecycle2;
 
 import android.os.Bundle;
-import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
+import androidx.annotation.CheckResult;
+import androidx.annotation.NonNull;
 import com.bluelinelabs.conductor.RestoreViewOnCreateController;
 import com.trello.rxlifecycle2.LifecycleProvider;
 import com.trello.rxlifecycle2.LifecycleTransformer;

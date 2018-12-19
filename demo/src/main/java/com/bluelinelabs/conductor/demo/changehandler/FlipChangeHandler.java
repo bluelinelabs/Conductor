@@ -3,7 +3,7 @@ package com.bluelinelabs.conductor.demo.changehandler;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Property;
 import android.view.View;
 import android.view.ViewGroup;

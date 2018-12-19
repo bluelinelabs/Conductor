@@ -1,6 +1,6 @@
 package com.bluelinelabs.conductor.rxlifecycle2;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.trello.rxlifecycle2.LifecycleTransformer;
 import com.trello.rxlifecycle2.OutsideLifecycleException;
 import com.trello.rxlifecycle2.RxLifecycle;

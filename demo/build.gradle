@@ -30,8 +30,8 @@ android {
 }
 
 dependencies {
-    implementation rootProject.ext.supportV4
-    implementation rootProject.ext.supportDesign
+    implementation rootProject.ext.androidxAppCompat
+    implementation rootProject.ext.material
 
     implementation rootProject.ext.archComponentsLiveDataCore // Fix duplicate classes
 

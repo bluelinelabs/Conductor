@@ -9,9 +9,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -34,6 +31,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * A Controller manages portions of the UI. It is similar to an Activity or Fragment in that it manages its
@@ -883,7 +884,7 @@ public abstract class Controller {
 
     void attach(@NonNull View view) {
         attachedToUnownedParent = router == null || view.getParent() != router.container;
-        if (attachedToUnownedParent) {
+        if (attachedToUnownedParent || isBeingDestroyed) {
             return;
         }
 

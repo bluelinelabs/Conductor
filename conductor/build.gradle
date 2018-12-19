@@ -35,7 +35,7 @@ dependencies {
     testImplementation rootProject.ext.junit
     testImplementation rootProject.ext.roboelectric
 
-    api rootProject.ext.supportAnnotations
+    api rootProject.ext.androidxAnnotations
 
     lintChecks project(path: ':conductor-lint', configuration: 'lintChecks')
 }
