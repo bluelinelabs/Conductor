@@ -3,7 +3,7 @@ ext {
     compileSdkVersion = 28
     targetSdkVersion = 28
 
-    butterknifeVersion = '9.0.0-rc1'
+    butterknifeVersion = '10.0.0'
     picassoVersion = '2.5.2'
     leakCanaryVersion = '1.5.4'
     rxJavaVersion = '1.3.8'
