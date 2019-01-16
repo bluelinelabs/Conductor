@@ -92,14 +92,13 @@ public abstract class Controller {
     private boolean isPerformingExitTransition;
     private boolean isContextAvailable;
 
+    static volatile ControllerFactory FACTORY = DefaultControllerFactory.INSTANCE;
+
     @NonNull
     static Controller newInstance(@NonNull Bundle bundle) {
         final String className = bundle.getString(KEY_CLASS_NAME);
         //noinspection ConstantConditions
         Class cls = ClassUtils.classForName(className, false);
-        Constructor[] constructors = cls.getConstructors();
-        Constructor bundleConstructor = getBundleConstructor(constructors);
-
         Bundle args = bundle.getBundle(KEY_ARGS);
         if (args != null) {
             args.setClassLoader(cls.getClassLoader());
@@ -107,15 +106,20 @@ public abstract class Controller {
 
         Controller controller;
         try {
-            if (bundleConstructor != null) {
-                controller = (Controller)bundleConstructor.newInstance(args);
-            } else {
-                //noinspection ConstantConditions
-                controller = (Controller)getDefaultConstructor(constructors).newInstance();
+            controller = FACTORY.create(className, args);
+            if (controller == null) {
+                Constructor[] constructors = cls.getConstructors();
+                Constructor bundleConstructor = getBundleConstructor(constructors);
+                if (bundleConstructor != null) {
+                    controller = (Controller) bundleConstructor.newInstance(args);
+                } else {
+                    //noinspection ConstantConditions
+                    controller = (Controller) getDefaultConstructor(constructors).newInstance();
 
-                // Restore the args that existed before the last process death
-                if (args != null) {
-                    controller.args.putAll(args);
+                    // Restore the args that existed before the last process death
+                    if (args != null) {
+                        controller.args.putAll(args);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -1321,6 +1325,10 @@ public abstract class Controller {
     }
 
     private void ensureRequiredConstructor() {
+        if (FACTORY != DefaultControllerFactory.INSTANCE) {
+            // We assume you know what you're doing if you've installed a ControllerFactory
+            return;
+        }
         Constructor[] constructors = getClass().getConstructors();
         if (getBundleConstructor(constructors) == null && getDefaultConstructor(constructors) == null) {
             throw new RuntimeException(getClass() + " does not have a constructor that takes a Bundle argument or a default constructor. Controllers must have one of these in order to restore their states.");
