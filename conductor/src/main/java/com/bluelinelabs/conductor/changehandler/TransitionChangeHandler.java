@@ -67,10 +67,20 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
             return;
         }
 
+        final Runnable onTransitionNotStarted = new Runnable() {
+            @Override
+            public void run() {
+                executePropertyChanges(container, from, to, null, isPush);
+                changeListener.onChangeCompleted();
+            }
+        };
+
         final Transition transition = getTransition(container, from, to, isPush);
         transition.addListener(new TransitionListener() {
             @Override
-            public void onTransitionStart(Transition transition) { }
+            public void onTransitionStart(Transition transition) {
+                container.removeCallbacks(onTransitionNotStarted);
+            }
 
             @Override
             public void onTransitionEnd(Transition transition) {
@@ -97,6 +107,7 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
                 if (!canceled) {
                     TransitionManager.beginDelayedTransition(container, transition);
                     executePropertyChanges(container, from, to, transition, isPush);
+                    container.post(onTransitionNotStarted);
                 }
             }
         });
