@@ -14,6 +14,8 @@ ext {
     archComponentsVersion = '2.0.0'
     junitVersion = '4.12'
     roboelectricVersion = '3.8'
+    androidxTestVersion = '1.2.0'
+    espressoVersion = '3.2.0'
     lintVersion = '26.1.2'
 
     material = "com.google.android.material:material:1.0.0"
@@ -45,6 +47,9 @@ ext {
 
     junit = "junit:junit:$junitVersion"
     roboelectric = "org.robolectric:robolectric:$roboelectricVersion"
+
+    androidxTestRules = "androidx.test:rules:$androidxTestVersion"
+    espressoCore = "androidx.test.espresso:espresso-core:$espressoVersion"
 
     lintapi = "com.android.tools.lint:lint-api:$lintVersion"
     lintchecks = "com.android.tools.lint:lint-checks:$lintVersion"
