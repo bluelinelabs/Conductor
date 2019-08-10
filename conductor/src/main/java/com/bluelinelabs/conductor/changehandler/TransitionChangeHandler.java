@@ -70,7 +70,6 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
         final Runnable onTransitionNotStarted = new Runnable() {
             @Override
             public void run() {
-                executePropertyChanges(container, from, to, null, isPush);
                 changeListener.onChangeCompleted();
             }
         };
