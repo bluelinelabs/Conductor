@@ -31,6 +31,7 @@ dependencies {
     testImplementation rootProject.ext.roboelectric
 
     implementation rootProject.ext.androidxAppCompat
+    implementation rootProject.ext.androidxCoordinatorLayout
     implementation project(':conductor')
 }
 
