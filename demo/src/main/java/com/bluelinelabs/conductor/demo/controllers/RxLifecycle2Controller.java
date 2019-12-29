@@ -86,6 +86,12 @@ public class RxLifecycle2Controller extends RxController {
     }
 
     @Override
+    protected void onViewCreated(@NonNull View view) {
+        super.onViewCreated(view);
+        Log.i(TAG, "Conductor: onViewCreated() called");
+    }
+
+    @Override
     protected void onAttach(@NonNull View view) {
         super.onAttach(view);
 

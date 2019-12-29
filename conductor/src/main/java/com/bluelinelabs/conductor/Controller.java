@@ -389,6 +389,13 @@ public abstract class Controller {
     }
 
     /**
+     * Called when this Controller's View has been created.
+     *
+     * @param view The View for this Controller (passed for convenience)
+     */
+    protected void onViewCreated(@NonNull View view) { }
+
+    /**
      * Called when this Controller's View is being destroyed. This should overridden to unbind the View
      * from any local variables.
      *
@@ -1014,6 +1021,7 @@ public abstract class Controller {
             if (view == parent) {
                 throw new IllegalStateException("Controller's onCreateView method returned the parent ViewGroup. Perhaps you forgot to pass false for LayoutInflater.inflate's attachToRoot parameter?");
             }
+            onViewCreated(view);
 
             listeners = new ArrayList<>(lifecycleListeners);
             for (LifecycleListener lifecycleListener : listeners) {
