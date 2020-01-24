@@ -11,6 +11,7 @@ import com.bluelinelabs.conductor.ControllerChangeHandler;
 import com.bluelinelabs.conductor.ControllerChangeType;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
+import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
 import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 import com.bluelinelabs.conductor.demo.util.BundleBuilder;
@@ -71,6 +72,8 @@ public class NavigationDemoController extends BaseController {
 
         if (displayUpMode != DisplayUpMode.SHOW) {
             view.findViewById(R.id.btn_up).setVisibility(View.GONE);
+            view.findViewById(R.id.btn_back).setVisibility(View.GONE);
+            view.findViewById(R.id.btn_back_override).setVisibility(View.GONE);
         }
 
         view.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), index));
@@ -101,6 +104,8 @@ public class NavigationDemoController extends BaseController {
         if (view != null) {
             view.findViewById(R.id.btn_next).setEnabled(enabled);
             view.findViewById(R.id.btn_up).setEnabled(enabled);
+            view.findViewById(R.id.btn_back).setEnabled(enabled);
+            view.findViewById(R.id.btn_back_override).setEnabled(enabled);
             view.findViewById(R.id.btn_pop_to_root).setEnabled(enabled);
         }
     }
@@ -113,6 +118,14 @@ public class NavigationDemoController extends BaseController {
 
     @OnClick(R.id.btn_up) void onUpClicked() {
         getRouter().popToTag(TAG_UP_TRANSACTION);
+    }
+
+    @OnClick(R.id.btn_back) void onBackClicked() {
+        getRouter().popCurrentController();
+    }
+
+    @OnClick(R.id.btn_back_override) void onBackOverrideClicked() {
+        getRouter().popCurrentController(new VerticalChangeHandler());
     }
 
     @OnClick(R.id.btn_pop_to_root) void onPopToRootClicked() {

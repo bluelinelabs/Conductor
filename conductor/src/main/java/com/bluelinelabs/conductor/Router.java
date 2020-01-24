@@ -111,13 +111,25 @@ public abstract class Router {
     @SuppressWarnings("WeakerAccess")
     @UiThread
     public boolean popCurrentController() {
+        return popCurrentController(null);
+    }
+
+    /**
+     * Pops the top {@link Controller} from the backstack
+     *
+     * @param changeHandler The {@link ControllerChangeHandler} to handle this transaction
+     * @return Whether or not any {@link Controller}s were popped in order to get to the transaction
+     */
+    @SuppressWarnings("WeakerAccess")
+    @UiThread
+    public boolean popCurrentController(@Nullable ControllerChangeHandler changeHandler) {
         ThreadUtils.ensureMainThread();
 
         RouterTransaction transaction = backstack.peek();
         if (transaction == null) {
             throw new IllegalStateException("Trying to pop the current controller when there are none on the backstack.");
         }
-        return popController(transaction.controller);
+        return popController(transaction.controller, changeHandler);
     }
 
     /**
@@ -128,6 +140,18 @@ public abstract class Router {
      */
     @UiThread
     public boolean popController(@NonNull Controller controller) {
+        return popController(controller, null);
+    }
+
+    /**
+     * Pops the passed {@link Controller} from the backstack
+     *
+     * @param controller The {@link Controller} that should be popped from this Router
+     * @param changeHandler The {@link ControllerChangeHandler} that overrides the existing one.
+     * @return Whether or not this Router still has controllers remaining on it after popping.
+     */
+    @UiThread
+    public boolean popController(@NonNull Controller controller, @Nullable ControllerChangeHandler changeHandler) {
         ThreadUtils.ensureMainThread();
 
         RouterTransaction topTransaction = backstack.peek();
@@ -135,7 +159,11 @@ public abstract class Router {
 
         if (poppingTopController) {
             trackDestroyingController(backstack.pop());
-            performControllerChange(backstack.peek(), topTransaction, false);
+            if (changeHandler != null) {
+                performControllerChange(backstack.peek(), topTransaction, false, changeHandler);
+            } else {
+                performControllerChange(backstack.peek(), topTransaction, false);
+            }
         } else {
             RouterTransaction removedTransaction = null;
             RouterTransaction nextTransaction = null;
@@ -160,7 +188,11 @@ public abstract class Router {
             }
 
             if (removedTransaction != null) {
-                performControllerChange(nextTransaction, removedTransaction, false);
+                if (changeHandler != null) {
+                    performControllerChange(nextTransaction, removedTransaction, false, changeHandler);
+                } else {
+                    performControllerChange(nextTransaction, removedTransaction, false);
+                }
             }
         }
 

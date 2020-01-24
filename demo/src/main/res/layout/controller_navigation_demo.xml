@@ -39,6 +39,24 @@
             />
 
         <Button
+            android:id="@+id/btn_back"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/go_back"
+            style="?android:attr/buttonBarButtonStyle"
+            />
+
+        <Button
+            android:id="@+id/btn_back_override"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/go_back_override"
+            style="?android:attr/buttonBarButtonStyle"
+            />
+
+        <Button
             android:id="@+id/btn_next"
             android:layout_width="0dp"
             android:layout_height="match_parent"

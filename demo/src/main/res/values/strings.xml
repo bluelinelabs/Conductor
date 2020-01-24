@@ -11,6 +11,8 @@
     <!-- Navigation Demo -->
     <string name="pop_to_root">Pop to Root</string>
     <string name="go_up">Go Up</string>
+    <string name="go_back">Go Back</string>
+    <string name="go_back_override">Go Back and Override Handler</string>
     <string name="next_controller">Next Controller</string>
     <string name="navigation_title">Controller #%1$d</string>
 
