@@ -19,7 +19,7 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
 import com.bluelinelabs.conductor.demo.R;
-import com.bluelinelabs.conductor.demo.changehandler.ArcFadeMoveChangeHandlerCompat;
+import com.bluelinelabs.conductor.demo.changehandler.ArcFadeMoveChangeHandler;
 import com.bluelinelabs.conductor.demo.changehandler.CircularRevealChangeHandlerCompat;
 import com.bluelinelabs.conductor.demo.changehandler.FlipChangeHandler;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
@@ -32,12 +32,12 @@ public class TransitionDemoController extends BaseController {
 
     public enum TransitionDemo {
         VERTICAL("Vertical Slide Animation", R.layout.controller_transition_demo, R.color.blue_grey_300),
-        CIRCULAR("Circular Reveal Animation (on Lollipop and above, else Fade)", R.layout.controller_transition_demo, R.color.red_300),
+        CIRCULAR("Circular Reveal Animation", R.layout.controller_transition_demo, R.color.red_300),
         FADE("Fade Animation", R.layout.controller_transition_demo, R.color.blue_300),
         FLIP("Flip Animation", R.layout.controller_transition_demo, R.color.deep_orange_300),
         HORIZONTAL("Horizontal Slide Animation", R.layout.controller_transition_demo, R.color.green_300),
-        ARC_FADE("Arc/Fade Shared Element Transition (on Lollipop and above, else Fade)", R.layout.controller_transition_demo_shared, 0),
-        ARC_FADE_RESET("Arc/Fade Shared Element Transition (on Lollipop and above, else Fade)", R.layout.controller_transition_demo, R.color.pink_300);
+        ARC_FADE("Arc/Fade Shared Element Transition", R.layout.controller_transition_demo_shared, 0),
+        ARC_FADE_RESET("Arc/Fade Shared Element Transition", R.layout.controller_transition_demo, R.color.pink_300);
 
         String title;
         int layoutId;
@@ -125,9 +125,9 @@ public class TransitionDemoController extends BaseController {
             case FLIP:
                 return new FlipChangeHandler();
             case ARC_FADE:
-                return new ArcFadeMoveChangeHandlerCompat(from.getResources().getString(R.string.transition_tag_dot), from.getResources().getString(R.string.transition_tag_title));
+                return new ArcFadeMoveChangeHandler(from.getResources().getString(R.string.transition_tag_dot), from.getResources().getString(R.string.transition_tag_title));
             case ARC_FADE_RESET:
-                return new ArcFadeMoveChangeHandlerCompat(from.getResources().getString(R.string.transition_tag_dot), from.getResources().getString(R.string.transition_tag_title));
+                return new ArcFadeMoveChangeHandler(from.getResources().getString(R.string.transition_tag_dot), from.getResources().getString(R.string.transition_tag_title));
             case HORIZONTAL:
                 return new HorizontalChangeHandler();
             default:

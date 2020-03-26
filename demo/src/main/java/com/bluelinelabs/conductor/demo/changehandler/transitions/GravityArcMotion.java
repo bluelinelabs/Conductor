@@ -16,12 +16,11 @@
 
 package com.bluelinelabs.conductor.demo.changehandler.transitions;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Path;
-import android.os.Build;
-import android.transition.ArcMotion;
 import android.util.AttributeSet;
+
+import androidx.transition.ArcMotion;
 
 /**
  * A tweak to {@link ArcMotion} which slightly alters the path calculation. In the real world
@@ -30,7 +29,6 @@ import android.util.AttributeSet;
  * <p>
  * See https://www.google.com/design/spec/motion/movement.html#movement-movement-within-screen-bounds
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class GravityArcMotion extends ArcMotion {
 
     private static final float DEFAULT_MIN_ANGLE_DEGREES = 0;

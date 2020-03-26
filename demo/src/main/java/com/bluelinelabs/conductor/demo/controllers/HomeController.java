@@ -29,9 +29,8 @@ import com.bluelinelabs.conductor.ControllerChangeType;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
-import com.bluelinelabs.conductor.changehandler.TransitionChangeHandlerCompat;
 import com.bluelinelabs.conductor.demo.R;
-import com.bluelinelabs.conductor.demo.changehandler.ArcFadeMoveChangeHandlerCompat;
+import com.bluelinelabs.conductor.demo.changehandler.ArcFadeMoveChangeHandler;
 import com.bluelinelabs.conductor.demo.changehandler.FabToDialogTransitionChangeHandler;
 import com.bluelinelabs.conductor.demo.controllers.NavigationDemoController.DisplayUpMode;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
@@ -153,8 +152,8 @@ public class HomeController extends BaseController {
         description.append("\n\n");
         description.append(link);
 
-        ControllerChangeHandler pushHandler = fromFab ? new TransitionChangeHandlerCompat(new FabToDialogTransitionChangeHandler(), new FadeChangeHandler(false)) : new FadeChangeHandler(false);
-        ControllerChangeHandler popHandler = fromFab ? new TransitionChangeHandlerCompat(new FabToDialogTransitionChangeHandler(), new FadeChangeHandler()) : new FadeChangeHandler();
+        ControllerChangeHandler pushHandler = fromFab ? new FabToDialogTransitionChangeHandler() : new FadeChangeHandler(false);
+        ControllerChangeHandler popHandler = fromFab ? new FabToDialogTransitionChangeHandler() : new FadeChangeHandler();
 
         getRouter()
                 .pushController(RouterTransaction.with(new DialogController("Conductor", description))
@@ -196,8 +195,8 @@ public class HomeController extends BaseController {
                 String dotSharedElementName = getResources().getString(R.string.transition_tag_dot_indexed, position);
 
                 getRouter().pushController(RouterTransaction.with(new CityGridController(model.title, model.color, position))
-                        .pushChangeHandler(new ArcFadeMoveChangeHandlerCompat(titleSharedElementName, dotSharedElementName))
-                        .popChangeHandler(new ArcFadeMoveChangeHandlerCompat(titleSharedElementName, dotSharedElementName)));
+                        .pushChangeHandler(new ArcFadeMoveChangeHandler(titleSharedElementName, dotSharedElementName))
+                        .popChangeHandler(new ArcFadeMoveChangeHandler(titleSharedElementName, dotSharedElementName)));
                 break;
             case DRAG_DISMISS:
                 getRouter().pushController(RouterTransaction.with(new DragDismissController())

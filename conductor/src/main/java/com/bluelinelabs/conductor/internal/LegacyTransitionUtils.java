@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class TransitionUtils {
+public class LegacyTransitionUtils {
 
     public static void findNamedViews(@NonNull Map<String, View> namedViews, View view) {
         if (view.getVisibility() == View.VISIBLE) {
@@ -116,7 +116,7 @@ public class TransitionUtils {
                 Transition child = set.getTransitionAt(i);
                 replaceTargets(child, oldTargets, newTargets);
             }
-        } else if (!TransitionUtils.hasSimpleTarget(transition)) {
+        } else if (!LegacyTransitionUtils.hasSimpleTarget(transition)) {
             List<View> targets = transition.getTargets();
             if (targets != null && targets.size() == oldTargets.size() && targets.containsAll(oldTargets)) {
                 final int targetCount = newTargets == null ? 0 : newTargets.size();

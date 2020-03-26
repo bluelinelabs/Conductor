@@ -28,7 +28,7 @@ public class CityDetailController extends BaseController {
             "• This is a city.",
             "• There's some cool stuff about it.",
             "• But really this is just a demo, not a city guide app.",
-            "• This demo is meant to show some nice transitions, as long as you're on Lollipop or later.",
+            "• This demo is meant to show some nice transitions.",
             "• You should have seen some sweet shared element transitions using the ImageView and the TextView in the \"header\" above.",
             "• This transition utilized some callbacks to ensure all the necessary rows in the RecyclerView were laid about before the transition occurred.",
             "• Just adding some more lines so it scrolls now...\n\n\n\n\n\n\nThe end."

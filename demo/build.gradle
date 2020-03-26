@@ -45,6 +45,7 @@ dependencies {
     implementation project(':conductor-modules:rxlifecycle2')
     implementation project(':conductor-modules:autodispose')
     implementation project(':conductor-modules:arch-components-lifecycle')
+    implementation project(':conductor-modules:androidx-transition')
 
     debugImplementation rootProject.ext.leakCanary
     releaseImplementation rootProject.ext.leakCanaryNoOp

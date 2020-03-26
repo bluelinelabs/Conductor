@@ -23,19 +23,18 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
-import android.transition.Transition;
-import android.transition.TransitionValues;
+import androidx.transition.Transition;
+import androidx.transition.TransitionValues;
+
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -55,7 +54,6 @@ import static android.view.View.MeasureSpec.makeMeasureSpec;
  * <p>
  * See: https://www.google.com/design/spec/motion/transforming-material.html#transforming-material-radial-transformation
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class FabTransform extends Transition {
 
     private static final long DEFAULT_DURATION = 240L;

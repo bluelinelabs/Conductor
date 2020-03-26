@@ -1,28 +1,25 @@
 package com.bluelinelabs.conductor.demo.changehandler;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.transition.ArcMotion;
-import android.transition.ChangeBounds;
-import android.transition.ChangeClipBounds;
-import android.transition.ChangeTransform;
-import android.transition.Fade;
-import android.transition.Transition;
-import android.transition.Transition.TransitionListener;
-import android.transition.TransitionSet;
+import androidx.transition.ArcMotion;
+import androidx.transition.ChangeBounds;
+import androidx.transition.ChangeClipBounds;
+import androidx.transition.ChangeTransform;
+import androidx.transition.Fade;
+import androidx.transition.Transition;
+import androidx.transition.TransitionSet;
+
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bluelinelabs.conductor.changehandler.SharedElementTransitionChangeHandler;
+import com.bluelinelabs.conductor.changehandler.androidxtransition.SharedElementTransitionChangeHandler;
 import com.bluelinelabs.conductor.internal.TransitionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ArcFadeMoveChangeHandler extends SharedElementTransitionChangeHandler {
 
     private static final String KEY_SHARED_ELEMENT_NAMES = "ArcFadeMoveChangeHandler.sharedElementNames";
@@ -62,7 +59,7 @@ public class ArcFadeMoveChangeHandler extends SharedElementTransitionChangeHandl
         transition.setPathMotion(new ArcMotion());
 
         // The framework doesn't totally fade out the "from" shared element, so we'll hide it manually once it's safe.
-        transition.addListener(new TransitionListener() {
+        transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
                 if (from != null) {

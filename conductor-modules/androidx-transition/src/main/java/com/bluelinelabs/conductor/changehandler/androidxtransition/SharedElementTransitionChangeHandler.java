@@ -1,23 +1,23 @@
-package com.bluelinelabs.conductor.changehandler;
+package com.bluelinelabs.conductor.changehandler.androidxtransition;
 
-import android.annotation.TargetApi;
-import android.app.SharedElementCallback;
 import android.graphics.Rect;
-import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.transition.Transition;
-import android.transition.Transition.TransitionListener;
-import android.transition.TransitionSet;
-import android.util.ArrayMap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnPreDrawListener;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.ArrayMap;
+import androidx.core.app.SharedElementCallback;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.ViewGroupCompat;
+import androidx.transition.Transition;
+import androidx.transition.TransitionSet;
+
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.ControllerChangeHandler;
-import com.bluelinelabs.conductor.internal.LegacyTransitionUtils;
+import com.bluelinelabs.conductor.internal.TransitionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +25,8 @@ import java.util.List;
 /**
  * A TransitionChangeHandler that facilitates using different Transitions for the entering view, the exiting view,
  * and shared elements between the two.
- *
- * @deprecated See {@link TransitionChangeHandler}
  */
 // Much of this class is based on FragmentTransition.java and FragmentTransitionCompat21.java from the Android support library
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-@Deprecated
 public abstract class SharedElementTransitionChangeHandler extends TransitionChangeHandler {
 
     // A map of from -> to names. Generally these will be the same.
@@ -137,9 +133,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                 List<View> foundViews = new ArrayList<>();
                 boolean allViewsFound = true;
                 for (String transitionName : waitForTransitionNames) {
-                    View namedView = LegacyTransitionUtils.findNamedView(to, transitionName);
+                    View namedView = TransitionUtils.findNamedView(to, transitionName);
                     if (namedView != null) {
-                        foundViews.add(LegacyTransitionUtils.findNamedView(to, transitionName));
+                        foundViews.add(TransitionUtils.findNamedView(to, transitionName));
                     } else {
                         allViewsFound = false;
                         break;
@@ -163,7 +159,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
             OneShotPreDrawListener.add(true, view, new Runnable() {
                 @Override
                 public void run() {
-                    waitForTransitionNames.remove(view.getTransitionName());
+                    waitForTransitionNames.remove(ViewCompat.getTransitionName(view));
 
                     removedViews.add(new ViewParentPair(view, (ViewGroup)view.getParent()));
                     ((ViewGroup)view.getParent()).removeView(view);
@@ -193,7 +189,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                     if (exitTransition != null) {
                         List<View> tempExiting = new ArrayList<>();
                         tempExiting.add(nonExistentView);
-                        LegacyTransitionUtils.replaceTargets(exitTransition, exitingViews, tempExiting);
+                        TransitionUtils.replaceTargets(exitTransition, exitingViews, tempExiting);
                     }
                     exitingViews.clear();
                     exitingViews.add(nonExistentView);
@@ -206,10 +202,10 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         boolean overlap = enterTransition == null || exitTransition == null || allowTransitionOverlap(isPush);
 
         if (overlap) {
-            return LegacyTransitionUtils.mergeTransitions(TransitionSet.ORDERING_TOGETHER, exitTransition, enterTransition, sharedElementTransition);
+            return TransitionUtils.mergeTransitions(TransitionSet.ORDERING_TOGETHER, exitTransition, enterTransition, sharedElementTransition);
         } else {
-            Transition staggered = LegacyTransitionUtils.mergeTransitions(TransitionSet.ORDERING_SEQUENTIAL, exitTransition, enterTransition);
-            return LegacyTransitionUtils.mergeTransitions(TransitionSet.ORDERING_TOGETHER, staggered, sharedElementTransition);
+            Transition staggered = TransitionUtils.mergeTransitions(TransitionSet.ORDERING_SEQUENTIAL, exitTransition, enterTransition);
+            return TransitionUtils.mergeTransitions(TransitionSet.ORDERING_TOGETHER, staggered, sharedElementTransition);
         }
     }
 
@@ -221,7 +217,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         viewList.removeAll(sharedElements);
         if (!viewList.isEmpty()) {
             viewList.add(nonExistentView);
-            LegacyTransitionUtils.addTargets(transition, viewList);
+            TransitionUtils.addTargets(transition, viewList);
         }
         return viewList;
     }
@@ -250,7 +246,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         final Rect toEpicenter;
         if (sharedElementTransition != null) {
             toEpicenter = new Rect();
-            LegacyTransitionUtils.setTargets(sharedElementTransition, nonExistentView, fromSharedElements);
+            TransitionUtils.setTargets(sharedElementTransition, nonExistentView, fromSharedElements);
             setFromEpicenter(capturedFromSharedElements);
             if (enterTransition != null) {
                 enterTransition.setEpicenterCallback(new Transition.EpicenterCallback() {
@@ -281,11 +277,11 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                 if (sharedElementTransition != null) {
                     sharedElementTransition.getTargets().clear();
                     sharedElementTransition.getTargets().addAll(toSharedElements);
-                    LegacyTransitionUtils.replaceTargets(sharedElementTransition, fromSharedElements, toSharedElements);
+                    TransitionUtils.replaceTargets(sharedElementTransition, fromSharedElements, toSharedElements);
 
                     final View toEpicenterView = getToEpicenterView(capturedToSharedElements);
                     if (toEpicenterView != null && toEpicenter != null) {
-                        LegacyTransitionUtils.getBoundsOnScreen(toEpicenterView, toEpicenter);
+                        TransitionUtils.getBoundsOnScreen(toEpicenterView, toEpicenter);
                     }
                 }
             }
@@ -304,11 +300,11 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
             final View fromEpicenterView = fromSharedElements.get(sharedElementNames.keyAt(0));
 
             if (sharedElementTransition != null) {
-                LegacyTransitionUtils.setEpicenter(sharedElementTransition, fromEpicenterView);
+                TransitionUtils.setEpicenter(sharedElementTransition, fromEpicenterView);
             }
 
             if (exitTransition != null) {
-                LegacyTransitionUtils.setEpicenter(exitTransition, fromEpicenterView);
+                TransitionUtils.setEpicenter(exitTransition, fromEpicenterView);
             }
         }
     }
@@ -320,9 +316,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         }
 
         final ArrayMap<String, View> toSharedElements = new ArrayMap<>();
-        LegacyTransitionUtils.findNamedViews(toSharedElements, to);
+        TransitionUtils.findNamedViews(toSharedElements, to);
         for (ViewParentPair removedView : removedViews) {
-            toSharedElements.put(removedView.view.getTransitionName(), removedView.view);
+            toSharedElements.put(ViewCompat.getTransitionName(removedView.view), removedView.view);
         }
 
         final List<String> names = new ArrayList<>(sharedElementNames.values());
@@ -338,10 +334,10 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                     if (key != null) {
                         sharedElementNames.remove(key);
                     }
-                } else if (!name.equals(view.getTransitionName())) {
+                } else if (!name.equals(ViewCompat.getTransitionName(view))) {
                     String key = findKeyForValue(sharedElementNames, name);
                     if (key != null) {
-                        sharedElementNames.put(key, view.getTransitionName());
+                        sharedElementNames.put(key, ViewCompat.getTransitionName(view));
                     }
                 }
             }
@@ -374,7 +370,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         }
 
         final ArrayMap<String, View> fromSharedElements = new ArrayMap<>();
-        LegacyTransitionUtils.findNamedViews(fromSharedElements, from);
+        TransitionUtils.findNamedViews(fromSharedElements, from);
 
         final List<String> names = new ArrayList<>(sharedElementNames.keySet());
 
@@ -386,9 +382,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                 View view = fromSharedElements.get(name);
                 if (view == null) {
                     sharedElementNames.remove(name);
-                } else if (!name.equals(view.getTransitionName())) {
+                } else if (!name.equals(ViewCompat.getTransitionName(view))) {
                     String targetValue = sharedElementNames.remove(name);
-                    sharedElementNames.put(view.getTransitionName(), targetValue);
+                    sharedElementNames.put(ViewCompat.getTransitionName(view), targetValue);
                 }
             }
         } else {
@@ -418,7 +414,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         if (view.getVisibility() == View.VISIBLE) {
             if (view instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) view;
-                if (viewGroup.isTransitionGroup()) {
+                if (ViewGroupCompat.isTransitionGroup(viewGroup)) {
                     transitioningViews.add(viewGroup);
                 } else {
                     int count = viewGroup.getChildCount();
@@ -437,17 +433,17 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                                        @Nullable final Transition enterTransition, @Nullable final List<View> enteringViews,
                                        @Nullable final Transition exitTransition, @Nullable final List<View> exitingViews,
                                        @Nullable final Transition sharedElementTransition, @Nullable final List<View> toSharedElements) {
-        overallTransition.addListener(new TransitionListener() {
+        overallTransition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
                 if (enterTransition != null && enteringViews != null) {
-                    LegacyTransitionUtils.replaceTargets(enterTransition, enteringViews, null);
+                    TransitionUtils.replaceTargets(enterTransition, enteringViews, null);
                 }
                 if (exitTransition != null && exitingViews != null) {
-                    LegacyTransitionUtils.replaceTargets(exitTransition, exitingViews, null);
+                    TransitionUtils.replaceTargets(exitTransition, exitingViews, null);
                 }
                 if (sharedElementTransition != null && toSharedElements != null) {
-                    LegacyTransitionUtils.replaceTargets(sharedElementTransition, toSharedElements, null);
+                    TransitionUtils.replaceTargets(sharedElementTransition, toSharedElements, null);
                 }
             }
 
@@ -472,10 +468,10 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                 final int numSharedElements = toSharedElements.size();
                 for (int i = 0; i < numSharedElements; i++) {
                     View view = toSharedElements.get(i);
-                    String name = view.getTransitionName();
+                    String name = ViewCompat.getTransitionName(view);
                     if (name != null) {
                         String inName = findKeyForValue(sharedElementNames, name);
-                        view.setTransitionName(inName);
+                        ViewCompat.setTransitionName(view, inName);
                     }
                 }
             }
@@ -489,9 +485,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                 final int numSharedElements = toSharedElements.size();
                 for (int i = 0; i < numSharedElements; i++) {
                     final View view = toSharedElements.get(i);
-                    final String name = view.getTransitionName();
+                    final String name = ViewCompat.getTransitionName(view);
                     final String inName = sharedElementNames.get(name);
-                    view.setTransitionName(inName);
+                    ViewCompat.setTransitionName(view, inName);
                 }
             }
         });
@@ -575,7 +571,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
      * @param toName The transition name used in the "to" view
      */
     protected final void addSharedElement(@NonNull View sharedElement, @NonNull String toName) {
-        String transitionName = sharedElement.getTransitionName();
+        String transitionName = ViewCompat.getTransitionName(sharedElement);
         if (transitionName == null) {
             throw new IllegalArgumentException("Unique transitionNames are required for all sharedElements");
         }

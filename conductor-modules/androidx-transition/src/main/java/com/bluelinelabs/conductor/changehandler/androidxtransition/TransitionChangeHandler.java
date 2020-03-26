@@ -1,29 +1,19 @@
-package com.bluelinelabs.conductor.changehandler;
+package com.bluelinelabs.conductor.changehandler.androidxtransition;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.transition.Transition;
-import android.transition.Transition.TransitionListener;
-import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.ControllerChangeHandler;
 
 /**
- * A base {@link ControllerChangeHandler} that facilitates using {@link android.transition.Transition}s to replace Controller Views.
- *
- * @deprecated Transitions are backported via
- * <a href="https://developer.android.com/jetpack/androidx/releases/transition">AndroidX</a>.
- * They have the same API, but are preferred to the built-in framework transitions as they fix
- * platform-specific bugs, and even work on versions older than 5.0.
- * The {@code androidx-transition} module provides an equivalent {@link ControllerChangeHandler}.
+ * A base {@link ControllerChangeHandler} that facilitates using {@link Transition}s to replace Controller Views.
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-@Deprecated
 public abstract class TransitionChangeHandler extends ControllerChangeHandler {
 
     public interface OnTransitionPreparedListener {
@@ -82,7 +72,7 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
         };
 
         final Transition transition = getTransition(container, from, to, isPush);
-        transition.addListener(new TransitionListener() {
+        transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
                 container.removeCallbacks(onTransitionNotStarted);
