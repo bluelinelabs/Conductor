@@ -41,4 +41,7 @@ public final class Conductor {
         return router;
     }
 
+    public static void setControllerFactory(@NonNull ControllerFactory factory) {
+        Controller.FACTORY = factory;
+    }
 }
