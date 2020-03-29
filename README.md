@@ -34,6 +34,9 @@ implementation 'com.bluelinelabs:conductor-rxlifecycle:3.0.0-rc3'
 // If you want RxJava2 lifecycle support:
 implementation 'com.bluelinelabs:conductor-rxlifecycle2:3.0.0-rc3'
 
+// If you want RxJava2 AndroidX lifecycle support:
+implementation 'com.bluelinelabs:conductor-rxlifecycle3:2.1.5'
+
 // If you want RxJava2 Autodispose support:
 implementation 'com.bluelinelabs:conductor-autodispose:3.0.0-rc3'
 
