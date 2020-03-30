@@ -10,6 +10,7 @@ android {
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         consumerProguardFiles 'proguard-rules.txt'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 
@@ -20,6 +21,9 @@ configurations {
 dependencies {
     testImplementation rootProject.ext.junit
     testImplementation rootProject.ext.roboelectric
+    androidTestImplementation rootProject.ext.junit
+    androidTestImplementation rootProject.ext.androidxTestRules
+    androidTestImplementation rootProject.ext.espressoCore
 
     api rootProject.ext.androidxAnnotations
     api kotlinStd
