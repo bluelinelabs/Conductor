@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME
+    }
+}
+
+dependencies {
+    implementation project(':conductor')
+}
+
+ext.artifactId = 'conductor-android-transition'
+
+apply from: rootProject.file('dependencies.gradle')
+apply from: rootProject.file('gradle-mvn-push.gradle')

@@ -1,6 +1,13 @@
-package com.bluelinelabs.conductor.changehandler.androidxtransition;
+package com.bluelinelabs.conductor.changehandler.transition_platform;
 
+import android.annotation.TargetApi;
+import android.app.SharedElementCallback;
 import android.graphics.Rect;
+import android.os.Build;
+import android.transition.Transition;
+import android.transition.Transition.TransitionListener;
+import android.transition.TransitionSet;
+import android.util.ArrayMap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -8,12 +15,6 @@ import android.view.ViewTreeObserver.OnPreDrawListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.collection.ArrayMap;
-import androidx.core.app.SharedElementCallback;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.ViewGroupCompat;
-import androidx.transition.Transition;
-import androidx.transition.TransitionSet;
 
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.ControllerChangeHandler;
@@ -25,8 +26,12 @@ import java.util.List;
 /**
  * A TransitionChangeHandler that facilitates using different Transitions for the entering view, the exiting view,
  * and shared elements between the two.
+ * <p/>
+ * Note that this class uses Android's <b>platform</b> {@link Transition}. If you're using androidx transitions, consider
+ * using the {@code SharedElementTransitionChangeHandler} provided by the {@code androidx-transitions} Conductor module.
  */
 // Much of this class is based on FragmentTransition.java and FragmentTransitionCompat21.java from the Android support library
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public abstract class SharedElementTransitionChangeHandler extends TransitionChangeHandler {
 
     // A map of from -> to names. Generally these will be the same.
@@ -59,12 +64,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
 
     @Override
     public void prepareForTransition(@NonNull final ViewGroup container, @Nullable final View from, @Nullable final View to, @NonNull final Transition transition, final boolean isPush, @NonNull final OnTransitionPreparedListener onTransitionPreparedListener) {
-        OnTransitionPreparedListener listener = new OnTransitionPreparedListener() {
-            @Override
-            public void onPrepared() {
-                configureTransition(container, from, to, transition, isPush);
-                onTransitionPreparedListener.onPrepared();
-            }
+        OnTransitionPreparedListener listener = () -> {
+            configureTransition(container, from, to, transition, isPush);
+            onTransitionPreparedListener.onPrepared();
         };
 
         configureSharedElements(container, from, to, isPush);
@@ -97,6 +99,13 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         super.onAbortPush(newHandler, newTop);
 
         removedViews.clear();
+    }
+
+    @Override
+    protected void onEnd() {
+        exitTransition = null;
+        enterTransition = null;
+        sharedElementTransition = null;
     }
 
     void configureTransition(@NonNull final ViewGroup container, @Nullable View from, @Nullable View to, @NonNull final Transition transition, boolean isPush) {
@@ -156,19 +165,16 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
 
     void waitOnChildTransitionNames(@NonNull final View to, @NonNull List<View> foundViews, @NonNull final OnPreDrawListener parentPreDrawListener, @NonNull final OnTransitionPreparedListener onTransitionPreparedListener) {
         for (final View view : foundViews) {
-            OneShotPreDrawListener.add(true, view, new Runnable() {
-                @Override
-                public void run() {
-                    waitForTransitionNames.remove(ViewCompat.getTransitionName(view));
+            OneShotPreDrawListener.add(true, view, () -> {
+                waitForTransitionNames.remove(view.getTransitionName());
 
-                    removedViews.add(new ViewParentPair(view, (ViewGroup)view.getParent()));
-                    ((ViewGroup)view.getParent()).removeView(view);
+                removedViews.add(new ViewParentPair(view, (ViewGroup) view.getParent()));
+                ((ViewGroup) view.getParent()).removeView(view);
 
-                    if (waitForTransitionNames.size() == 0) {
-                        to.getViewTreeObserver().removeOnPreDrawListener(parentPreDrawListener);
-                        to.setVisibility(View.INVISIBLE);
-                        onTransitionPreparedListener.onPrepared();
-                    }
+                if (waitForTransitionNames.size() == 0) {
+                    to.getViewTreeObserver().removeOnPreDrawListener(parentPreDrawListener);
+                    to.setVisibility(View.INVISIBLE);
+                    onTransitionPreparedListener.onPrepared();
                 }
             });
         }
@@ -176,24 +182,21 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
 
     private void scheduleTargetChange(@NonNull final ViewGroup container, @Nullable final View to, @NonNull final View nonExistentView,
                                       @NonNull final List<View> toSharedElements, @NonNull final List<View> enteringViews, @Nullable final List<View> exitingViews) {
-        OneShotPreDrawListener.add(true, container, new Runnable() {
-            @Override
-            public void run() {
-                if (enterTransition != null) {
-                    enterTransition.removeTarget(nonExistentView);
-                    List<View> views = configureEnteringExitingViews(enterTransition, to, toSharedElements, nonExistentView);
-                    enteringViews.addAll(views);
-                }
+        OneShotPreDrawListener.add(true, container, () -> {
+            if (enterTransition != null) {
+                enterTransition.removeTarget(nonExistentView);
+                List<View> views = configureEnteringExitingViews(enterTransition, to, toSharedElements, nonExistentView);
+                enteringViews.addAll(views);
+            }
 
-                if (exitingViews != null) {
-                    if (exitTransition != null) {
-                        List<View> tempExiting = new ArrayList<>();
-                        tempExiting.add(nonExistentView);
-                        TransitionUtils.replaceTargets(exitTransition, exitingViews, tempExiting);
-                    }
-                    exitingViews.clear();
-                    exitingViews.add(nonExistentView);
+            if (exitingViews != null) {
+                if (exitTransition != null) {
+                    List<View> tempExiting = new ArrayList<>();
+                    tempExiting.add(nonExistentView);
+                    TransitionUtils.replaceTargets(exitTransition, exitingViews, tempExiting);
                 }
+                exitingViews.clear();
+                exitingViews.add(nonExistentView);
             }
         });
     }
@@ -263,26 +266,23 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
             toEpicenter = null;
         }
 
-        OneShotPreDrawListener.add(true, container, new Runnable() {
-            @Override
-            public void run() {
-                ArrayMap<String, View> capturedToSharedElements = captureToSharedElements(to, isPush);
+        OneShotPreDrawListener.add(true, container, () -> {
+            ArrayMap<String, View> capturedToSharedElements = captureToSharedElements(to, isPush);
 
-                if (capturedToSharedElements != null) {
-                    toSharedElements.addAll(capturedToSharedElements.values());
-                    toSharedElements.add(nonExistentView);
-                }
+            if (capturedToSharedElements != null) {
+                toSharedElements.addAll(capturedToSharedElements.values());
+                toSharedElements.add(nonExistentView);
+            }
 
-                callSharedElementStartEnd(capturedToSharedElements, false);
-                if (sharedElementTransition != null) {
-                    sharedElementTransition.getTargets().clear();
-                    sharedElementTransition.getTargets().addAll(toSharedElements);
-                    TransitionUtils.replaceTargets(sharedElementTransition, fromSharedElements, toSharedElements);
+            callSharedElementStartEnd(capturedToSharedElements, false);
+            if (sharedElementTransition != null) {
+                sharedElementTransition.getTargets().clear();
+                sharedElementTransition.getTargets().addAll(toSharedElements);
+                TransitionUtils.replaceTargets(sharedElementTransition, fromSharedElements, toSharedElements);
 
-                    final View toEpicenterView = getToEpicenterView(capturedToSharedElements);
-                    if (toEpicenterView != null && toEpicenter != null) {
-                        TransitionUtils.getBoundsOnScreen(toEpicenterView, toEpicenter);
-                    }
+                final View toEpicenterView = getToEpicenterView(capturedToSharedElements);
+                if (toEpicenterView != null && toEpicenter != null) {
+                    TransitionUtils.getBoundsOnScreen(toEpicenterView, toEpicenter);
                 }
             }
         });
@@ -318,7 +318,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         final ArrayMap<String, View> toSharedElements = new ArrayMap<>();
         TransitionUtils.findNamedViews(toSharedElements, to);
         for (ViewParentPair removedView : removedViews) {
-            toSharedElements.put(ViewCompat.getTransitionName(removedView.view), removedView.view);
+            toSharedElements.put(removedView.view.getTransitionName(), removedView.view);
         }
 
         final List<String> names = new ArrayList<>(sharedElementNames.values());
@@ -334,10 +334,10 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                     if (key != null) {
                         sharedElementNames.remove(key);
                     }
-                } else if (!name.equals(ViewCompat.getTransitionName(view))) {
+                } else if (!name.equals(view.getTransitionName())) {
                     String key = findKeyForValue(sharedElementNames, name);
                     if (key != null) {
-                        sharedElementNames.put(key, ViewCompat.getTransitionName(view));
+                        sharedElementNames.put(key, view.getTransitionName());
                     }
                 }
             }
@@ -382,9 +382,9 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                 View view = fromSharedElements.get(name);
                 if (view == null) {
                     sharedElementNames.remove(name);
-                } else if (!name.equals(ViewCompat.getTransitionName(view))) {
+                } else if (!name.equals(view.getTransitionName())) {
                     String targetValue = sharedElementNames.remove(name);
-                    sharedElementNames.put(ViewCompat.getTransitionName(view), targetValue);
+                    sharedElementNames.put(view.getTransitionName(), targetValue);
                 }
             }
         } else {
@@ -414,7 +414,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         if (view.getVisibility() == View.VISIBLE) {
             if (view instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) view;
-                if (ViewGroupCompat.isTransitionGroup(viewGroup)) {
+                if (viewGroup.isTransitionGroup()) {
                     transitioningViews.add(viewGroup);
                 } else {
                     int count = viewGroup.getChildCount();
@@ -433,7 +433,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
                                        @Nullable final Transition enterTransition, @Nullable final List<View> enteringViews,
                                        @Nullable final Transition exitTransition, @Nullable final List<View> exitingViews,
                                        @Nullable final Transition sharedElementTransition, @Nullable final List<View> toSharedElements) {
-        overallTransition.addListener(new Transition.TransitionListener() {
+        overallTransition.addListener(new TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
                 if (enterTransition != null && enteringViews != null) {
@@ -462,33 +462,27 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
     }
 
     private void setNameOverrides(@NonNull final View container, @NonNull final List<View> toSharedElements) {
-        OneShotPreDrawListener.add(true, container, new Runnable() {
-            @Override
-            public void run() {
-                final int numSharedElements = toSharedElements.size();
-                for (int i = 0; i < numSharedElements; i++) {
-                    View view = toSharedElements.get(i);
-                    String name = ViewCompat.getTransitionName(view);
-                    if (name != null) {
-                        String inName = findKeyForValue(sharedElementNames, name);
-                        ViewCompat.setTransitionName(view, inName);
-                    }
+        OneShotPreDrawListener.add(true, container, () -> {
+            final int numSharedElements = toSharedElements.size();
+            for (int i = 0; i < numSharedElements; i++) {
+                View view = toSharedElements.get(i);
+                String name = view.getTransitionName();
+                if (name != null) {
+                    String inName = findKeyForValue(sharedElementNames, name);
+                    view.setTransitionName(inName);
                 }
             }
         });
     }
 
     private void scheduleNameReset(@NonNull final ViewGroup container, @NonNull final List<View> toSharedElements) {
-        OneShotPreDrawListener.add(true, container, new Runnable() {
-            @Override
-            public void run() {
-                final int numSharedElements = toSharedElements.size();
-                for (int i = 0; i < numSharedElements; i++) {
-                    final View view = toSharedElements.get(i);
-                    final String name = ViewCompat.getTransitionName(view);
-                    final String inName = sharedElementNames.get(name);
-                    ViewCompat.setTransitionName(view, inName);
-                }
+        OneShotPreDrawListener.add(true, container, () -> {
+            final int numSharedElements = toSharedElements.size();
+            for (int i = 0; i < numSharedElements; i++) {
+                final View view = toSharedElements.get(i);
+                final String name = view.getTransitionName();
+                final String inName = sharedElementNames.get(name);
+                view.setTransitionName(inName);
             }
         });
     }
@@ -571,7 +565,7 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
      * @param toName The transition name used in the "to" view
      */
     protected final void addSharedElement(@NonNull View sharedElement, @NonNull String toName) {
-        String transitionName = ViewCompat.getTransitionName(sharedElement);
+        String transitionName = sharedElement.getTransitionName();
         if (transitionName == null) {
             throw new IllegalArgumentException("Unique transitionNames are required for all sharedElements");
         }

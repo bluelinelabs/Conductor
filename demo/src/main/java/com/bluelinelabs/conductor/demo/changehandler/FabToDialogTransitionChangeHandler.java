@@ -10,7 +10,7 @@ import androidx.transition.TransitionSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bluelinelabs.conductor.changehandler.androidxtransition.TransitionChangeHandler;
+import com.bluelinelabs.conductor.changehandler.transition_androidx.TransitionChangeHandler;
 import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.changehandler.transitions.FabTransform;
 import com.bluelinelabs.conductor.demo.util.AnimUtils;

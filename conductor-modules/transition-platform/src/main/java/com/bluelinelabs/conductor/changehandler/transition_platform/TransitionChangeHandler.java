@@ -1,19 +1,26 @@
-package com.bluelinelabs.conductor.changehandler.androidxtransition;
+package com.bluelinelabs.conductor.changehandler.transition_platform;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+import android.transition.Transition;
+import android.transition.Transition.TransitionListener;
+import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.transition.Transition;
-import androidx.transition.TransitionManager;
 
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.ControllerChangeHandler;
 
 /**
  * A base {@link ControllerChangeHandler} that facilitates using {@link Transition}s to replace Controller Views.
+ * <p/>
+ * Note that this class uses Android's <b>platform</b> {@link Transition}. If you're using androidx transitions, consider
+ * using the {@code TransitionChangeHandler} provided by the {@code androidx-transitions} Conductor module.
  */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public abstract class TransitionChangeHandler extends ControllerChangeHandler {
 
     public interface OnTransitionPreparedListener {
@@ -64,15 +71,10 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
             return;
         }
 
-        final Runnable onTransitionNotStarted = new Runnable() {
-            @Override
-            public void run() {
-                changeListener.onChangeCompleted();
-            }
-        };
+        final Runnable onTransitionNotStarted = changeListener::onChangeCompleted;
 
         final Transition transition = getTransition(container, from, to, isPush);
-        transition.addListener(new Transition.TransitionListener() {
+        transition.addListener(new TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
                 container.removeCallbacks(onTransitionNotStarted);
@@ -97,14 +99,11 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
             public void onTransitionResume(Transition transition) { }
         });
 
-        prepareForTransition(container, from, to, transition, isPush, new OnTransitionPreparedListener() {
-            @Override
-            public void onPrepared() {
-                if (!canceled) {
-                    TransitionManager.beginDelayedTransition(container, transition);
-                    executePropertyChanges(container, from, to, transition, isPush);
-                    container.post(onTransitionNotStarted);
-                }
+        prepareForTransition(container, from, to, transition, isPush, () -> {
+            if (!canceled) {
+                TransitionManager.beginDelayedTransition(container, transition);
+                executePropertyChanges(container, from, to, transition, isPush);
+                container.post(onTransitionNotStarted);
             }
         });
     }
