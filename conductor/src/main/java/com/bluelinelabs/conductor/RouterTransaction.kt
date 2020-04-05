@@ -10,6 +10,7 @@ private const val KEY_VIEW_CONTROLLER_BUNDLE = "RouterTransaction.controller.bun
 private const val KEY_PUSH_TRANSITION = "RouterTransaction.pushControllerChangeHandler"
 private const val KEY_POP_TRANSITION = "RouterTransaction.popControllerChangeHandler"
 private const val KEY_TAG = "RouterTransaction.tag"
+private const val KEY_IS_DETAIL = "RouterTransaction.isDetail"
 private const val KEY_INDEX = "RouterTransaction.transactionIndex"
 private const val KEY_ATTACHED_TO_ROUTER = "RouterTransaction.attachedToRouter"
 
@@ -24,6 +25,7 @@ private constructor(
   private var pushControllerChangeHandler: ControllerChangeHandler? = null,
   private var popControllerChangeHandler: ControllerChangeHandler? = null,
   private var attachedToRouter: Boolean = false,
+  private var isDetail: Boolean = false,
   @RestrictTo(LIBRARY)
   var transactionIndex: Int = INVALID_INDEX
 ) {
@@ -43,6 +45,7 @@ private constructor(
       )
     ),
     tag = bundle.getString(KEY_TAG),
+    isDetail = bundle.getBoolean(KEY_IS_DETAIL),
     transactionIndex = bundle.getInt(KEY_INDEX),
     attachedToRouter = bundle.getBoolean(KEY_ATTACHED_TO_ROUTER)
   )
@@ -60,6 +63,16 @@ private constructor(
     } else {
       throw RuntimeException(javaClass.simpleName + "s can not be modified after being added to a Router.")
     }
+  }
+
+  fun isDetail(isDetail: Boolean): RouterTransaction {
+    this.isDetail = isDetail
+    this.controller.isDetail = isDetail
+    return this
+  }
+
+  fun isDetail(): Boolean {
+    return isDetail
   }
 
   fun pushChangeHandler(): ControllerChangeHandler? {
@@ -102,6 +115,7 @@ private constructor(
     pushControllerChangeHandler?.let { putBundle(KEY_PUSH_TRANSITION, it.toBundle()) }
     popControllerChangeHandler?.let { putBundle(KEY_POP_TRANSITION, it.toBundle()) }
     putString(KEY_TAG, tag)
+    putBoolean(KEY_IS_DETAIL, isDetail)
     putInt(KEY_INDEX, transactionIndex)
     putBoolean(KEY_ATTACHED_TO_ROUTER, attachedToRouter)
   }

@@ -51,6 +51,7 @@ public abstract class Controller {
     private static final String KEY_TARGET_INSTANCE_ID = "Controller.target.instanceId";
     private static final String KEY_ARGS = "Controller.args";
     private static final String KEY_NEEDS_ATTACH = "Controller.needsAttach";
+    private static final String KEY_IS_DETAIL = "Controller.isDetail";
     private static final String KEY_REQUESTED_PERMISSIONS = "Controller.requestedPermissions";
     private static final String KEY_OVERRIDDEN_PUSH_HANDLER = "Controller.overriddenPushHandler";
     private static final String KEY_OVERRIDDEN_POP_HANDLER = "Controller.overriddenPopHandler";
@@ -79,6 +80,7 @@ public abstract class Controller {
     private boolean awaitingParentAttach;
     private boolean hasSavedViewState;
     boolean isDetachFrozen;
+    boolean isDetail;
     private ControllerChangeHandler overriddenPushHandler;
     private ControllerChangeHandler overriddenPopHandler;
     private RetainViewMode retainViewMode = RetainViewMode.RELEASE_DETACH;
@@ -159,10 +161,21 @@ public abstract class Controller {
     protected abstract View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState);
 
     /**
-     * Returns the {@link Router} object that can be used for pushing or popping other Controllers
+     * Returns the {@link Router} object that can be used for pushing or popping other Controllers.
+     * NOTE: If this Controller is pushed to {@link MasterDetailController},
+     * method will return either {@link MasterDetailController#getMasterRouter()} or
+     * {@link MasterDetailController#getDetailRouter()}
      */
     public final Router getRouter() {
-        return router;
+        if (getMasterDetailController() != null) {
+            if (isDetail) {
+                return getMasterDetailController().getDetailRouter();
+            } else {
+                return getMasterDetailController().getMasterRouter();
+            }
+        } else {
+            return router;
+        }
     }
 
     /**
@@ -274,6 +287,13 @@ public abstract class Controller {
     }
 
     /**
+     * Returns whether or not this Controller is currently shown in master/detail as detail.
+     */
+    public final boolean isDetail() {
+        return isDetail;
+    }
+
+    /**
      * Return this Controller's View or {@code null} if it has not yet been created or has been
      * destroyed.
      */
@@ -318,6 +338,17 @@ public abstract class Controller {
     @Nullable
     public final Controller getParentController() {
         return parentController;
+    }
+
+    /**
+     * Returns this Controller's parent master/details Controller or {@code null} if
+     * it has no parent or parent is not a master/detail Controller.
+     */
+    @Nullable
+    public final MasterDetailController getMasterDetailController() {
+        return parentController instanceof MasterDetailController
+                ? (MasterDetailController) parentController
+                : null;
     }
 
     /**
@@ -614,7 +645,7 @@ public abstract class Controller {
         for (RouterTransaction transaction : childTransactions) {
             Controller childController = transaction.controller();
 
-            if (childController.isAttached() && childController.getRouter().handleBack()) {
+            if (childController.isAttached() && childController.router.handleBack()) {
                 return true;
             }
         }
@@ -1069,7 +1100,7 @@ public abstract class Controller {
             if (!childRouter.hasHost()) {
                 View containerView = view.findViewById(childRouter.getHostId());
 
-                if (containerView != null && containerView instanceof ViewGroup) {
+                if (containerView instanceof ViewGroup) {
                     childRouter.setHost(this, (ViewGroup) containerView);
                     childRouter.rebindIfNeeded();
                 }
@@ -1182,6 +1213,7 @@ public abstract class Controller {
         outState.putString(KEY_TARGET_INSTANCE_ID, targetInstanceId);
         outState.putStringArrayList(KEY_REQUESTED_PERMISSIONS, requestedPermissions);
         outState.putBoolean(KEY_NEEDS_ATTACH, needsAttach || attached);
+        outState.putBoolean(KEY_IS_DETAIL, isDetail);
         outState.putInt(KEY_RETAIN_VIEW_MODE, retainViewMode.ordinal());
 
         if (overriddenPushHandler != null) {
@@ -1224,6 +1256,7 @@ public abstract class Controller {
         overriddenPushHandler = ControllerChangeHandler.fromBundle(savedInstanceState.getBundle(KEY_OVERRIDDEN_PUSH_HANDLER));
         overriddenPopHandler = ControllerChangeHandler.fromBundle(savedInstanceState.getBundle(KEY_OVERRIDDEN_POP_HANDLER));
         needsAttach = savedInstanceState.getBoolean(KEY_NEEDS_ATTACH);
+        isDetail = savedInstanceState.getBoolean(KEY_IS_DETAIL);
         retainViewMode = RetainViewMode.values()[savedInstanceState.getInt(KEY_RETAIN_VIEW_MODE, 0)];
 
         List<Bundle> childBundles = savedInstanceState.getParcelableArrayList(KEY_CHILD_ROUTERS);

@@ -35,6 +35,7 @@ public abstract class Router {
 
     private static final String KEY_BACKSTACK = "Router.backstack";
     private static final String KEY_POPS_LAST_VIEW = "Router.popsLastView";
+    private static final String KEY_IS_DETAIL = "Router.isDetail";
 
     final Backstack backstack = new Backstack();
     private final List<ControllerChangeListener> changeListeners = new ArrayList<>();
@@ -44,6 +45,7 @@ public abstract class Router {
     private boolean popsLastView = false;
     boolean containerFullyAttached = false;
     boolean isActivityStopped = false;
+    boolean isDetail = false;
 
     ViewGroup container;
 
@@ -409,6 +411,7 @@ public abstract class Router {
         removeAllExceptVisibleAndUnowned();
         ensureOrderedTransactionIndices(newBackstack);
         ensureNoDuplicateControllers(newBackstack);
+        updateIsDetail(newBackstack);
 
         backstack.setBackstack(newBackstack);
 
@@ -422,7 +425,7 @@ public abstract class Router {
                 }
             }
 
-            if (!contains) {
+            if (!contains && oldTransaction.controller().router == this) {
                 // Inform the controller that it will be destroyed soon
                 oldTransaction.controller().isBeingDestroyed = true;
                 transactionsToBeRemoved.add(oldTransaction);
@@ -647,6 +650,7 @@ public abstract class Router {
 
         outState.putParcelable(KEY_BACKSTACK, backstackState);
         outState.putBoolean(KEY_POPS_LAST_VIEW, popsLastView);
+        outState.putBoolean(KEY_IS_DETAIL, isDetail);
     }
 
     public void restoreInstanceState(@NonNull Bundle savedInstanceState) {
@@ -654,6 +658,7 @@ public abstract class Router {
         //noinspection ConstantConditions
         backstack.restoreInstanceState(backstackBundle);
         popsLastView = savedInstanceState.getBoolean(KEY_POPS_LAST_VIEW);
+        isDetail = savedInstanceState.getBoolean(KEY_IS_DETAIL);
 
         Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
         while (backstackIterator.hasNext()) {
@@ -696,7 +701,7 @@ public abstract class Router {
         return false;
     }
 
-    private void popToTransaction(@NonNull RouterTransaction transaction, @Nullable ControllerChangeHandler changeHandler) {
+    void popToTransaction(@NonNull RouterTransaction transaction, @Nullable ControllerChangeHandler changeHandler) {
         if (backstack.size() > 0) {
             RouterTransaction topTransaction = backstack.peek();
 
@@ -774,7 +779,7 @@ public abstract class Router {
             changeHandler = null;
         }
 
-        performControllerChange(to, from, isPush, changeHandler);
+        performControllerChange(to, from, isPush, validateChangeHandler(to, from, isPush, changeHandler));
     }
 
     private void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush, @Nullable ControllerChangeHandler changeHandler) {
@@ -835,6 +840,25 @@ public abstract class Router {
         }
     }
 
+    @Nullable
+    private ControllerChangeHandler validateChangeHandler(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush, @Nullable ControllerChangeHandler changeHandler) {
+        if (changeHandler == null && to != null && from != null && to.isDetail() != from.isDetail()) {
+            // It looks like we are in the master/detail controller being in the single-pane mode
+            // and there is a transition between master and detail routers.
+            MasterDetailController masterDetailController = to.controller().getMasterDetailController();
+            if (masterDetailController != null) {
+                if (isPush && !from.isDetail() && to.isDetail()) {
+                    // Root detail controller is pushed to the master router.
+                    return masterDetailController.getRootDetailPushHandler();
+                } else if (!isPush && from.isDetail() && !to.isDetail()) {
+                    // Root detail controller is popped out of the master router.
+                    return masterDetailController.getRootDetailPopHandler();
+                }
+            }
+        }
+        return changeHandler;
+    }
+
     void performPendingControllerChanges() {
         // We're intentionally using dynamic size checking (list.size()) here so we can account for changes
         // that occur during this loop (ex: if a controller is popped from within onAttach)
@@ -848,6 +872,7 @@ public abstract class Router {
         if (backstack.contains(entry.controller())) {
             throw new IllegalStateException("Trying to push a controller that already exists on the backstack.");
         }
+        updateIsDetail(entry);
         backstack.push(entry);
     }
 
@@ -918,6 +943,21 @@ public abstract class Router {
                     throw new IllegalStateException("Trying to push the same controller to the backstack more than once.");
                 }
             }
+        }
+    }
+
+    private void updateIsDetail(List<RouterTransaction> transactions) {
+        for (RouterTransaction transaction : transactions) {
+            updateIsDetail(transaction);
+        }
+    }
+
+    private void updateIsDetail(RouterTransaction transaction) {
+        // Router can only set transaction isDetail to TRUE and never to FALSE
+        // because transactions can be moved from router to router.
+        // Once isDetail is set to TRUE it must be persisted.
+        if (isDetail) {
+            transaction.isDetail(true);
         }
     }
 

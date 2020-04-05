@@ -1,6 +1,8 @@
 package com.bluelinelabs.conductor.util;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+
 import androidx.annotation.IdRes;
 
 import org.robolectric.Robolectric;
@@ -67,8 +69,14 @@ public class ActivityProxy {
     }
 
     public ActivityProxy rotate() {
+        Configuration configuration = getActivity().getResources().getConfiguration();
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            configuration.orientation = Configuration.ORIENTATION_PORTRAIT;
+        } else {
+            configuration.orientation = Configuration.ORIENTATION_LANDSCAPE;
+        }
         getActivity().isChangingConfigurations = true;
-        getActivity().recreate();
+        activityController.configurationChange(configuration);
         return this;
     }
 

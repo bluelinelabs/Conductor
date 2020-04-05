@@ -39,12 +39,12 @@ public class RouterChangeHandlerTests {
         TestController rootController = new TestController();
         router.setRoot(RouterTransaction.with(rootController).pushChangeHandler(handler));
 
-        assertTrue(rootController.changeHandlerHistory.isValidHistory);
-        assertNull(rootController.changeHandlerHistory.latestFromView());
-        assertNotNull(rootController.changeHandlerHistory.latestToView());
-        assertEquals(rootController.getView(), rootController.changeHandlerHistory.latestToView());
-        assertTrue(rootController.changeHandlerHistory.latestIsPush());
-        assertEquals(handler.tag, rootController.changeHandlerHistory.latestChangeHandler().tag);
+        assertTrue(rootController.changeHandlerHistory().isValidHistory);
+        assertNull(rootController.changeHandlerHistory().latestFromView());
+        assertNotNull(rootController.changeHandlerHistory().latestToView());
+        assertEquals(rootController.getView(), rootController.changeHandlerHistory().latestToView());
+        assertTrue(rootController.changeHandlerHistory().latestIsPush());
+        assertEquals(handler.tag, rootController.changeHandlerHistory().latestChangeHandler().tag);
     }
 
     @Test
@@ -58,25 +58,25 @@ public class RouterChangeHandlerTests {
         TestController pushController = new TestController();
         router.pushController(RouterTransaction.with(pushController).pushChangeHandler(pushHandler).popChangeHandler(popHandler));
 
-        assertTrue(rootController.changeHandlerHistory.isValidHistory);
-        assertTrue(pushController.changeHandlerHistory.isValidHistory);
+        assertTrue(rootController.changeHandlerHistory().isValidHistory);
+        assertTrue(pushController.changeHandlerHistory().isValidHistory);
 
-        assertNotNull(pushController.changeHandlerHistory.latestFromView());
-        assertNotNull(pushController.changeHandlerHistory.latestToView());
-        assertEquals(rootView, pushController.changeHandlerHistory.latestFromView());
-        assertEquals(pushController.getView(), pushController.changeHandlerHistory.latestToView());
-        assertTrue(pushController.changeHandlerHistory.latestIsPush());
-        assertEquals(pushHandler.tag, pushController.changeHandlerHistory.latestChangeHandler().tag);
+        assertNotNull(pushController.changeHandlerHistory().latestFromView());
+        assertNotNull(pushController.changeHandlerHistory().latestToView());
+        assertEquals(rootView, pushController.changeHandlerHistory().latestFromView());
+        assertEquals(pushController.getView(), pushController.changeHandlerHistory().latestToView());
+        assertTrue(pushController.changeHandlerHistory().latestIsPush());
+        assertEquals(pushHandler.tag, pushController.changeHandlerHistory().latestChangeHandler().tag);
 
         View pushView = pushController.getView();
         router.popController(pushController);
 
-        assertNotNull(pushController.changeHandlerHistory.latestFromView());
-        assertNotNull(pushController.changeHandlerHistory.latestToView());
-        assertEquals(pushView, pushController.changeHandlerHistory.fromViewAt(1));
-        assertEquals(rootController.getView(), pushController.changeHandlerHistory.latestToView());
-        assertFalse(pushController.changeHandlerHistory.latestIsPush());
-        assertEquals(popHandler.tag, pushController.changeHandlerHistory.latestChangeHandler().tag);
+        assertNotNull(pushController.changeHandlerHistory().latestFromView());
+        assertNotNull(pushController.changeHandlerHistory().latestToView());
+        assertEquals(pushView, pushController.changeHandlerHistory().fromViewAt(1));
+        assertEquals(rootController.getView(), pushController.changeHandlerHistory().latestToView());
+        assertFalse(pushController.changeHandlerHistory().latestIsPush());
+        assertEquals(popHandler.tag, pushController.changeHandlerHistory().latestChangeHandler().tag);
     }
 
     @Test
@@ -98,30 +98,30 @@ public class RouterChangeHandlerTests {
 
         router.setRoot(RouterTransaction.with(newRootController).pushChangeHandler(newRootHandler));
 
-        assertTrue(initialController1.changeHandlerHistory.isValidHistory);
-        assertTrue(initialController2.changeHandlerHistory.isValidHistory);
-        assertTrue(newRootController.changeHandlerHistory.isValidHistory);
+        assertTrue(initialController1.changeHandlerHistory().isValidHistory);
+        assertTrue(initialController2.changeHandlerHistory().isValidHistory);
+        assertTrue(newRootController.changeHandlerHistory().isValidHistory);
 
-        assertEquals(3, initialController1.changeHandlerHistory.size());
-        assertEquals(2, initialController2.changeHandlerHistory.size());
-        assertEquals(1, newRootController.changeHandlerHistory.size());
+        assertEquals(3, initialController1.changeHandlerHistory().size());
+        assertEquals(2, initialController2.changeHandlerHistory().size());
+        assertEquals(1, newRootController.changeHandlerHistory().size());
 
-        assertNotNull(initialController1.changeHandlerHistory.latestToView());
-        assertEquals(newRootController.getView(), initialController1.changeHandlerHistory.latestToView());
-        assertEquals(initialView1, initialController1.changeHandlerHistory.latestFromView());
-        assertEquals(newRootHandler.tag, initialController1.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController1.changeHandlerHistory.latestIsPush());
+        assertNotNull(initialController1.changeHandlerHistory().latestToView());
+        assertEquals(newRootController.getView(), initialController1.changeHandlerHistory().latestToView());
+        assertEquals(initialView1, initialController1.changeHandlerHistory().latestFromView());
+        assertEquals(newRootHandler.tag, initialController1.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController1.changeHandlerHistory().latestIsPush());
 
-        assertNull(initialController2.changeHandlerHistory.latestToView());
-        assertEquals(initialView2, initialController2.changeHandlerHistory.latestFromView());
-        assertEquals(newRootHandler.tag, initialController2.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController2.changeHandlerHistory.latestIsPush());
+        assertNull(initialController2.changeHandlerHistory().latestToView());
+        assertEquals(initialView2, initialController2.changeHandlerHistory().latestFromView());
+        assertEquals(newRootHandler.tag, initialController2.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController2.changeHandlerHistory().latestIsPush());
 
-        assertNotNull(newRootController.changeHandlerHistory.latestToView());
-        assertEquals(newRootController.getView(), newRootController.changeHandlerHistory.latestToView());
-        assertEquals(initialView1, newRootController.changeHandlerHistory.latestFromView());
-        assertEquals(newRootHandler.tag, newRootController.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(newRootController.changeHandlerHistory.latestIsPush());
+        assertNotNull(newRootController.changeHandlerHistory().latestToView());
+        assertEquals(newRootController.getView(), newRootController.changeHandlerHistory().latestToView());
+        assertEquals(initialView1, newRootController.changeHandlerHistory().latestFromView());
+        assertEquals(newRootHandler.tag, newRootController.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(newRootController.changeHandlerHistory().latestIsPush());
     }
 
     @Test
@@ -149,31 +149,31 @@ public class RouterChangeHandlerTests {
 
         router.setBackstack(newBackstack, setBackstackHandler);
 
-        assertTrue(initialController1.changeHandlerHistory.isValidHistory);
-        assertTrue(initialController2.changeHandlerHistory.isValidHistory);
-        assertTrue(newController1.changeHandlerHistory.isValidHistory);
+        assertTrue(initialController1.changeHandlerHistory().isValidHistory);
+        assertTrue(initialController2.changeHandlerHistory().isValidHistory);
+        assertTrue(newController1.changeHandlerHistory().isValidHistory);
 
-        assertEquals(3, initialController1.changeHandlerHistory.size());
-        assertEquals(2, initialController2.changeHandlerHistory.size());
-        assertEquals(0, newController1.changeHandlerHistory.size());
-        assertEquals(1, newController2.changeHandlerHistory.size());
+        assertEquals(3, initialController1.changeHandlerHistory().size());
+        assertEquals(2, initialController2.changeHandlerHistory().size());
+        assertEquals(0, newController1.changeHandlerHistory().size());
+        assertEquals(1, newController2.changeHandlerHistory().size());
 
-        assertNotNull(initialController1.changeHandlerHistory.latestToView());
-        assertEquals(newController2.getView(), initialController1.changeHandlerHistory.latestToView());
-        assertEquals(initialView1, initialController1.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController1.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController1.changeHandlerHistory.latestIsPush());
+        assertNotNull(initialController1.changeHandlerHistory().latestToView());
+        assertEquals(newController2.getView(), initialController1.changeHandlerHistory().latestToView());
+        assertEquals(initialView1, initialController1.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController1.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController1.changeHandlerHistory().latestIsPush());
 
-        assertNull(initialController2.changeHandlerHistory.latestToView());
-        assertEquals(initialView2, initialController2.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController2.changeHandlerHistory.latestIsPush());
+        assertNull(initialController2.changeHandlerHistory().latestToView());
+        assertEquals(initialView2, initialController2.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController2.changeHandlerHistory().latestIsPush());
 
-        assertNotNull(newController2.changeHandlerHistory.latestToView());
-        assertEquals(newController2.getView(), newController2.changeHandlerHistory.latestToView());
-        assertEquals(initialView1, newController2.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, newController2.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(newController2.changeHandlerHistory.latestIsPush());
+        assertNotNull(newController2.changeHandlerHistory().latestToView());
+        assertEquals(newController2.getView(), newController2.changeHandlerHistory().latestToView());
+        assertEquals(initialView1, newController2.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, newController2.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(newController2.changeHandlerHistory().latestIsPush());
     }
 
     @Test
@@ -201,40 +201,40 @@ public class RouterChangeHandlerTests {
 
         router.setBackstack(newBackstack, setBackstackHandler);
 
-        assertTrue(initialController1.changeHandlerHistory.isValidHistory);
-        assertTrue(initialController2.changeHandlerHistory.isValidHistory);
-        assertTrue(newController1.changeHandlerHistory.isValidHistory);
+        assertTrue(initialController1.changeHandlerHistory().isValidHistory);
+        assertTrue(initialController2.changeHandlerHistory().isValidHistory);
+        assertTrue(newController1.changeHandlerHistory().isValidHistory);
 
-        assertEquals(3, initialController1.changeHandlerHistory.size());
-        assertEquals(2, initialController2.changeHandlerHistory.size());
-        assertEquals(2, newController1.changeHandlerHistory.size());
-        assertEquals(1, newController2.changeHandlerHistory.size());
+        assertEquals(3, initialController1.changeHandlerHistory().size());
+        assertEquals(2, initialController2.changeHandlerHistory().size());
+        assertEquals(2, newController1.changeHandlerHistory().size());
+        assertEquals(1, newController2.changeHandlerHistory().size());
 
-        assertNotNull(initialController1.changeHandlerHistory.latestToView());
-        assertEquals(newController1.getView(), initialController1.changeHandlerHistory.latestToView());
-        assertEquals(initialView1, initialController1.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController1.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController1.changeHandlerHistory.latestIsPush());
+        assertNotNull(initialController1.changeHandlerHistory().latestToView());
+        assertEquals(newController1.getView(), initialController1.changeHandlerHistory().latestToView());
+        assertEquals(initialView1, initialController1.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController1.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController1.changeHandlerHistory().latestIsPush());
 
-        assertNull(initialController2.changeHandlerHistory.latestToView());
-        assertEquals(initialView2, initialController2.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController2.changeHandlerHistory.latestIsPush());
+        assertNull(initialController2.changeHandlerHistory().latestToView());
+        assertEquals(initialView2, initialController2.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController2.changeHandlerHistory().latestIsPush());
 
-        assertNotNull(newController1.changeHandlerHistory.latestToView());
-        assertEquals(newController1.getView(), newController1.changeHandlerHistory.toViewAt(0));
-        assertEquals(newController2.getView(), newController1.changeHandlerHistory.latestToView());
-        assertEquals(initialView1, newController1.changeHandlerHistory.fromViewAt(0));
-        assertEquals(newController1.getView(), newController1.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, newController1.changeHandlerHistory.changeHandlerAt(0).tag);
-        assertEquals(pushController2Handler.tag, newController1.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(newController1.changeHandlerHistory.latestIsPush());
+        assertNotNull(newController1.changeHandlerHistory().latestToView());
+        assertEquals(newController1.getView(), newController1.changeHandlerHistory().toViewAt(0));
+        assertEquals(newController2.getView(), newController1.changeHandlerHistory().latestToView());
+        assertEquals(initialView1, newController1.changeHandlerHistory().fromViewAt(0));
+        assertEquals(newController1.getView(), newController1.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, newController1.changeHandlerHistory().changeHandlerAt(0).tag);
+        assertEquals(pushController2Handler.tag, newController1.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(newController1.changeHandlerHistory().latestIsPush());
 
-        assertNotNull(newController2.changeHandlerHistory.latestToView());
-        assertEquals(newController2.getView(), newController2.changeHandlerHistory.latestToView());
-        assertEquals(newController1.getView(), newController2.changeHandlerHistory.latestFromView());
-        assertEquals(pushController2Handler.tag, newController2.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(newController2.changeHandlerHistory.latestIsPush());
+        assertNotNull(newController2.changeHandlerHistory().latestToView());
+        assertEquals(newController2.getView(), newController2.changeHandlerHistory().latestToView());
+        assertEquals(newController1.getView(), newController2.changeHandlerHistory().latestFromView());
+        assertEquals(pushController2Handler.tag, newController2.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(newController2.changeHandlerHistory().latestIsPush());
     }
 
     @Test
@@ -256,18 +256,18 @@ public class RouterChangeHandlerTests {
 
         router.setBackstack(newBackstack, setBackstackHandler);
 
-        assertTrue(initialController.changeHandlerHistory.isValidHistory);
-        assertTrue(newController.changeHandlerHistory.isValidHistory);
+        assertTrue(initialController.changeHandlerHistory().isValidHistory);
+        assertTrue(newController.changeHandlerHistory().isValidHistory);
 
-        assertEquals(2, initialController.changeHandlerHistory.size());
-        assertEquals(1, newController.changeHandlerHistory.size());
+        assertEquals(2, initialController.changeHandlerHistory().size());
+        assertEquals(1, newController.changeHandlerHistory().size());
 
-        assertNotNull(initialController.changeHandlerHistory.latestToView());
-        assertEquals(newController.getView(), initialController.changeHandlerHistory.latestToView());
-        assertEquals(initialView, initialController.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController.changeHandlerHistory.latestIsPush());
-        assertTrue(newController.changeHandlerHistory.latestIsPush());
+        assertNotNull(initialController.changeHandlerHistory().latestToView());
+        assertEquals(newController.getView(), initialController.changeHandlerHistory().latestToView());
+        assertEquals(initialView, initialController.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController.changeHandlerHistory().latestIsPush());
+        assertTrue(newController.changeHandlerHistory().latestIsPush());
     }
 
     @Test
@@ -293,21 +293,21 @@ public class RouterChangeHandlerTests {
 
         router.setBackstack(newBackstack, setBackstackHandler);
 
-        assertTrue(initialController1.changeHandlerHistory.isValidHistory);
-        assertTrue(initialController2.changeHandlerHistory.isValidHistory);
+        assertTrue(initialController1.changeHandlerHistory().isValidHistory);
+        assertTrue(initialController2.changeHandlerHistory().isValidHistory);
 
-        assertEquals(3, initialController1.changeHandlerHistory.size());
-        assertEquals(2, initialController2.changeHandlerHistory.size());
+        assertEquals(3, initialController1.changeHandlerHistory().size());
+        assertEquals(2, initialController2.changeHandlerHistory().size());
 
-        assertNotNull(initialController1.changeHandlerHistory.latestToView());
-        assertEquals(initialView2, initialController1.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController1.changeHandlerHistory.latestChangeHandler().tag);
-        assertFalse(initialController1.changeHandlerHistory.latestIsPush());
+        assertNotNull(initialController1.changeHandlerHistory().latestToView());
+        assertEquals(initialView2, initialController1.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController1.changeHandlerHistory().latestChangeHandler().tag);
+        assertFalse(initialController1.changeHandlerHistory().latestIsPush());
 
-        assertNotNull(initialController2.changeHandlerHistory.latestToView());
-        assertEquals(initialView2, initialController2.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory.latestChangeHandler().tag);
-        assertFalse(initialController2.changeHandlerHistory.latestIsPush());
+        assertNotNull(initialController2.changeHandlerHistory().latestToView());
+        assertEquals(initialView2, initialController2.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory().latestChangeHandler().tag);
+        assertFalse(initialController2.changeHandlerHistory().latestIsPush());
     }
 
     @Test
@@ -334,21 +334,21 @@ public class RouterChangeHandlerTests {
 
         router.setBackstack(newBackstack, setBackstackHandler);
 
-        assertTrue(initialController1.changeHandlerHistory.isValidHistory);
-        assertTrue(initialController2.changeHandlerHistory.isValidHistory);
+        assertTrue(initialController1.changeHandlerHistory().isValidHistory);
+        assertTrue(initialController2.changeHandlerHistory().isValidHistory);
 
-        assertEquals(2, initialController1.changeHandlerHistory.size());
-        assertEquals(2, initialController2.changeHandlerHistory.size());
+        assertEquals(2, initialController1.changeHandlerHistory().size());
+        assertEquals(2, initialController2.changeHandlerHistory().size());
 
-        assertNotNull(initialController1.changeHandlerHistory.latestToView());
-        assertEquals(initialView1, initialController1.changeHandlerHistory.latestFromView());
-        assertEquals(initialPushHandler2.tag, initialController1.changeHandlerHistory.latestChangeHandler().tag);
-        assertTrue(initialController1.changeHandlerHistory.latestIsPush());
+        assertNotNull(initialController1.changeHandlerHistory().latestToView());
+        assertEquals(initialView1, initialController1.changeHandlerHistory().latestFromView());
+        assertEquals(initialPushHandler2.tag, initialController1.changeHandlerHistory().latestChangeHandler().tag);
+        assertTrue(initialController1.changeHandlerHistory().latestIsPush());
 
-        assertNull(initialController2.changeHandlerHistory.latestToView());
-        assertEquals(initialView2, initialController2.changeHandlerHistory.latestFromView());
-        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory.latestChangeHandler().tag);
-        assertFalse(initialController2.changeHandlerHistory.latestIsPush());
+        assertNull(initialController2.changeHandlerHistory().latestToView());
+        assertEquals(initialView2, initialController2.changeHandlerHistory().latestFromView());
+        assertEquals(setBackstackHandler.tag, initialController2.changeHandlerHistory().latestChangeHandler().tag);
+        assertFalse(initialController2.changeHandlerHistory().latestIsPush());
     }
 
 }

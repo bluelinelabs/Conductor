@@ -19,6 +19,7 @@ public class ControllerTransactionTests {
     public void testRouterSaveRestore() {
         RouterTransaction transaction = RouterTransaction.with(new TestController())
                 .pushChangeHandler(new HorizontalChangeHandler())
+                .isDetail(true)
                 .popChangeHandler(new VerticalChangeHandler())
                 .tag("Test Tag");
 
@@ -30,5 +31,6 @@ public class ControllerTransactionTests {
         assertEquals(transaction.pushChangeHandler().getClass(), restoredTransaction.pushChangeHandler().getClass());
         assertEquals(transaction.popChangeHandler().getClass(), restoredTransaction.popChangeHandler().getClass());
         assertEquals(transaction.tag(), restoredTransaction.tag());
+        assertEquals(transaction.isDetail(), restoredTransaction.isDetail());
     }
 }

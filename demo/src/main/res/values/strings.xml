@@ -37,6 +37,7 @@
 
     <!-- Master/Detail Demo -->
     <string name="rotate_for_two_pane">Rotate your device for a two pane view.</string>
+    <string name="detail_pane_empty">No item selected yet!</string>
 
     <!-- Transitions -->
     <string name="fab_dialog_transition_name">transition.fab</string>

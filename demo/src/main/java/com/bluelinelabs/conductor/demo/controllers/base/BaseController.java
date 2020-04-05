@@ -30,6 +30,9 @@ public abstract class BaseController extends RefWatchingController {
     }
 
     protected void setTitle() {
+        if (isDetail()) {
+            return;
+        }
         Controller parentController = getParentController();
         while (parentController != null) {
             if (parentController instanceof BaseController && ((BaseController)parentController).getTitle() != null) {

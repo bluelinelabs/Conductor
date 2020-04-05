@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import com.bluelinelabs.conductor.util.ActivityProxy;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
+import com.bluelinelabs.conductor.util.TestMasterDetailController;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -101,6 +102,35 @@ public class TargetControllerTests {
 
         assertNull(controllerB.getTargetController());
         assertEquals(controllerB, controllerA.getTargetController());
+    }
+
+    @Test
+    public void testMasterDetailTarget() {
+        final TestMasterDetailController controller = new TestMasterDetailController();
+        final TestController controllerA = new TestController();
+        final TestController controllerB = new TestController();
+
+        assertNull(controller.getTargetController());
+        assertNull(controllerA.getTargetController());
+        assertNull(controllerB.getTargetController());
+
+        router.pushController(RouterTransaction.with(controller)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        controller.getMasterRouter().pushController(RouterTransaction.with(controllerA)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+
+        controllerB.setTargetController(controllerA);
+
+        router.pushController(RouterTransaction.with(controllerB)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        assertNull(controllerA.getTargetController());
+        assertEquals(controllerA, controllerB.getTargetController());
     }
 
 }

@@ -406,7 +406,7 @@ public class ControllerTests {
     }
 
     private void assertCalls(CallState callState, TestController controller) {
-        assertEquals("Expected call counts and controller call counts do not match.", callState, controller.currentCallState);
+        assertEquals("Expected call counts and controller call counts do not match.", callState, controller.currentCallState());
     }
 
 }

@@ -2,18 +2,21 @@ package com.bluelinelabs.conductor;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 
 import com.bluelinelabs.conductor.Controller.LifecycleListener;
 import com.bluelinelabs.conductor.Controller.RetainViewMode;
 import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
 import com.bluelinelabs.conductor.util.ActivityProxy;
 import com.bluelinelabs.conductor.util.CallState;
+import com.bluelinelabs.conductor.util.CallStateOwner;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.MockChangeHandler.ChangeHandlerListener;
 import com.bluelinelabs.conductor.util.TestController;
+import com.bluelinelabs.conductor.util.TestMasterDetailController;
 import com.bluelinelabs.conductor.util.ViewUtils;
 
 import org.junit.Before;
@@ -59,7 +62,173 @@ public class ControllerLifecycleCallbacksTests {
 
     @Test
     public void testNormalLifecycle() {
-        TestController controller = new TestController();
+        testNormalLifecycle(new TestController());
+    }
+
+    @Test
+    public void testNormalLifecycleMasterDetail() {
+        testNormalLifecycle(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityStop() {
+        testLifecycleWithActivityStop(new TestController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityStopMasterDetail() {
+        testLifecycleWithActivityStop(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityDestroy() {
+        testLifecycleWithActivityDestroy(new TestController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityDestroyMasterDetail() {
+        testLifecycleWithActivityDestroy(new TestController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityConfigurationChange() {
+        testLifecycleWithActivityConfigurationChange(new TestController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityConfigurationChangeMasterDetail() {
+        testLifecycleWithActivityConfigurationChange(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityBackground() {
+        testLifecycleWithActivityBackground(new TestController());
+    }
+
+    @Test
+    public void testLifecycleWithActivityBackgroundMasterDetail() {
+        testLifecycleWithActivityBackground(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testLifecycleCallOrder() {
+        testLifecycleCallOrder(new TestController());
+    }
+
+    @Test
+    public void testLifecycleCallOrderMasterDetail() {
+        testLifecycleCallOrder(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testChildLifecycle() {
+        Controller parent = new TestController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        testChildLifecycle(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycleMaster() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getMasterRouter();
+        testChildLifecycle(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycleDetail() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getDetailRouter();
+        testChildLifecycle(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycle2() {
+        Controller parent = new TestController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        testChildLifecycle2(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycle2Master() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getMasterRouter();
+        testChildLifecycle2(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycle2Detail() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getDetailRouter();
+        testChildLifecycle2(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycleOrderingAfterUnexpectedAttach() {
+        Controller parent = new TestController();
+        parent.setRetainViewMode(RetainViewMode.RETAIN_DETACH);
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        testChildLifecycleOrderingAfterUnexpectedAttach(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycleOrderingAfterUnexpectedAttachMaster() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        parent.setRetainViewMode(RetainViewMode.RETAIN_DETACH);
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getMasterRouter();
+        testChildLifecycleOrderingAfterUnexpectedAttach(parent, childRouter, child);
+    }
+
+    @Test
+    public void testChildLifecycleOrderingAfterUnexpectedAttachDetail() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        parent.setRetainViewMode(RetainViewMode.RETAIN_DETACH);
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getDetailRouter();
+        testChildLifecycleOrderingAfterUnexpectedAttach(parent, childRouter, child);
+    }
+
+    private void testNormalLifecycle(Controller controller) {
         attachLifecycleListener(controller);
 
         CallState expectedCallState = new CallState(false);
@@ -78,9 +247,7 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, controller);
     }
 
-    @Test
-    public void testLifecycleWithActivityStop() {
-        TestController controller = new TestController();
+    private void testLifecycleWithActivityStop(Controller controller) {
         attachLifecycleListener(controller);
 
         CallState expectedCallState = new CallState(false);
@@ -109,9 +276,7 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, controller);
     }
 
-    @Test
-    public void testLifecycleWithActivityDestroy() {
-        TestController controller = new TestController();
+    private void testLifecycleWithActivityDestroy(Controller controller) {
         attachLifecycleListener(controller);
 
         CallState expectedCallState = new CallState(false);
@@ -141,9 +306,7 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, controller);
     }
 
-    @Test
-    public void testLifecycleWithActivityConfigurationChange() {
-        TestController controller = new TestController();
+    private void testLifecycleWithActivityConfigurationChange(Controller controller) {
         attachLifecycleListener(controller);
 
         CallState expectedCallState = new CallState(false);
@@ -177,7 +340,7 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, controller);
 
         createActivityController(bundle, false);
-        controller = (TestController)router.getControllerWithTag("root");
+        controller = router.getControllerWithTag("root");
 
         expectedCallState.contextAvailableCalls++;
         expectedCallState.restoreInstanceStateCalls++;
@@ -185,20 +348,23 @@ public class ControllerLifecycleCallbacksTests {
         expectedCallState.changeStartCalls++;
         expectedCallState.createViewCalls++;
 
+        assertTrue(controller instanceof CallStateOwner);
+        CallStateOwner owner = (CallStateOwner) controller;
+
         // Lifecycle listener isn't attached during restore, grab the current views from the controller for this stuff...
-        currentCallState.restoreInstanceStateCalls = controller.currentCallState.restoreInstanceStateCalls;
-        currentCallState.restoreViewStateCalls = controller.currentCallState.restoreViewStateCalls;
-        currentCallState.changeStartCalls = controller.currentCallState.changeStartCalls;
-        currentCallState.changeEndCalls = controller.currentCallState.changeEndCalls;
-        currentCallState.createViewCalls = controller.currentCallState.createViewCalls;
-        currentCallState.attachCalls = controller.currentCallState.attachCalls;
-        currentCallState.contextAvailableCalls = controller.currentCallState.contextAvailableCalls;
+        currentCallState.restoreInstanceStateCalls = owner.currentCallState().restoreInstanceStateCalls;
+        currentCallState.restoreViewStateCalls = owner.currentCallState().restoreViewStateCalls;
+        currentCallState.changeStartCalls = owner.currentCallState().changeStartCalls;
+        currentCallState.changeEndCalls = owner.currentCallState().changeEndCalls;
+        currentCallState.createViewCalls = owner.currentCallState().createViewCalls;
+        currentCallState.attachCalls = owner.currentCallState().attachCalls;
+        currentCallState.contextAvailableCalls = owner.currentCallState().contextAvailableCalls;
 
         assertCalls(expectedCallState, controller);
 
         activityProxy.start().resume();
-        currentCallState.changeEndCalls = controller.currentCallState.changeEndCalls;
-        currentCallState.attachCalls = controller.currentCallState.attachCalls;
+        currentCallState.changeEndCalls = owner.currentCallState().changeEndCalls;
+        currentCallState.attachCalls = owner.currentCallState().attachCalls;
         expectedCallState.changeEndCalls++;
         expectedCallState.attachCalls++;
 
@@ -208,9 +374,7 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, controller);
     }
 
-    @Test
-    public void testLifecycleWithActivityBackground() {
-        TestController controller = new TestController();
+    private void testLifecycleWithActivityBackground(Controller controller) {
         attachLifecycleListener(controller);
 
         CallState expectedCallState = new CallState(false);
@@ -235,208 +399,208 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, controller);
     }
 
-    @Test
-    public void testLifecycleCallOrder() {
-        final TestController testController = new TestController();
+    private void testLifecycleCallOrder(Controller controller) {
+        assertTrue(controller instanceof CallStateOwner);
         final CallState callState = new CallState(false);
+        final CallState controllerCallState = ((CallStateOwner) controller).currentCallState();
 
-        testController.addLifecycleListener(new LifecycleListener() {
+        controller.addLifecycleListener(new LifecycleListener() {
             @Override
             public void preCreateView(@NonNull Controller controller) {
                 callState.createViewCalls++;
                 assertEquals(1, callState.createViewCalls);
-                assertEquals(0, testController.currentCallState.createViewCalls);
+                assertEquals(0, controllerCallState.createViewCalls);
 
                 assertEquals(0, callState.attachCalls);
-                assertEquals(0, testController.currentCallState.attachCalls);
+                assertEquals(0, controllerCallState.attachCalls);
 
                 assertEquals(0, callState.detachCalls);
-                assertEquals(0, testController.currentCallState.detachCalls);
+                assertEquals(0, controllerCallState.detachCalls);
 
                 assertEquals(0, callState.destroyViewCalls);
-                assertEquals(0, testController.currentCallState.destroyViewCalls);
+                assertEquals(0, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void postCreateView(@NonNull Controller controller, @NonNull View view) {
                 callState.createViewCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(0, callState.attachCalls);
-                assertEquals(0, testController.currentCallState.attachCalls);
+                assertEquals(0, controllerCallState.attachCalls);
 
                 assertEquals(0, callState.detachCalls);
-                assertEquals(0, testController.currentCallState.detachCalls);
+                assertEquals(0, controllerCallState.detachCalls);
 
                 assertEquals(0, callState.destroyViewCalls);
-                assertEquals(0, testController.currentCallState.destroyViewCalls);
+                assertEquals(0, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void preAttach(@NonNull Controller controller, @NonNull View view) {
                 callState.attachCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(1, callState.attachCalls);
-                assertEquals(0, testController.currentCallState.attachCalls);
+                assertEquals(0, controllerCallState.attachCalls);
 
                 assertEquals(0, callState.detachCalls);
-                assertEquals(0, testController.currentCallState.detachCalls);
+                assertEquals(0, controllerCallState.detachCalls);
 
                 assertEquals(0, callState.destroyViewCalls);
-                assertEquals(0, testController.currentCallState.destroyViewCalls);
+                assertEquals(0, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void postAttach(@NonNull Controller controller, @NonNull View view) {
                 callState.attachCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(2, callState.attachCalls);
-                assertEquals(1, testController.currentCallState.attachCalls);
+                assertEquals(1, controllerCallState.attachCalls);
 
                 assertEquals(0, callState.detachCalls);
-                assertEquals(0, testController.currentCallState.detachCalls);
+                assertEquals(0, controllerCallState.detachCalls);
 
                 assertEquals(0, callState.destroyViewCalls);
-                assertEquals(0, testController.currentCallState.destroyViewCalls);
+                assertEquals(0, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void preDetach(@NonNull Controller controller, @NonNull View view) {
                 callState.detachCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(2, callState.attachCalls);
-                assertEquals(1, testController.currentCallState.attachCalls);
+                assertEquals(1, controllerCallState.attachCalls);
 
                 assertEquals(1, callState.detachCalls);
-                assertEquals(0, testController.currentCallState.detachCalls);
+                assertEquals(0, controllerCallState.detachCalls);
 
                 assertEquals(0, callState.destroyViewCalls);
-                assertEquals(0, testController.currentCallState.destroyViewCalls);
+                assertEquals(0, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void postDetach(@NonNull Controller controller, @NonNull View view) {
                 callState.detachCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(2, callState.attachCalls);
-                assertEquals(1, testController.currentCallState.attachCalls);
+                assertEquals(1, controllerCallState.attachCalls);
 
                 assertEquals(2, callState.detachCalls);
-                assertEquals(1, testController.currentCallState.detachCalls);
+                assertEquals(1, controllerCallState.detachCalls);
 
                 assertEquals(0, callState.destroyViewCalls);
-                assertEquals(0, testController.currentCallState.destroyViewCalls);
+                assertEquals(0, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void preDestroyView(@NonNull Controller controller, @NonNull View view) {
                 callState.destroyViewCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(2, callState.attachCalls);
-                assertEquals(1, testController.currentCallState.attachCalls);
+                assertEquals(1, controllerCallState.attachCalls);
 
                 assertEquals(2, callState.detachCalls);
-                assertEquals(1, testController.currentCallState.detachCalls);
+                assertEquals(1, controllerCallState.detachCalls);
 
                 assertEquals(1, callState.destroyViewCalls);
-                assertEquals(0, testController.currentCallState.destroyViewCalls);
+                assertEquals(0, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void postDestroyView(@NonNull Controller controller) {
                 callState.destroyViewCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(2, callState.attachCalls);
-                assertEquals(1, testController.currentCallState.attachCalls);
+                assertEquals(1, controllerCallState.attachCalls);
 
                 assertEquals(2, callState.detachCalls);
-                assertEquals(1, testController.currentCallState.detachCalls);
+                assertEquals(1, controllerCallState.detachCalls);
 
                 assertEquals(2, callState.destroyViewCalls);
-                assertEquals(1, testController.currentCallState.destroyViewCalls);
+                assertEquals(1, controllerCallState.destroyViewCalls);
 
                 assertEquals(0, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void preDestroy(@NonNull Controller controller) {
                 callState.destroyCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(2, callState.attachCalls);
-                assertEquals(1, testController.currentCallState.attachCalls);
+                assertEquals(1, controllerCallState.attachCalls);
 
                 assertEquals(2, callState.detachCalls);
-                assertEquals(1, testController.currentCallState.detachCalls);
+                assertEquals(1, controllerCallState.detachCalls);
 
                 assertEquals(2, callState.destroyViewCalls);
-                assertEquals(1, testController.currentCallState.destroyViewCalls);
+                assertEquals(1, controllerCallState.destroyViewCalls);
 
                 assertEquals(1, callState.destroyCalls);
-                assertEquals(0, testController.currentCallState.destroyCalls);
+                assertEquals(0, controllerCallState.destroyCalls);
             }
 
             @Override
             public void postDestroy(@NonNull Controller controller) {
                 callState.destroyCalls++;
                 assertEquals(2, callState.createViewCalls);
-                assertEquals(1, testController.currentCallState.createViewCalls);
+                assertEquals(1, controllerCallState.createViewCalls);
 
                 assertEquals(2, callState.attachCalls);
-                assertEquals(1, testController.currentCallState.attachCalls);
+                assertEquals(1, controllerCallState.attachCalls);
 
                 assertEquals(2, callState.detachCalls);
-                assertEquals(1, testController.currentCallState.detachCalls);
+                assertEquals(1, controllerCallState.detachCalls);
 
                 assertEquals(2, callState.destroyViewCalls);
-                assertEquals(1, testController.currentCallState.destroyViewCalls);
+                assertEquals(1, controllerCallState.destroyViewCalls);
 
                 assertEquals(2, callState.destroyCalls);
-                assertEquals(1, testController.currentCallState.destroyCalls);
+                assertEquals(1, controllerCallState.destroyCalls);
             }
         });
 
-        router.pushController(RouterTransaction.with(testController)
+        router.pushController(RouterTransaction.with(controller)
                 .pushChangeHandler(MockChangeHandler.defaultHandler())
                 .popChangeHandler(MockChangeHandler.defaultHandler()));
 
-        router.popController(testController);
+        router.popController(controller);
 
         assertEquals(2, callState.createViewCalls);
         assertEquals(2, callState.attachCalls);
@@ -445,56 +609,16 @@ public class ControllerLifecycleCallbacksTests {
         assertEquals(2, callState.destroyCalls);
     }
 
-    @Test
-    public void testLifecycleWhenPopNonCurrentController() {
-        String controller1Tag = "controller1";
-        String controller2Tag = "controller2";
-        String controller3Tag = "controller3";
-
-        TestController controller1 = new TestController();
-        TestController controller2 = new TestController();
-        TestController controller3 = new TestController();
-
-        router.pushController(RouterTransaction.with(controller1)
-                .tag(controller1Tag));
-
-        router.pushController(RouterTransaction.with(controller2)
-                .tag(controller2Tag));
-
-        router.pushController(RouterTransaction.with(controller3)
-                .tag(controller3Tag));
-
-        router.popController(controller2);
-
-        assertEquals(1, controller2.currentCallState.attachCalls);
-        assertEquals(1, controller2.currentCallState.createViewCalls);
-        assertEquals(1, controller2.currentCallState.detachCalls);
-        assertEquals(1, controller2.currentCallState.destroyViewCalls);
-        assertEquals(1, controller2.currentCallState.destroyCalls);
-        assertEquals(1, controller2.currentCallState.contextAvailableCalls);
-        assertEquals(1, controller2.currentCallState.contextUnavailableCalls);
-        assertEquals(1, controller2.currentCallState.saveViewStateCalls);
-        assertEquals(0, controller2.currentCallState.restoreViewStateCalls);
-    }
-
-    @Test
-    public void testChildLifecycle() {
-        Controller parent = new TestController();
-        router.pushController(RouterTransaction.with(parent)
-                .pushChangeHandler(MockChangeHandler.defaultHandler()));
-
-        TestController child = new TestController();
+    private void testChildLifecycle(Controller parent, Router childRouter, Controller child) {
         attachLifecycleListener(child);
 
         CallState expectedCallState = new CallState(false);
 
         assertCalls(expectedCallState, child);
 
-        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
-            childRouter
-                .setRoot(RouterTransaction.with(child)
-                        .pushChangeHandler(getPushHandler(expectedCallState, child))
-                        .popChangeHandler(getPopHandler(expectedCallState, child)));
+        childRouter.setRoot(RouterTransaction.with(child)
+                .pushChangeHandler(getPushHandler(expectedCallState, child))
+                .popChangeHandler(getPopHandler(expectedCallState, child)));
 
         assertCalls(expectedCallState, child);
 
@@ -503,25 +627,16 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, child);
     }
 
-    @Test
-    public void testChildLifecycle2() {
-        Controller parent = new TestController();
-        router.pushController(RouterTransaction.with(parent)
-                .pushChangeHandler(MockChangeHandler.defaultHandler())
-                .popChangeHandler(MockChangeHandler.defaultHandler()));
-
-        TestController child = new TestController();
+    private void testChildLifecycle2(Controller parent, Router childRouter, Controller child) {
         attachLifecycleListener(child);
 
         CallState expectedCallState = new CallState(false);
 
         assertCalls(expectedCallState, child);
 
-        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
-        childRouter
-                .setRoot(RouterTransaction.with(child)
-                        .pushChangeHandler(getPushHandler(expectedCallState, child))
-                        .popChangeHandler(getPopHandler(expectedCallState, child)));
+        childRouter.setRoot(RouterTransaction.with(child)
+                .pushChangeHandler(getPushHandler(expectedCallState, child))
+                .popChangeHandler(getPopHandler(expectedCallState, child)));
 
         assertCalls(expectedCallState, child);
 
@@ -535,21 +650,11 @@ public class ControllerLifecycleCallbacksTests {
         assertCalls(expectedCallState, child);
     }
 
-    @Test
-    public void testChildLifecycleOrderingAfterUnexpectedAttach() {
-        Controller parent = new TestController();
-        parent.setRetainViewMode(RetainViewMode.RETAIN_DETACH);
-        router.pushController(RouterTransaction.with(parent)
-                .pushChangeHandler(MockChangeHandler.defaultHandler())
-                .popChangeHandler(MockChangeHandler.defaultHandler()));
-
-        TestController child = new TestController();
+    private void testChildLifecycleOrderingAfterUnexpectedAttach(Controller parent, Router childRouter, Controller child) {
         child.setRetainViewMode(RetainViewMode.RETAIN_DETACH);
-        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
-        childRouter
-                .setRoot(RouterTransaction.with(child)
-                        .pushChangeHandler(new SimpleSwapChangeHandler())
-                        .popChangeHandler(new SimpleSwapChangeHandler()));
+        childRouter.setRoot(RouterTransaction.with(child)
+                .pushChangeHandler(new SimpleSwapChangeHandler())
+                .popChangeHandler(new SimpleSwapChangeHandler()));
 
         assertTrue(parent.isAttached());
         assertTrue(child.isAttached());
@@ -590,7 +695,7 @@ public class ControllerLifecycleCallbacksTests {
         assertTrue(child.isAttached());
     }
 
-    private MockChangeHandler getPushHandler(final CallState expectedCallState, final TestController controller) {
+    private MockChangeHandler getPushHandler(final CallState expectedCallState, final Controller controller) {
         return MockChangeHandler.listeningChangeHandler(new ChangeHandlerListener() {
             @Override
             public void willStartChange() {
@@ -614,7 +719,7 @@ public class ControllerLifecycleCallbacksTests {
         });
     }
 
-    private MockChangeHandler getPopHandler(final CallState expectedCallState, final TestController controller) {
+    private MockChangeHandler getPopHandler(final CallState expectedCallState, final Controller controller) {
         return MockChangeHandler.listeningChangeHandler(new ChangeHandlerListener() {
             @Override
             public void willStartChange() {
@@ -639,8 +744,9 @@ public class ControllerLifecycleCallbacksTests {
         });
     }
 
-    private void assertCalls(CallState callState, TestController controller) {
-        assertEquals("Expected call counts and controller call counts do not match.", callState, controller.currentCallState);
+    private void assertCalls(CallState callState, Controller controller) {
+        assertTrue(controller instanceof CallStateOwner);
+        assertEquals("Expected call counts and controller call counts do not match.", callState, ((CallStateOwner) controller).currentCallState());
         assertEquals("Expected call counts and lifecycle call counts do not match.", callState, currentCallState);
     }
 

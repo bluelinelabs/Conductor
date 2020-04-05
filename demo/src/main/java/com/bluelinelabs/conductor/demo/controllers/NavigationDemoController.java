@@ -59,6 +59,10 @@ public class NavigationDemoController extends BaseController {
         displayUpMode = DisplayUpMode.values()[args.getInt(KEY_DISPLAY_UP_MODE)];
     }
 
+    public int getIndex() {
+        return index;
+    }
+
     @NonNull
     @Override
     protected View inflateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {

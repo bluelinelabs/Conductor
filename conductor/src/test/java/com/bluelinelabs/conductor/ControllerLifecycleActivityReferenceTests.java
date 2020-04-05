@@ -2,12 +2,14 @@ package com.bluelinelabs.conductor;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
 import com.bluelinelabs.conductor.util.ActivityProxy;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
+import com.bluelinelabs.conductor.util.TestMasterDetailController;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,8 +54,186 @@ public class ControllerLifecycleActivityReferenceTests {
 
     @Test
     public void testSingleControllerActivityOnPush() {
-        Controller controller = new TestController();
+        testSingleControllerActivityOnPush(new TestController());
+    }
 
+    @Test
+    public void testMasterDetailControllerActivityOnPush() {
+        testSingleControllerActivityOnPush(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testChildControllerActivityOnPush() {
+        Controller parent = new TestController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router router = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        testChildControllerActivityOnPush(router, child);
+    }
+
+    @Test
+    public void testMasterControllerActivityOnPush() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+        TestController child = new TestController();
+        Router router = parent.getMasterRouter();
+        testChildControllerActivityOnPush(router, child);
+    }
+
+    @Test
+    public void testDetailControllerActivityOnPush() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+        TestController child = new TestController();
+        Router router = parent.getDetailRouter();
+        testChildControllerActivityOnPush(router, child);
+    }
+
+    @Test
+    public void testSingleControllerActivityOnPop() {
+        testSingleControllerActivityOnPop(new TestController());
+    }
+
+    @Test
+    public void testMasterDetailControllerActivityOnPop() {
+        testSingleControllerActivityOnPop(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testChildControllerActivityOnPop() {
+        Controller parent = new TestController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router router = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        testChildControllerActivityOnPop(router, child);
+    }
+
+    @Test
+    public void testMasterControllerActivityOnPop() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router router = parent.getMasterRouter();
+        testChildControllerActivityOnPop(router, child);
+    }
+
+    @Test
+    public void testDetailControllerActivityOnPop() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router router = parent.getDetailRouter();
+        testChildControllerActivityOnPop(router, child);
+    }
+
+    @Test
+    public void testChildControllerActivityOnParentPop() {
+        Controller parent = new TestController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        testChildControllerActivityOnParentPop(childRouter, child);
+    }
+
+    @Test
+    public void testMasterControllerActivityOnParentPop() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getMasterRouter();
+        testChildControllerActivityOnParentPop(childRouter, child);
+    }
+
+    @Test
+    public void testDetailControllerActivityOnParentPop() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getDetailRouter();
+        testChildControllerActivityOnParentPop(childRouter, child);
+    }
+
+    @Test
+    public void testSingleControllerActivityOnDestroy() {
+        testSingleControllerActivityOnDestroy(new TestController());
+    }
+
+    @Test
+    public void testMasterDetailControllerActivityOnDestroy() {
+        testSingleControllerActivityOnDestroy(new TestMasterDetailController());
+    }
+
+    @Test
+    public void testChildControllerActivityOnDestroy() {
+        Controller parent = new TestController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        testChildControllerActivityOnDestroy(childRouter, child);
+    }
+
+    @Test
+    public void testMasterControllerActivityOnDestroy() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getMasterRouter();
+        testChildControllerActivityOnDestroy(childRouter, child);
+    }
+
+    @Test
+    public void testDetailControllerActivityOnDestroy() {
+        TestMasterDetailController parent = new TestMasterDetailController();
+
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getDetailRouter();
+        testChildControllerActivityOnDestroy(childRouter, child);
+    }
+
+    private void testSingleControllerActivityOnPush(Controller controller) {
         assertNull(controller.getActivity());
 
         ActivityReferencingLifecycleListener listener = new ActivityReferencingLifecycleListener();
@@ -71,21 +251,12 @@ public class ControllerLifecycleActivityReferenceTests {
         assertEquals(Collections.emptyList(), listener.postDestroyReferences);
     }
 
-    @Test
-    public void testChildControllerActivityOnPush() {
-        Controller parent = new TestController();
-        router.pushController(RouterTransaction.with(parent)
-                .pushChangeHandler(MockChangeHandler.defaultHandler())
-                .popChangeHandler(MockChangeHandler.defaultHandler()));
-
-        TestController child = new TestController();
-
+    private void testChildControllerActivityOnPush(Router childRouter, Controller child) {
         assertNull(child.getActivity());
 
         ActivityReferencingLifecycleListener listener = new ActivityReferencingLifecycleListener();
         child.addLifecycleListener(listener);
 
-        Router childRouter = parent.getChildRouter(parent.getView().findViewById(TestController.VIEW_ID));
         childRouter.pushController(RouterTransaction.with(child)
                 .pushChangeHandler(MockChangeHandler.defaultHandler())
                 .popChangeHandler(MockChangeHandler.defaultHandler()));
@@ -98,10 +269,7 @@ public class ControllerLifecycleActivityReferenceTests {
         assertEquals(Collections.emptyList(), listener.postDestroyReferences);
     }
 
-    @Test
-    public void testSingleControllerActivityOnPop() {
-        Controller controller = new TestController();
-
+    private void testSingleControllerActivityOnPop(Controller controller) {
         ActivityReferencingLifecycleListener listener = new ActivityReferencingLifecycleListener();
         controller.addLifecycleListener(listener);
 
@@ -119,20 +287,10 @@ public class ControllerLifecycleActivityReferenceTests {
         assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
-    @Test
-    public void testChildControllerActivityOnPop() {
-        Controller parent = new TestController();
-
-        router.pushController(RouterTransaction.with(parent)
-                .pushChangeHandler(MockChangeHandler.defaultHandler())
-                .popChangeHandler(MockChangeHandler.defaultHandler()));
-
-        TestController child = new TestController();
-
+    private void testChildControllerActivityOnPop(Router childRouter, Controller child) {
         ActivityReferencingLifecycleListener listener = new ActivityReferencingLifecycleListener();
         child.addLifecycleListener(listener);
 
-        Router childRouter = parent.getChildRouter(parent.getView().findViewById(TestController.VIEW_ID));
         childRouter.setPopsLastView(true);
         childRouter.pushController(RouterTransaction.with(child)
                 .pushChangeHandler(MockChangeHandler.defaultHandler())
@@ -148,20 +306,10 @@ public class ControllerLifecycleActivityReferenceTests {
         assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
-    @Test
-    public void testChildControllerActivityOnParentPop() {
-        Controller parent = new TestController();
-
-        router.pushController(RouterTransaction.with(parent)
-                .pushChangeHandler(MockChangeHandler.defaultHandler())
-                .popChangeHandler(MockChangeHandler.defaultHandler()));
-
-        TestController child = new TestController();
-
+    private void testChildControllerActivityOnParentPop(Router childRouter, Controller child) {
         ActivityReferencingLifecycleListener listener = new ActivityReferencingLifecycleListener();
         child.addLifecycleListener(listener);
 
-        Router childRouter = parent.getChildRouter(parent.getView().findViewById(TestController.VIEW_ID));
         childRouter.setPopsLastView(true);
         childRouter.pushController(RouterTransaction.with(child)
                 .pushChangeHandler(MockChangeHandler.defaultHandler())
@@ -177,10 +325,7 @@ public class ControllerLifecycleActivityReferenceTests {
         assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
-    @Test
-    public void testSingleControllerActivityOnDestroy() {
-        Controller controller = new TestController();
-
+    private void testSingleControllerActivityOnDestroy(Controller controller) {
         ActivityReferencingLifecycleListener listener = new ActivityReferencingLifecycleListener();
         controller.addLifecycleListener(listener);
 
@@ -198,20 +343,10 @@ public class ControllerLifecycleActivityReferenceTests {
         assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
 
-    @Test
-    public void testChildControllerActivityOnDestroy() {
-        Controller parent = new TestController();
-
-        router.pushController(RouterTransaction.with(parent)
-                .pushChangeHandler(MockChangeHandler.defaultHandler())
-                .popChangeHandler(MockChangeHandler.defaultHandler()));
-
-        TestController child = new TestController();
-
+    private void testChildControllerActivityOnDestroy(Router childRouter, Controller child) {
         ActivityReferencingLifecycleListener listener = new ActivityReferencingLifecycleListener();
         child.addLifecycleListener(listener);
 
-        Router childRouter = parent.getChildRouter(parent.getView().findViewById(TestController.VIEW_ID));
         childRouter.setPopsLastView(true);
         childRouter.pushController(RouterTransaction.with(child)
                 .pushChangeHandler(MockChangeHandler.defaultHandler())
@@ -226,6 +361,7 @@ public class ControllerLifecycleActivityReferenceTests {
         assertEquals(Collections.singletonList(true), listener.postDestroyViewReferences);
         assertEquals(Collections.singletonList(true), listener.postDestroyReferences);
     }
+
 
     static class ActivityReferencingLifecycleListener implements Controller.LifecycleListener {
         final List<Boolean> changeEndReferences = new ArrayList<>();

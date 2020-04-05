@@ -66,4 +66,19 @@ public class BackstackTests {
         assertEquals(1, backstack.size());
         assertEquals(transaction1, backstack.peek());
     }
+
+    @Test
+    public void testClear() {
+        RouterTransaction transaction1 = RouterTransaction.with(new TestController());
+        RouterTransaction transaction2 = RouterTransaction.with(new TestController());
+        RouterTransaction transaction3 = RouterTransaction.with(new TestController());
+
+        backstack.push(transaction1);
+        backstack.push(transaction2);
+        backstack.push(transaction3);
+        assertEquals(3, backstack.size());
+
+        backstack.clear();
+        assertEquals(0, backstack.size());
+    }
 }
