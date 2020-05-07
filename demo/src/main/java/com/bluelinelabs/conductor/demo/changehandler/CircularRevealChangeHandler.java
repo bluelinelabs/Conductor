@@ -51,7 +51,7 @@ public class CircularRevealChangeHandler extends AnimatorChangeHandler {
      * @param removesFromViewOnPush If true, the view being replaced will be removed from the view hierarchy on pushes
      */
     public CircularRevealChangeHandler(@NonNull View fromView, @NonNull View containerView, boolean removesFromViewOnPush) {
-        this(fromView, containerView, DEFAULT_ANIMATION_DURATION, true);
+        this(fromView, containerView, DEFAULT_ANIMATION_DURATION, removesFromViewOnPush);
     }
 
     /**
