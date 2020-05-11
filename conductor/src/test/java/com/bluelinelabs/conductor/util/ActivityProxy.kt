@@ -4,13 +4,16 @@ import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.os.Bundle
 import androidx.annotation.IdRes
+import com.bluelinelabs.conductor.R
 import org.robolectric.Robolectric
 
 class ActivityProxy {
 
   @IdRes
   private val containerId = 4
-  private val activityController = Robolectric.buildActivity(TestActivity::class.java)
+  private val activityController = Robolectric.buildActivity(TestActivity::class.java).apply {
+    get().setTheme(R.style.Theme_AppCompat)
+  }
 
   val activity: TestActivity
     get() = activityController.get()

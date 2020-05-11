@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    testOptions.unitTests.includeAndroidResources = true
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -17,7 +18,9 @@ dependencies {
     testImplementation rootProject.ext.junit
     testImplementation rootProject.ext.roboelectric
 
+    api rootProject.ext.androidxAppCompat
     api rootProject.ext.androidxAnnotations
+    api rootProject.ext.androidxFragment
     api kotlinStd
 
     lintPublish project(':conductor-lint')

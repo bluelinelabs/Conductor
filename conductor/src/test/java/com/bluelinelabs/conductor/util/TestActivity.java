@@ -1,8 +1,8 @@
 package com.bluelinelabs.conductor.util;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class TestActivity extends Activity {
+public class TestActivity extends AppCompatActivity {
 
     public boolean isChangingConfigurations = false;
     public boolean isDestroying = false;

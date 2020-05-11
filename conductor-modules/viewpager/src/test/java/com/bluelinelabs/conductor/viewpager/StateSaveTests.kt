@@ -1,7 +1,7 @@
 package com.bluelinelabs.conductor.viewpager
 
-import android.app.Activity
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
@@ -23,7 +23,10 @@ class StateSaveTests {
   private val pagerAdapter: RouterPagerAdapter
 
   init {
-    val activityController = Robolectric.buildActivity(Activity::class.java).setup()
+    val activityController = Robolectric.buildActivity(AppCompatActivity::class.java)
+    activityController.get().setTheme(R.style.Theme_AppCompat)
+    activityController.setup()
+
     val router = Conductor.attachRouter(activityController.get(), FrameLayout(activityController.get()), null)
     val controller = TestController()
     router.setRoot(with(controller))
