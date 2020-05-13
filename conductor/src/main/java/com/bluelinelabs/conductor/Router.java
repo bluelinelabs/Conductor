@@ -759,7 +759,7 @@ public abstract class Router {
         return null;
     }
 
-    private void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush) {
+    void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush) {
         if (isPush && to != null) {
             to.onAttachedToRouter();
         }

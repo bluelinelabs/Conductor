@@ -2,9 +2,10 @@ package com.bluelinelabs.conductor;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 
 import com.bluelinelabs.conductor.Controller.LifecycleListener;
 import com.bluelinelabs.conductor.Controller.RetainViewMode;
@@ -588,6 +589,34 @@ public class ControllerLifecycleCallbacksTests {
 
         assertTrue(parent.isAttached());
         assertTrue(child.isAttached());
+    }
+
+    @Test
+    public void testChildLifecycleAfterPushPopPush() {
+        Controller parent = new TestController();
+        parent.setRetainViewMode(RetainViewMode.RETAIN_DETACH);
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        childRouter
+                .setRoot(RouterTransaction.with(child)
+                        .pushChangeHandler(new SimpleSwapChangeHandler())
+                        .popChangeHandler(new SimpleSwapChangeHandler()));
+
+        Controller nextController = new TestController();
+        router.pushController(RouterTransaction.with(nextController));
+
+        TestController child2 = new TestController();
+        childRouter.pushController(RouterTransaction.with(child2));
+
+        router.popCurrentController();
+
+        assertTrue(parent.isAttached());
+        assertFalse(child.isAttached());
+        assertTrue(child2.isAttached());
     }
 
     private MockChangeHandler getPushHandler(final CallState expectedCallState, final TestController controller) {

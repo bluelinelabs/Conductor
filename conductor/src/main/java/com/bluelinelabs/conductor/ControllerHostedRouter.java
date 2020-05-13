@@ -108,6 +108,21 @@ class ControllerHostedRouter extends Router {
         super.setBackstack(newBackstack, changeHandler);
     }
 
+    @Override
+    void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush) {
+        super.performControllerChange(to, from, isPush);
+
+        // If we're pushing a transaction that will detach controllers to an unattached child
+        // router, we need mark all other controllers as NOT needing to be reattached.
+        if (to != null && !hostController.isAttached()) {
+            if (to.pushChangeHandler() == null || to.pushChangeHandler().removesFromViewOnPush()) {
+                for (RouterTransaction transaction : backstack) {
+                    transaction.controller().setNeedsAttach(false);
+                }
+            }
+        }
+    }
+
     @Override @Nullable
     public Activity getActivity() {
         return hostController != null ? hostController.getActivity() : null;
