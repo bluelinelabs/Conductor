@@ -3,7 +3,6 @@ package com.bluelinelabs.conductor.internal;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -19,6 +18,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.bluelinelabs.conductor.ActivityHostedRouter;
 import com.bluelinelabs.conductor.Router;
@@ -37,13 +38,13 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
     private static final String KEY_ACTIVITY_REQUEST_CODES = "LifecycleHandler.activityRequests";
     private static final String KEY_ROUTER_STATE_PREFIX = "LifecycleHandler.routerState";
 
-    private Activity activity;
+    private FragmentActivity activity;
     private boolean hasRegisteredCallbacks;
     private boolean destroyed;
     private boolean attached;
     private boolean hasPreparedForHostDetach;
 
-    private static final Map<Activity, LifecycleHandler> activeLifecycleHandlers = new HashMap<>();
+    private static final Map<FragmentActivity, LifecycleHandler> activeLifecycleHandlers = new HashMap<>();
     private SparseArray<String> permissionRequestMap = new SparseArray<>();
     private SparseArray<String> activityRequestMap = new SparseArray<>();
     private ArrayList<PendingPermissionRequest> pendingPermissionRequests = new ArrayList<>();
@@ -56,10 +57,10 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
     }
 
     @Nullable
-    private static LifecycleHandler findInActivity(@NonNull Activity activity) {
+    private static LifecycleHandler findInActivity(@NonNull FragmentActivity activity) {
         LifecycleHandler lifecycleHandler = activeLifecycleHandlers.get(activity);
         if (lifecycleHandler == null) {
-            lifecycleHandler = (LifecycleHandler)activity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+            lifecycleHandler = (LifecycleHandler)activity.getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         }
         if (lifecycleHandler != null) {
             lifecycleHandler.registerActivityListener(activity);
@@ -68,11 +69,11 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
     }
 
     @NonNull
-    public static LifecycleHandler install(@NonNull Activity activity) {
+    public static LifecycleHandler install(@NonNull FragmentActivity activity) {
         LifecycleHandler lifecycleHandler = findInActivity(activity);
         if (lifecycleHandler == null) {
             lifecycleHandler = new LifecycleHandler();
-            activity.getFragmentManager().beginTransaction().add(lifecycleHandler, FRAGMENT_TAG).commit();
+            activity.getSupportFragmentManager().beginTransaction().add(lifecycleHandler, FRAGMENT_TAG).commit();
         }
         lifecycleHandler.registerActivityListener(activity);
         return lifecycleHandler;
@@ -113,7 +114,7 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
         return viewGroup.getId();
     }
 
-    private void registerActivityListener(@NonNull Activity activity) {
+    private void registerActivityListener(@NonNull FragmentActivity activity) {
         this.activity = activity;
 
         if (!hasRegisteredCallbacks) {
@@ -319,8 +320,8 @@ public class LifecycleHandler extends Fragment implements ActivityLifecycleCallb
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        if (this.activity == null && findInActivity(activity) == LifecycleHandler.this) {
-            this.activity = activity;
+        if (this.activity == null && activity instanceof FragmentActivity && findInActivity((FragmentActivity) activity) == LifecycleHandler.this) {
+            this.activity = (FragmentActivity) activity;
 
             for (ActivityHostedRouter router : new ArrayList<>(routerMap.values())) {
                 router.onContextAvailable();

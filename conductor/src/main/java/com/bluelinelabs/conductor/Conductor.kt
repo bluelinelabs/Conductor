@@ -1,9 +1,9 @@
 package com.bluelinelabs.conductor
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.annotation.UiThread
+import androidx.fragment.app.FragmentActivity
 import com.bluelinelabs.conductor.internal.LifecycleHandler
 import com.bluelinelabs.conductor.internal.ensureMainThread
 
@@ -23,7 +23,7 @@ import com.bluelinelabs.conductor.internal.ensureMainThread
 object Conductor {
   
   @JvmStatic
-  fun attachRouter(activity: Activity, container: ViewGroup, savedInstanceState: Bundle?): Router {
+  fun attachRouter(activity: FragmentActivity, container: ViewGroup, savedInstanceState: Bundle?): Router {
     ensureMainThread()
     return LifecycleHandler.install(activity)
       .getRouter(container, savedInstanceState)

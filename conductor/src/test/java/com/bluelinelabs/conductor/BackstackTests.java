@@ -4,9 +4,12 @@ import com.bluelinelabs.conductor.util.TestController;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(RobolectricTestRunner.class)
 public class BackstackTests {
 
     private Backstack backstack;
