@@ -48,6 +48,7 @@ public class HomeController extends BaseController {
         SHARED_ELEMENT_TRANSITIONS("Shared Element Demos", R.color.purple_300),
         CHILD_CONTROLLERS("Child Controllers", R.color.orange_300),
         VIEW_PAGER("ViewPager", R.color.green_300),
+        BOTTOM_NAVIGATION("Bottom Navigation", R.color.brown_300),
         TARGET_CONTROLLER("Target Controller", R.color.pink_300),
         MULTIPLE_CHILD_ROUTERS("Multiple Child Routers", R.color.deep_orange_300),
         MASTER_DETAIL("Master Detail", R.color.grey_300),
@@ -183,6 +184,11 @@ public class HomeController extends BaseController {
                 break;
             case VIEW_PAGER:
                 getRouter().pushController(RouterTransaction.with(new PagerController())
+                        .pushChangeHandler(new FadeChangeHandler())
+                        .popChangeHandler(new FadeChangeHandler()));
+                break;
+            case BOTTOM_NAVIGATION:
+                getRouter().pushController(RouterTransaction.with(new BottomNavigationController())
                         .pushChangeHandler(new FadeChangeHandler())
                         .popChangeHandler(new FadeChangeHandler()));
                 break;

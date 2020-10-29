@@ -14,6 +14,12 @@
     <string name="next_controller">Next Controller</string>
     <string name="navigation_title">Controller #%1$d</string>
 
+    <!-- Bottom Navigation Demo -->
+    <string name="home">Home</string>
+    <string name="places">Places</string>
+    <string name="favorite">Favorite</string>
+    <string name="settings">Settings</string>
+
     <!-- Transitions Demo -->
     <string name="next">Next</string>
 
