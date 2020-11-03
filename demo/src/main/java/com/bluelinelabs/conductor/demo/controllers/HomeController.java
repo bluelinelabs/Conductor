@@ -35,6 +35,7 @@ import com.bluelinelabs.conductor.demo.changehandler.ArcFadeMoveChangeHandler;
 import com.bluelinelabs.conductor.demo.changehandler.FabToDialogTransitionChangeHandler;
 import com.bluelinelabs.conductor.demo.controllers.NavigationDemoController.DisplayUpMode;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
+import com.bluelinelabs.conductor.demo.controllers.bottomnavigation.DemoBottomNavigationController;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +53,7 @@ public class HomeController extends BaseController {
         MULTIPLE_CHILD_ROUTERS("Multiple Child Routers", R.color.deep_orange_300),
         MASTER_DETAIL("Master Detail", R.color.grey_300),
         DRAG_DISMISS("Drag Dismiss", R.color.lime_300),
+        BOTTOM_NAVIGATION("Bottom Navigation", R.color.purple_600),
         EXTERNAL_MODULES("Bonus Modules", R.color.teal_300);
 
         String title;
@@ -203,6 +205,11 @@ public class HomeController extends BaseController {
                 getRouter().pushController(RouterTransaction.with(new DragDismissController())
                         .pushChangeHandler(new FadeChangeHandler(false))
                         .popChangeHandler(new FadeChangeHandler()));
+                break;
+            case BOTTOM_NAVIGATION:
+                getRouter().pushController(RouterTransaction.with(new DemoBottomNavigationController())
+                                                            .pushChangeHandler(new FadeChangeHandler())
+                                                            .popChangeHandler(new FadeChangeHandler()));
                 break;
             case EXTERNAL_MODULES:
                 getRouter().pushController(RouterTransaction.with(new ExternalModulesController())

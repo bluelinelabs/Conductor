@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:checked="true"
+        android:title="@string/bottom_navigation_title_home"/>
+
+    <item
+        android:id="@+id/navigation_friends"
+        android:icon="@android:drawable/ic_lock_idle_lock"
+        android:title="@string/bottom_navigation_title_friends"/>
+
+    <item
+        android:id="@+id/navigation_intro"
+        android:icon="@android:drawable/ic_popup_reminder"
+        android:title="@string/bottom_navigation_title_intro"/>
+
+    <item
+        android:id="@+id/navigation_planner"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="@string/bottom_navigation_title_travel_planner"/>
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:title="@string/bottom_navigation_title_settings"/>
+
+</menu>

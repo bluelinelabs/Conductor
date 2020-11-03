@@ -47,6 +47,13 @@
     <string name="transition_tag_image_named">transition.image%1$s</string>
     <string name="transition_tag_title_named">transition.title%1$s</string>
 
+    <!-- Bottom Navigation View Demo -->
+    <string name="bottom_navigation_title_home">Home</string>
+    <string name="bottom_navigation_title_friends">Friends</string>
+    <string name="bottom_navigation_title_intro">Intro</string>
+    <string name="bottom_navigation_title_travel_planner">Planner</string>
+    <string name="bottom_navigation_title_settings">Settings</string>
+
     <!-- Placeholder data -->
     <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, volutpat lacus egestas integer vitae, tempus potenti posuere dolore, elit cras ut vulputate pede eros. Pharetra curabitur, cum ultrices nisi nulla, non a est diamlorem in pede. Feugiat vivamus id, leo massa, pede ligula libero wisi, posuere nec interdum risus. Mauris eros. Scelerisque etiam dignissim, sem odio magna posuere libero in. Eget non posuere, rutrum nunc ut, ipsum ornare, vestibulum nisl turpis, urna interdum. Arcu mi velit. Sem dolor amet sed hymenaeos tempor. Cras felis.\n" +
                 "Tempus risus vehicula, mauris nulla interdum purus sodales suspendisse, morbi ultrices tempus vitae vestibulum porttitor, vel mus enim tellus non massa in, quis nec fermentum scelerisque sem congue dolores. Accumsan lacinia urna eu feugiat, habitasse wisi cras id nonummy sapien, a pede. Turpis ac donec, adipiscing ut faucibus, odio ut morbi, habitant volutpat lacinia. At vitae ipsum, porttitor wisi hendrerit pellentesque sapien, suspendisse pellentesque praesent sit tellus varius. At in ligula neque imperdiet eget, viverra lectus risus est sem feugiat. Diam amet non phasellus, sed enim ante etiam lorem id at, feugiat eu urna, urna posuere. Amet vel, vehicula ac in fermentum id, elit mauris dolor, eget orci in nec non in vestibulum. Tortor risus mattis, massa vel condimentum non ornare, pede nunc curabitur dui, eu dolorum luctus duis pellentesque. Nec in imperdiet ac tortor pulvinar bibendum. Parturient lacus luctus posuere, quis luctus sociis tellus iaculis.\n" +
