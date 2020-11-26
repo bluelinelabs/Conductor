@@ -15,7 +15,7 @@
         />
 
     <Button
-        android:id="@+id/btn_use_title"
+        android:id="@+id/use_title_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/use_title"

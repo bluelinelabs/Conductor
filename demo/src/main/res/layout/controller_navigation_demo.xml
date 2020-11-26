@@ -6,7 +6,7 @@
     android:layout_height="match_parent" >
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -21,7 +21,7 @@
         android:background="@color/white">
 
         <Button
-            android:id="@+id/btn_pop_to_root"
+            android:id="@+id/popToRoot"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -30,7 +30,7 @@
             />
 
         <Button
-            android:id="@+id/btn_up"
+            android:id="@+id/goUp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -39,7 +39,7 @@
             />
 
         <Button
-            android:id="@+id/btn_next"
+            android:id="@+id/goToNext"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

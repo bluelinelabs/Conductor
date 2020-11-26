@@ -19,7 +19,6 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/padding_normal"
         android:layout_marginEnd="@dimen/padding_normal"
-        android:layout_marginRight="@dimen/padding_normal"
         android:elevation="@dimen/z_fab"
         android:scaleType="matrix"
         android:stateListAnimator="@animator/raise"

@@ -6,6 +6,10 @@
     <dimen name="display_target_image_size">200dp</dimen>
     <dimen name="display_target_image_margin">24dp</dimen>
 
+    <!-- Transition demo controllers -->
+    <dimen name="transition_margin_top_standard">96dp</dimen>
+    <dimen name="transition_margin_top_shared">24dp</dimen>
+
     <!-- Custom transition dimensions -->
     <dimen name="padding_normal">16dp</dimen>
     <dimen name="z_fab">6dp</dimen>

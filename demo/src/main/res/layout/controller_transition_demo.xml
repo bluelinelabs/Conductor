@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/transition_root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,26 +13,22 @@
         />
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginTop="96dp"
         android:gravity="center_horizontal"
         android:transitionName="@string/transition_tag_title"
-        tools:targetApi="lollipop"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_next"
+        android:id="@+id/next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
         android:layout_margin="24dp"
         app:srcCompat="@drawable/ic_arrow_forward_white_36dp"
         app:elevation="0dp"
         app:pressedTranslationZ="0dp"
         android:transitionName="@string/transition_tag_dot"
-        tools:targetApi="lollipop"
         />
 
 </FrameLayout>

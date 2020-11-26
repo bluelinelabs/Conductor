@@ -1,13 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     defaultConfig {
         applicationId "com.bluelinelabs.conductor.demo"
         minSdkVersion 21
@@ -27,18 +21,34 @@ android {
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
     implementation rootProject.ext.androidxAppCompat
     implementation rootProject.ext.androidxViewPager2
     implementation rootProject.ext.material
+    implementation rootProject.ext.androidxKtx
 
     implementation rootProject.ext.archComponentsLiveDataCore // Fix duplicate classes
 
-    annotationProcessor rootProject.ext.butterknifeCompiler
-    implementation rootProject.ext.butterknife
     implementation rootProject.ext.picasso
+
+    implementation rootProject.ext.autodisposeKtx
 
     implementation project(':conductor')
     implementation project(':conductor-modules:viewpager')

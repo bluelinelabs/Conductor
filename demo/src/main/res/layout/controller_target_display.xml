@@ -7,7 +7,7 @@
     android:background="@color/pink_300" >
 
     <TextView
-        android:id="@+id/tv_selection"
+        android:id="@+id/selection"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -20,6 +20,7 @@
         android:layout_height="@dimen/display_target_image_size"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/display_target_image_margin"
+        android:importantForAccessibility="no"
         />
 
     <LinearLayout
@@ -29,7 +30,7 @@
         android:background="@color/white">
 
         <Button
-            android:id="@+id/btn_pick_title"
+            android:id="@+id/pick_title_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -38,7 +39,7 @@
             />
 
         <Button
-            android:id="@+id/btn_pick_image"
+            android:id="@+id/pick_image_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
