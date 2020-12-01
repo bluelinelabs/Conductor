@@ -1,6 +1,5 @@
 package com.bluelinelabs.conductor.demo.controllers
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -56,7 +55,7 @@ class TransitionDemoController(args: Bundle) : BaseController(R.layout.controlle
       R.color.blue_grey_300
     }
 
-    binding.next.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(view.context, buttonColor))
+    binding.next.backgroundTintList = ContextCompat.getColorStateList(view.context, buttonColor)
     binding.title.text = demo.title
 
     binding.next.setOnClickListener {

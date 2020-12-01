@@ -42,7 +42,7 @@ dependencies {
     implementation rootProject.ext.androidxAppCompat
     implementation rootProject.ext.androidxViewPager2
     implementation rootProject.ext.material
-    implementation rootProject.ext.androidxKtx
+    implementation rootProject.ext.androidxCoreKtx
 
     implementation rootProject.ext.archComponentsLiveDataCore // Fix duplicate classes
 

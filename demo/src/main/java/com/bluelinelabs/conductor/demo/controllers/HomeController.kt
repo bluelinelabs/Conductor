@@ -5,7 +5,6 @@ import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.URLSpan
@@ -15,7 +14,7 @@ import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
+import androidx.core.text.buildSpannedString
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.RouterTransaction
@@ -44,7 +43,7 @@ class HomeController : BaseController(R.layout.controller_home) {
       ::onModelRowClick
     )
 
-    binding.fab.setOnClickListener { showAboutDialog(true) }
+    binding.fab.setOnClickListener { showAboutDialog(fromFab = true) }
   }
 
   override fun configureToolbar(toolbar: Toolbar) {
@@ -52,7 +51,7 @@ class HomeController : BaseController(R.layout.controller_home) {
 
     toolbar.setOnMenuItemClickListener {
       if (it.itemId == R.id.about) {
-        showAboutDialog(false)
+        showAboutDialog(fromFab = false)
         true
       } else {
         false
@@ -170,7 +169,7 @@ class HomeController : BaseController(R.layout.controller_home) {
       }, 0, length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
     }
 
-    val description = SpannableStringBuilder().apply {
+    val description = buildSpannedString {
       append(details)
       append("\n\n")
       append(link)
@@ -237,14 +236,10 @@ private class HomeAdapter(
       )
       binding.root.setOnClickListener { modelClickListener(item, position) }
 
-      ViewCompat.setTransitionName(
-        binding.title,
+      binding.title.transitionName =
         binding.root.resources.getString(R.string.transition_tag_title_indexed, position)
-      )
-      ViewCompat.setTransitionName(
-        binding.dot,
+      binding.dot.transitionName =
         binding.root.resources.getString(R.string.transition_tag_dot_indexed, position)
-      )
     }
   }
 }

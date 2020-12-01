@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.TextUtils
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction.Companion.with
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
@@ -68,7 +67,7 @@ class TargetDisplayController : BaseController(R.layout.controller_target_displa
     super.onRestoreInstanceState(savedInstanceState)
     selectedText = savedInstanceState.getString(KEY_SELECTED_TEXT)
     val uriString = savedInstanceState.getString(KEY_SELECTED_IMAGE)
-    if (!TextUtils.isEmpty(uriString)) {
+    if (!uriString.isNullOrEmpty()) {
       imageUri = Uri.parse(uriString)
     }
   }
@@ -86,7 +85,7 @@ class TargetDisplayController : BaseController(R.layout.controller_target_displa
   private fun setTextView() {
     view ?: return
 
-    if (!TextUtils.isEmpty(selectedText)) {
+    if (!selectedText.isNullOrEmpty()) {
       binding.selection.text = selectedText
     } else {
       binding.selection.text = "Press pick title to set this title, or pick image to fill in the image view."
