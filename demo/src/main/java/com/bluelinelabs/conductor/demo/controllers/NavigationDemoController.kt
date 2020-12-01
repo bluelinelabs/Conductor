@@ -43,8 +43,6 @@ class NavigationDemoController(args: Bundle) : BaseController(R.layout.controlle
           .popChangeHandler(HorizontalChangeHandler())
       )
     }
-
-
   }
 
   override fun onChangeEnded(
