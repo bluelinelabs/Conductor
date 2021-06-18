@@ -21,7 +21,7 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
     private lateinit var savedStateRegistryController: SavedStateRegistryController
 
     private var handlingDestroyViaHostDetach = false
-
+    private var hasRestoredInstanceState = false
     private var savedRegistryState = Bundle.EMPTY
 
     private fun initLifecycle() {
@@ -33,8 +33,12 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
         controller.addLifecycleListener(object : Controller.LifecycleListener() {
 
             override fun postContextAvailable(controller: Controller, context: Context) {
-                initLifecycle()
-                savedStateRegistryController.performRestore(savedRegistryState)
+                if (hasRestoredInstanceState) {
+                    hasRestoredInstanceState = false
+                } else {
+                    initLifecycle()
+                    savedStateRegistryController.performRestore(savedRegistryState)
+                }
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
             }
 
@@ -68,7 +72,9 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
                 controller: Controller,
                 savedInstanceState: Bundle
             ) {
+                initLifecycle()
                 savedStateRegistryController.performRestore(savedInstanceState)
+                hasRestoredInstanceState = true
             }
 
             override fun preDestroyView(controller: Controller, view: View) {
