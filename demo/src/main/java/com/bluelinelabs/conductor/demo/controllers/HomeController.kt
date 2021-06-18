@@ -18,6 +18,7 @@ import androidx.core.text.buildSpannedString
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.asTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.bluelinelabs.conductor.demo.R
@@ -117,12 +118,24 @@ class HomeController : BaseController(R.layout.controller_home) {
         )
       }
       DemoModel.SHARED_ELEMENT_TRANSITIONS -> {
-        val titleSharedElementName = resources!!.getString(R.string.transition_tag_title_indexed, position)
-        val dotSharedElementName = resources!!.getString(R.string.transition_tag_dot_indexed, position)
+        val titleSharedElementName =
+          resources!!.getString(R.string.transition_tag_title_indexed, position)
+        val dotSharedElementName =
+          resources!!.getString(R.string.transition_tag_dot_indexed, position)
         router.pushController(
           RouterTransaction.with(CityGridController(model.title, model.color, position))
-            .pushChangeHandler(ArcFadeMoveChangeHandler(titleSharedElementName, dotSharedElementName))
-            .popChangeHandler(ArcFadeMoveChangeHandler(titleSharedElementName, dotSharedElementName))
+            .pushChangeHandler(
+              ArcFadeMoveChangeHandler(
+                titleSharedElementName,
+                dotSharedElementName
+              )
+            )
+            .popChangeHandler(
+              ArcFadeMoveChangeHandler(
+                titleSharedElementName,
+                dotSharedElementName
+              )
+            )
         )
       }
       DemoModel.DRAG_DISMISS -> {
@@ -153,13 +166,19 @@ class HomeController : BaseController(R.layout.controller_home) {
             .popChangeHandler(FadeChangeHandler())
         )
       }
+      DemoModel.COMPOSE -> {
+        router.pushController(
+          ComposeController().asTransaction(FadeChangeHandler(), FadeChangeHandler())
+        )
+      }
     }
   }
 
   private fun showAboutDialog(fromFab: Boolean) {
-    val details = SpannableString("A small, yet full-featured framework that allows building View-based Android applications").apply {
-      setSpan(AbsoluteSizeSpan(16, true), 0, length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-    }
+    val details =
+      SpannableString("A small, yet full-featured framework that allows building View-based Android applications").apply {
+        setSpan(AbsoluteSizeSpan(16, true), 0, length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+      }
 
     val link = SpannableString(CONDUCTOR_URL).apply {
       setSpan(object : URLSpan(CONDUCTOR_URL) {
@@ -175,7 +194,8 @@ class HomeController : BaseController(R.layout.controller_home) {
       append(link)
     }
 
-    val pushHandler = if (fromFab) FabToDialogTransitionChangeHandler() else FadeChangeHandler(false)
+    val pushHandler =
+      if (fromFab) FabToDialogTransitionChangeHandler() else FadeChangeHandler(false)
     val popHandler = if (fromFab) FabToDialogTransitionChangeHandler() else FadeChangeHandler()
     router.pushController(
       RouterTransaction.with(DialogController("Conductor", description))
@@ -191,6 +211,7 @@ class HomeController : BaseController(R.layout.controller_home) {
 }
 
 private enum class DemoModel(val title: String, @ColorRes val color: Int) {
+  COMPOSE("Jetpack Compose", R.color.amber_500),
   NAVIGATION("Navigation Demos", R.color.red_300),
   TRANSITIONS("Transition Demos", R.color.blue_grey_300),
   SHARED_ELEMENT_TRANSITIONS("Shared Element Demos", R.color.purple_300),

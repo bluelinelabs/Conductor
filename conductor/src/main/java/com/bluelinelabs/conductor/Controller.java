@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bluelinelabs.conductor.internal.ClassUtils;
+import com.bluelinelabs.conductor.internal.OwnViewTreeLifecycleAndRegistry;
 import com.bluelinelabs.conductor.internal.RouterRequiringFunc;
 import com.bluelinelabs.conductor.internal.ViewAttachHandler;
 import com.bluelinelabs.conductor.internal.ViewAttachHandler.ViewAttachListener;
@@ -142,6 +143,7 @@ public abstract class Controller {
         this.args = args != null ? args : new Bundle(getClass().getClassLoader());
         instanceId = UUID.randomUUID().toString();
         ensureRequiredConstructor();
+        OwnViewTreeLifecycleAndRegistry.Companion.own(this);
     }
 
     /**

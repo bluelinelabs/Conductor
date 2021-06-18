@@ -10,23 +10,24 @@ ext {
     rxLifecycleVersion = '1.0'
     rxLifecycle2Version = '2.2.1'
     autodisposeVersion = '1.0.0'
-    archComponentsVersion = '2.0.0'
+    archComponentsVersion = '2.3.1'
     junitVersion = '4.12'
     mvnPublishVersion = '0.13.0'
     dokkaVersion = '1.4.10.2'
+    composeVersion = "1.0.0-beta09"
 
-    agpVersion = "4.1.0"
+    agpVersion = "7.1.0-alpha02"
     lintVersion = agpVersion.replaceFirst(~/\d*/) { version ->
         // the major version of lint is always 23 version higher than the major version of agp
         version.toInteger() + 23
     }
 
-    kotlinVersion = '1.3.72'
+    kotlinVersion = '1.5.10'
     kotlinStd = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
     material = "com.google.android.material:material:1.1.0"
     androidxAnnotations = "androidx.annotation:annotation:1.1.0"
-    androidxAppCompat = "androidx.appcompat:appcompat:1.0.0"
+    androidxAppCompat = "androidx.appcompat:appcompat:1.3.0"
     androidxTransition = "androidx.transition:transition:1.3.1"
     androidxCollection = "androidx.collection:collection:1.1.0"
     androidxViewPager2 = "androidx.viewpager2:viewpager2:1.0.0"
@@ -49,6 +50,8 @@ ext {
 
     archComponentsLifecycle = "androidx.lifecycle:lifecycle-runtime:$archComponentsVersion"
     archComponentsLiveDataCore = "androidx.lifecycle:lifecycle-livedata-core:$archComponentsVersion"
+
+    savedState = "androidx.savedstate:savedstate-ktx:1.1.0"
 
     junit = "junit:junit:$junitVersion"
     roboelectric = "org.robolectric:robolectric:4.3.1"
