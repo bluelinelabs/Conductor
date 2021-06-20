@@ -493,4 +493,40 @@ public class RouterTests {
         assertTrue(controller3.isBeingDestroyed());
     }
 
+    @Test
+    public void testReattachNestedBackstackCorrectly() {
+        Controller rootController = new TestController();
+        Controller childController1 = new TestController();
+        Controller childController2 = new TestController();
+        Controller childController11 = new TestController();
+        Controller childController12 = new TestController();
+        Controller childController13 = new TestController();
+
+
+        router.setRoot(RouterTransaction.with(rootController));
+        Router router1 = rootController.getChildRouter(rootController.getView().findViewById(TestController.CHILD_VIEW_ID_1));
+        router1.setRoot(RouterTransaction.with(childController1));
+        Router router2 = childController1.getChildRouter(childController1.getView().findViewById(TestController.CHILD_VIEW_ID_1));
+        router2.setRoot(RouterTransaction.with(childController11));
+        router2.pushController(RouterTransaction.with(childController12).pushChangeHandler(new HorizontalChangeHandler()).popChangeHandler(new HorizontalChangeHandler()));
+        router2.pushController(RouterTransaction.with(childController13).pushChangeHandler(new HorizontalChangeHandler()).popChangeHandler(new HorizontalChangeHandler()));
+        router1.pushController(RouterTransaction.with(childController2));
+
+        assertTrue(rootController.isAttached());
+        assertFalse(childController1.isAttached());
+        assertFalse(childController11.isAttached());
+        assertFalse(childController12.isAttached());
+        assertFalse(childController13.isAttached());
+        assertTrue(childController2.isAttached());
+
+        assertTrue(router.handleBack());
+
+        assertTrue(rootController.isAttached());
+        assertTrue(childController1.isAttached());
+        assertFalse(childController11.isAttached());
+        assertFalse(childController12.isAttached());
+        assertTrue(childController13.isAttached());
+        assertFalse(childController2.isAttached());
+    }
+
 }
