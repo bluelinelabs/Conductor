@@ -273,4 +273,17 @@ class ControllerHostedRouter extends Router {
         }
     }
 
+    @Override
+    List<ControllerChangeListener> getAllChangeListeners(boolean recursiveOnly) {
+        final List<ControllerChangeListener> listeners = new ArrayList<>();
+
+        Router hostRouter = hostController.getRouter();
+        if (hostRouter != null) {
+            listeners.addAll(hostRouter.getAllChangeListeners(true));
+        }
+
+        listeners.addAll(super.getAllChangeListeners(recursiveOnly));
+
+        return listeners;
+    }
 }
