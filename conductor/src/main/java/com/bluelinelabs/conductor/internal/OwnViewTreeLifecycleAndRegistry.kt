@@ -52,6 +52,23 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
             }
 
+            override fun onChangeEnd(
+                changeController: Controller,
+                changeHandler: ControllerChangeHandler,
+                changeType: ControllerChangeType
+            ) {
+                // Should only happen if pushing another controller over this one was aborted
+                if (
+                    controller == changeController &&
+                    changeType.isEnter &&
+                    changeHandler.removesFromViewOnPush() &&
+                    changeController.view?.windowToken != null &&
+                    lifecycleRegistry.currentState == Lifecycle.State.STARTED
+                ) {
+                    lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                }
+            }
+
             // AbstractComposeView adds its own OnAttachStateChangeListener by default. Since it
             // does this on init, its detach callbacks get called before ours, which prevents us
             // from saving state in onDetach. The if statement in here should detect upcoming
@@ -65,7 +82,8 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
                 if (
                     controller == changeController &&
                     !changeType.isEnter &&
-                    changeHandler.removesFromViewOnPush()
+                    changeHandler.removesFromViewOnPush() &&
+                    lifecycleRegistry.currentState == Lifecycle.State.RESUMED
                 ) {
                     lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
 
@@ -77,6 +95,10 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
             }
 
             override fun preDetach(controller: Controller, view: View) {
+                // Should only happen if pushing this controller was aborted
+                if (lifecycleRegistry.currentState == Lifecycle.State.RESUMED) {
+                    lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                }
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
             }
 
