@@ -1,6 +1,5 @@
 package com.bluelinelabs.conductor.internal
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -12,6 +11,8 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.ControllerChangeHandler
+import com.bluelinelabs.conductor.ControllerChangeType
 
 internal class OwnViewTreeLifecycleAndRegistry
 private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistryOwner {
@@ -20,25 +21,20 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
 
     private lateinit var savedStateRegistryController: SavedStateRegistryController
 
-    private var handlingDestroyViaHostDetach = false
-    private var hasRestoredInstanceState = false
+    private var hasSavedState = false
     private var savedRegistryState = Bundle.EMPTY
-
-    private fun initLifecycle() {
-        lifecycleRegistry = LifecycleRegistry(this)
-        savedStateRegistryController = SavedStateRegistryController.create(this)
-    }
 
     init {
         controller.addLifecycleListener(object : Controller.LifecycleListener() {
+            override fun preCreateView(controller: Controller) {
+                hasSavedState = false
 
-            override fun postContextAvailable(controller: Controller, context: Context) {
-                if (hasRestoredInstanceState) {
-                    hasRestoredInstanceState = false
-                } else {
-                    initLifecycle()
-                    savedStateRegistryController.performRestore(savedRegistryState)
-                }
+                lifecycleRegistry = LifecycleRegistry(this@OwnViewTreeLifecycleAndRegistry)
+                savedStateRegistryController = SavedStateRegistryController.create(
+                    this@OwnViewTreeLifecycleAndRegistry
+                )
+                savedStateRegistryController.performRestore(savedRegistryState)
+
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
             }
 
@@ -48,6 +44,7 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
                     view,
                     this@OwnViewTreeLifecycleAndRegistry
                 )
+
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
             }
 
@@ -55,33 +52,55 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
             }
 
+            // AbstractComposeView adds its own OnAttachStateChangeListener by default. Since it
+            // does this on init, its detach callbacks get called before ours, which prevents us
+            // from saving state in onDetach. The if statement in here should detect upcoming
+            // detachment.
+            // TODO: verify that there aren't edge cases where this won't work as intended
+            override fun onChangeStart(
+                changeController: Controller,
+                changeHandler: ControllerChangeHandler,
+                changeType: ControllerChangeType
+            ) {
+                if (
+                    controller == changeController &&
+                    !changeType.isEnter &&
+                    changeHandler.removesFromViewOnPush()
+                ) {
+                    lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+
+                    savedRegistryState = Bundle()
+                    savedStateRegistryController.performSave(savedRegistryState)
+
+                    hasSavedState = true
+                }
+            }
+
             override fun preDetach(controller: Controller, view: View) {
-                lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
             }
 
             override fun onSaveInstanceState(controller: Controller, outState: Bundle) {
-                savedStateRegistryController.performSave(outState)
+                outState.putBundle(KEY_SAVED_STATE, savedRegistryState)
             }
 
             override fun onSaveViewState(controller: Controller, outState: Bundle) {
-                savedRegistryState = Bundle()
-                savedStateRegistryController.performSave(savedRegistryState)
+                if (!hasSavedState) {
+                    savedRegistryState = Bundle()
+                    savedStateRegistryController.performSave(savedRegistryState)
+                }
             }
 
             override fun onRestoreInstanceState(
                 controller: Controller,
                 savedInstanceState: Bundle
             ) {
-                initLifecycle()
-                savedStateRegistryController.performRestore(savedInstanceState)
-                hasRestoredInstanceState = true
+                savedRegistryState = savedInstanceState.getBundle(KEY_SAVED_STATE)
             }
 
             override fun preDestroyView(controller: Controller, view: View) {
-                lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
                 if (controller.isBeingDestroyed && controller.router.backstackSize == 0) {
                     val parent = view.parent as? View
-                    handlingDestroyViaHostDetach = parent != null
                     parent?.addOnAttachStateChangeListener(object :
                         View.OnAttachStateChangeListener {
                         override fun onViewAttachedToWindow(v: View?) = Unit
@@ -90,11 +109,7 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
                             onDestroy()
                         }
                     })
-                }
-            }
-
-            override fun preDestroy(controller: Controller) {
-                if (!handlingDestroyViaHostDetach) {
+                } else {
                     onDestroy()
                 }
             }
@@ -111,6 +126,7 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
         savedStateRegistryController.savedStateRegistry
 
     companion object {
+        private const val KEY_SAVED_STATE = "Registry.savedState"
         fun own(target: Controller) {
             OwnViewTreeLifecycleAndRegistry(target)
         }

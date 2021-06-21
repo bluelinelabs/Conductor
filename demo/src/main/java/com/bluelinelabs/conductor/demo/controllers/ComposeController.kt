@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.asTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.bluelinelabs.conductor.demo.ToolbarProvider
 
 class ComposeController : Controller() {
 
@@ -28,14 +33,30 @@ class ComposeController : Controller() {
   ): View {
     return ComposeView(container.context).apply {
       setContent {
-        LongNumberList()
+        LongNumberList {
+          router.pushController(
+            ComposeController().asTransaction(
+              pushChangeHandler = HorizontalChangeHandler(),
+              popChangeHandler = HorizontalChangeHandler()
+            )
+          )
+        }
       }
+    }
+  }
+
+  override fun onAttach(view: View) {
+    super.onAttach(view)
+
+    (activity as? ToolbarProvider)?.toolbar?.apply {
+      title = "Jetpack Compose Demo"
+      menu.clear()
     }
   }
 }
 
 @Composable
-fun LongNumberList() {
+fun LongNumberList(onClick: () -> Unit) {
   MaterialTheme {
     LazyColumn {
       item {
@@ -45,6 +66,8 @@ fun LongNumberList() {
         Box(
           modifier = Modifier
             .height(48.dp)
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp)
         ) {
           Text(
@@ -59,5 +82,4 @@ fun LongNumberList() {
       }
     }
   }
-
 }
