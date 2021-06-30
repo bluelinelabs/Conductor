@@ -1,25 +1,15 @@
-package com.bluelinelabs.conductor.lint;
+package com.bluelinelabs.conductor.lint
 
-import com.android.tools.lint.detector.api.Issue;
+import com.android.tools.lint.detector.api.CURRENT_API
+import com.android.tools.lint.client.api.IssueRegistry as LintIssueRegistry
 
-import java.util.Arrays;
-import java.util.List;
+@Suppress("UnstableApiUsage", "unused")
+class IssueRegistry : LintIssueRegistry() {
 
-import static com.android.tools.lint.detector.api.ApiKt.CURRENT_API;
+  override val issues = listOf(
+    ControllerIssueDetector.ISSUE,
+    ControllerChangeHandlerIssueDetector.ISSUE
+  )
 
-@SuppressWarnings({"unused", "UnstableApiUsage"})
-public final class IssueRegistry extends com.android.tools.lint.client.api.IssueRegistry {
-
-    @Override
-    public List<Issue> getIssues() {
-        return Arrays.asList(
-                ControllerIssueDetector.ISSUE,
-                ControllerChangeHandlerIssueDetector.ISSUE
-        );
-    }
-
-    @Override
-    public int getApi() {
-        return CURRENT_API;
-    }
+  override val api: Int = CURRENT_API
 }
