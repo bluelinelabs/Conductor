@@ -110,16 +110,12 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
             override fun onViewAttachedToWindow(v: View?) = Unit
             override fun onViewDetachedFromWindow(v: View?) {
               parent.removeOnAttachStateChangeListener(this)
-              onDestroy()
+              lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             }
           })
         } else {
-          onDestroy()
+          lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         }
-      }
-
-      private fun onDestroy() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
       }
     })
   }
