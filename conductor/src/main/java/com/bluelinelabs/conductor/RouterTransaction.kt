@@ -24,7 +24,8 @@ private constructor(
   private var pushControllerChangeHandler: ControllerChangeHandler? = null,
   private var popControllerChangeHandler: ControllerChangeHandler? = null,
   private var attachedToRouter: Boolean = false,
-  @RestrictTo(LIBRARY)
+  @get:RestrictTo(LIBRARY)
+  @set:RestrictTo(LIBRARY)
   var transactionIndex: Int = INVALID_INDEX
 ) {
 
