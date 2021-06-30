@@ -13,6 +13,7 @@ import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
+import com.bluelinelabs.conductor.R
 
 /**
  * This class sets the [ViewTreeLifecycleOwner] and [ViewTreeSavedStateRegistryOwner] which is
@@ -44,6 +45,16 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
       }
 
       override fun postCreateView(controller: Controller, view: View) {
+        if (view.getTag(R.id.view_tree_lifecycle_owner) != null
+          || view.getTag(R.id.view_tree_saved_state_registry_owner) != null
+        ) {
+          /**
+           * The consumer of the library already has it's own [ViewTreeLifecycleOwner] or
+           * [ViewTreeSavedStateRegistryOwner] set, fallback to no-op.
+           */
+          return
+        }
+
         ViewTreeLifecycleOwner.set(view, this@OwnViewTreeLifecycleAndRegistry)
         ViewTreeSavedStateRegistryOwner.set(
           view,
