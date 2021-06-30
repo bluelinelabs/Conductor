@@ -14,6 +14,11 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
 
+/**
+ * This class sets the [ViewTreeLifecycleOwner] and [ViewTreeSavedStateRegistryOwner] which is
+ * necessary for Jetpack Compose. By setting these, the view state restoration and compose lifecycle
+ * play together with the lifecycle of the [Controller].
+ */
 internal class OwnViewTreeLifecycleAndRegistry
 private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistryOwner {
 
@@ -56,7 +61,6 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
             // does this on init, its detach callbacks get called before ours, which prevents us
             // from saving state in onDetach. The if statement in here should detect upcoming
             // detachment.
-            // TODO: verify that there aren't edge cases where this won't work as intended
             override fun onChangeStart(
                 changeController: Controller,
                 changeHandler: ControllerChangeHandler,
@@ -127,6 +131,7 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
 
     companion object {
         private const val KEY_SAVED_STATE = "Registry.savedState"
+
         fun own(target: Controller) {
             OwnViewTreeLifecycleAndRegistry(target)
         }
