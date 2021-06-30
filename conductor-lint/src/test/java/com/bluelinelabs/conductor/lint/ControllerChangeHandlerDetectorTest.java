@@ -1,12 +1,12 @@
 package com.bluelinelabs.conductor.lint;
 
-import com.android.tools.lint.checks.infrastructure.LintDetectorTest;
+import static com.android.tools.lint.checks.infrastructure.TestFiles.java;
+import static com.android.tools.lint.checks.infrastructure.TestLintTask.lint;
+
+import com.android.tools.lint.checks.infrastructure.TestFile;
 
 import org.intellij.lang.annotations.Language;
 import org.junit.Test;
-
-import static com.android.tools.lint.checks.infrastructure.TestFiles.java;
-import static com.android.tools.lint.checks.infrastructure.TestLintTask.lint;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ControllerChangeHandlerDetectorTest {
@@ -17,7 +17,7 @@ public class ControllerChangeHandlerDetectorTest {
                     + "^\n"
                     + "1 errors, 0 warnings\n";
 
-    private final LintDetectorTest.TestFile controllerChangeHandlerStub = java(
+    private final TestFile controllerChangeHandlerStub = java(
             "package com.bluelinelabs.conductor;\n"
                     + "abstract class ControllerChangeHandler {}"
     );
