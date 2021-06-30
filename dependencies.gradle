@@ -54,7 +54,7 @@ ext {
     savedState = "androidx.savedstate:savedstate-ktx:1.1.0"
 
     junit = "junit:junit:$junitVersion"
-    roboelectric = "org.robolectric:robolectric:4.3.1"
+    robolectric = "org.robolectric:robolectric:4.3.1"
 
     lintapi = "com.android.tools.lint:lint-api:$lintVersion"
     lintchecks = "com.android.tools.lint:lint-checks:$lintVersion"

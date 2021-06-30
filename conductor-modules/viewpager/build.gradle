@@ -14,7 +14,7 @@ android {
 
 dependencies {
     testImplementation rootProject.ext.junit
-    testImplementation rootProject.ext.roboelectric
+    testImplementation rootProject.ext.robolectric
 
     implementation rootProject.ext.androidxAppCompat
     implementation project(':conductor')

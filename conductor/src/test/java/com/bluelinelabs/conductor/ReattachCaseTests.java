@@ -340,7 +340,7 @@ public class ReattachCaseTests {
         AttachFakingFrameLayout container2 = new AttachFakingFrameLayout(activityProxy.getActivity());
         activityProxy.setView(container2);
 
-        // second attach router with the same lifecycleHandler (do manually as Roboelectric recreates retained fragments)
+        // second attach router with the same lifecycleHandler (do manually as robolectric recreates retained fragments)
         // Conductor.attachRouter(activityProxy.getActivity(), container2, savedState);
         router = lifecycleHandler.getRouter(container2, savedState);
         router.rebindIfNeeded();
