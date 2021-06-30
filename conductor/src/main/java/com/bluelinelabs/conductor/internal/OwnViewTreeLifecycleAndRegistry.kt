@@ -45,21 +45,20 @@ private constructor(controller: Controller) : LifecycleOwner, SavedStateRegistry
       }
 
       override fun postCreateView(controller: Controller, view: View) {
-        if (view.getTag(R.id.view_tree_lifecycle_owner) != null
-          || view.getTag(R.id.view_tree_saved_state_registry_owner) != null
+        /**
+         * If the consumer of the library already has it's own [ViewTreeLifecycleOwner] or
+         * [ViewTreeSavedStateRegistryOwner] set, don't overwrite it but assume that he's doing it
+         * on purpose.
+         */
+        if (view.getTag(R.id.view_tree_lifecycle_owner) == null
+          && view.getTag(R.id.view_tree_saved_state_registry_owner) == null
         ) {
-          /**
-           * The consumer of the library already has it's own [ViewTreeLifecycleOwner] or
-           * [ViewTreeSavedStateRegistryOwner] set, fallback to no-op.
-           */
-          return
+          ViewTreeLifecycleOwner.set(view, this@OwnViewTreeLifecycleAndRegistry)
+          ViewTreeSavedStateRegistryOwner.set(
+            view,
+            this@OwnViewTreeLifecycleAndRegistry
+          )
         }
-
-        ViewTreeLifecycleOwner.set(view, this@OwnViewTreeLifecycleAndRegistry)
-        ViewTreeSavedStateRegistryOwner.set(
-          view,
-          this@OwnViewTreeLifecycleAndRegistry
-        )
 
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
       }
