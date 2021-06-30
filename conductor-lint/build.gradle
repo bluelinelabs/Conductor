@@ -8,6 +8,7 @@ dependencies {
     compileOnly rootProject.ext.lintapi
     compileOnly rootProject.ext.lintchecks
 
+    testImplementation rootProject.ext.junit
     testImplementation rootProject.ext.lint
     testImplementation rootProject.ext.lintTests
 }
