@@ -1,4 +1,4 @@
-package com.bluelinelabs.conductor.util;
+package com.bluelinelabs.conductor;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +14,10 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bluelinelabs.conductor.Controller;
-import com.bluelinelabs.conductor.ControllerChangeHandler;
-import com.bluelinelabs.conductor.ControllerChangeType;
+import com.bluelinelabs.conductor.util.AttachFakingFrameLayout;
+import com.bluelinelabs.conductor.util.CallState;
+import com.bluelinelabs.conductor.util.ChangeHandlerHistory;
+import com.bluelinelabs.conductor.util.MockChangeHandler;
 
 public class TestController extends Controller {
 

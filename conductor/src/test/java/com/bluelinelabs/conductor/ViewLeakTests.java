@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 
 import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
 import com.bluelinelabs.conductor.util.ActivityProxy;
-import com.bluelinelabs.conductor.util.TestController;
 
 import org.junit.Before;
 import org.junit.Test;

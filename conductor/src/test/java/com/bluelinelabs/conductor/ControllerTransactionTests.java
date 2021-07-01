@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler;
-import com.bluelinelabs.conductor.util.TestController;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

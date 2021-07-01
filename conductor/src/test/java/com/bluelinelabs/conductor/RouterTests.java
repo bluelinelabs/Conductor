@@ -10,7 +10,6 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.util.ActivityProxy;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
-import com.bluelinelabs.conductor.util.TestController;
 
 import org.junit.Before;
 import org.junit.Test;

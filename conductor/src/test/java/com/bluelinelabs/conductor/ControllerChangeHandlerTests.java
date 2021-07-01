@@ -2,7 +2,6 @@ package com.bluelinelabs.conductor;
 
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
-import com.bluelinelabs.conductor.util.TestController;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

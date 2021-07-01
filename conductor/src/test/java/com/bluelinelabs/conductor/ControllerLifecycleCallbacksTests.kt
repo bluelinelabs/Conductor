@@ -11,7 +11,6 @@ import com.bluelinelabs.conductor.util.CallState
 import com.bluelinelabs.conductor.util.MockChangeHandler
 import com.bluelinelabs.conductor.util.MockChangeHandler.ChangeHandlerListener
 import com.bluelinelabs.conductor.util.TestActivity
-import com.bluelinelabs.conductor.util.TestController
 import com.bluelinelabs.conductor.util.ViewUtils
 import org.junit.Assert
 import org.junit.Before

@@ -5,7 +5,6 @@ import android.view.View
 import com.bluelinelabs.conductor.Controller.LifecycleListener
 import com.bluelinelabs.conductor.util.MockChangeHandler
 import com.bluelinelabs.conductor.util.TestActivity
-import com.bluelinelabs.conductor.util.TestController
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
