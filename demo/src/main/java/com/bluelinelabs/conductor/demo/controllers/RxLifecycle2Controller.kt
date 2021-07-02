@@ -5,13 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bluelinelabs.conductor.ControllerChangeHandler
-import com.bluelinelabs.conductor.ControllerChangeType
 import com.bluelinelabs.conductor.RouterTransaction.Companion.with
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-import com.bluelinelabs.conductor.demo.DemoApplication
 import com.bluelinelabs.conductor.demo.R
 import com.bluelinelabs.conductor.demo.ToolbarProvider
+import com.bluelinelabs.conductor.demo.controllers.base.watchForLeaks
 import com.bluelinelabs.conductor.demo.databinding.ControllerLifecycleBinding
 import com.bluelinelabs.conductor.rxlifecycle2.ControllerEvent
 import com.bluelinelabs.conductor.rxlifecycle2.RxController
@@ -22,9 +20,11 @@ import java.util.concurrent.TimeUnit
 // instead of Activities or Fragments.
 class RxLifecycle2Controller : RxController() {
 
-  private var hasExited = false
-
   init {
+    watchForLeaks()
+
+    // suppress is safe because of bindUntilEvent
+    @Suppress("CheckResult")
     Observable.interval(1, TimeUnit.SECONDS)
       .doOnDispose { Log.i(TAG, "Disposing from constructor") }
       .compose(bindUntilEvent(ControllerEvent.DESTROY))
@@ -60,6 +60,8 @@ class RxLifecycle2Controller : RxController() {
       )
     }
 
+    // suppress is safe because of bindUntilEvent
+    @Suppress("CheckResult")
     Observable.interval(1, TimeUnit.SECONDS)
       .doOnDispose { Log.i(TAG, "Disposing from onCreateView()") }
       .compose(bindUntilEvent(ControllerEvent.DESTROY_VIEW))
@@ -75,6 +77,9 @@ class RxLifecycle2Controller : RxController() {
     Log.i(TAG, "onAttach() called")
 
     (activity as ToolbarProvider).toolbar.title = "RxLifecycle2 Demo"
+
+    // suppress is safe because of bindUntilEvent
+    @Suppress("CheckResult")
     Observable.interval(1, TimeUnit.SECONDS)
       .doOnDispose { Log.i(TAG, "Disposing from onAttach()") }
       .compose(bindUntilEvent(ControllerEvent.DETACH))
@@ -96,20 +101,6 @@ class RxLifecycle2Controller : RxController() {
   public override fun onDestroy() {
     super.onDestroy()
     Log.i(TAG, "onDestroy() called")
-    if (hasExited) {
-      DemoApplication.refWatcher.watch(this)
-    }
-  }
-
-  override fun onChangeEnded(
-    changeHandler: ControllerChangeHandler,
-    changeType: ControllerChangeType
-  ) {
-    super.onChangeEnded(changeHandler, changeType)
-    hasExited = !changeType.isEnter
-    if (isDestroyed) {
-      DemoApplication.refWatcher.watch(this)
-    }
   }
 
   companion object {

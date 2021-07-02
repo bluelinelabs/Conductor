@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.ControllerChangeHandler
-import com.bluelinelabs.conductor.ControllerChangeType
 import com.bluelinelabs.conductor.RouterTransaction.Companion.with
 import com.bluelinelabs.conductor.autodispose.ControllerScopeProvider
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-import com.bluelinelabs.conductor.demo.DemoApplication
 import com.bluelinelabs.conductor.demo.R
 import com.bluelinelabs.conductor.demo.ToolbarProvider
+import com.bluelinelabs.conductor.demo.controllers.base.watchForLeaks
 import com.bluelinelabs.conductor.demo.databinding.ControllerLifecycleBinding
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
@@ -23,10 +21,10 @@ import java.util.concurrent.TimeUnit
 // instead of Activities or Fragments.
 class AutodisposeController : Controller() {
 
-  private var hasExited = false
   private val scopeProvider = ControllerScopeProvider.from(this)
 
   init {
+    watchForLeaks()
     Observable.interval(1, TimeUnit.SECONDS)
       .doOnDispose { Log.i(TAG, "Disposing from constructor") }
       .autoDisposable(scopeProvider)
@@ -98,20 +96,6 @@ class AutodisposeController : Controller() {
   public override fun onDestroy() {
     super.onDestroy()
     Log.i(TAG, "onDestroy() called")
-    if (hasExited) {
-      DemoApplication.refWatcher.watch(this)
-    }
-  }
-
-  override fun onChangeEnded(
-    changeHandler: ControllerChangeHandler,
-    changeType: ControllerChangeType
-  ) {
-    super.onChangeEnded(changeHandler, changeType)
-    hasExited = !changeType.isEnter
-    if (isDestroyed) {
-      DemoApplication.refWatcher.watch(this)
-    }
   }
 
   companion object {

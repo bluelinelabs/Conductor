@@ -11,22 +11,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.bluelinelabs.conductor.ControllerChangeHandler
-import com.bluelinelabs.conductor.ControllerChangeType
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.archlifecycle.LifecycleController
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-import com.bluelinelabs.conductor.demo.DemoApplication
 import com.bluelinelabs.conductor.demo.R
 import com.bluelinelabs.conductor.demo.ToolbarProvider
+import com.bluelinelabs.conductor.demo.controllers.base.watchForLeaks
 import com.bluelinelabs.conductor.demo.databinding.ControllerLifecycleBinding
 
 class ArchLifecycleController : LifecycleController() {
 
-  private var hasExited = false
 
   init {
     Log.i(TAG, "Conductor: Constructor called")
+    watchForLeaks()
 
     lifecycle.addObserver(object : LifecycleObserver {
       @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
@@ -104,21 +102,6 @@ class ArchLifecycleController : LifecycleController() {
 
   override fun onDestroy() {
     Log.i(TAG, "Conductor: onDestroy() called")
-    super.onDestroy()
-    if (hasExited) {
-      DemoApplication.refWatcher.watch(this)
-    }
-  }
-
-  override fun onChangeEnded(
-    changeHandler: ControllerChangeHandler,
-    changeType: ControllerChangeType
-  ) {
-    super.onChangeEnded(changeHandler, changeType)
-    hasExited = !changeType.isEnter
-    if (isDestroyed) {
-      DemoApplication.refWatcher.watch(this)
-    }
   }
 
   companion object {

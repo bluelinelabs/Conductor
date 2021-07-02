@@ -14,7 +14,11 @@ import com.bluelinelabs.conductor.demo.ToolbarProvider
 abstract class BaseController(
   @LayoutRes private val layoutRes: Int,
   args: Bundle? = null
-) : RefWatchingController(args) {
+) : Controller(args) {
+
+  init {
+    watchForLeaks()
+  }
 
   // Note: This is just a quick demo of how an ActionBar *can* be accessed, not necessarily how it *should*
   // be accessed. In a production app, this would use Dagger instead.
