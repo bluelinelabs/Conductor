@@ -26,7 +26,7 @@ dependencies {
     lintPublish project(':conductor-lint')
 }
 
-ext.artifactId = 'conductor'
-
 apply from: rootProject.file('dependencies.gradle')
-apply plugin: "com.vanniktech.maven.publish"
+
+ext.artifactId = 'conductor'
+apply from: rootProject.file('gradle/publish.gradle')

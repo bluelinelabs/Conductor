@@ -17,7 +17,7 @@ dependencies {
     implementation project(':conductor')
 }
 
-ext.artifactId = 'conductor-arch-components-lifecycle'
-
 apply from: rootProject.file('dependencies.gradle')
-apply plugin: "com.vanniktech.maven.publish"
+
+ext.artifactId = 'conductor-arch-components-lifecycle'
+apply from: rootProject.file('gradle/publish.gradle')
