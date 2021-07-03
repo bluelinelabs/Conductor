@@ -280,7 +280,7 @@ public abstract class Router {
     public boolean popToRoot(@Nullable ControllerChangeHandler changeHandler) {
         ThreadUtils.ensureMainThread();
 
-        if (backstack.size() > 1) {
+        if (backstack.getSize() > 1) {
             //noinspection ConstantConditions
             popToTransaction(backstack.root(), changeHandler);
             return true;
@@ -375,7 +375,7 @@ public abstract class Router {
      */
     @SuppressWarnings("WeakerAccess")
     public int getBackstackSize() {
-        return backstack.size();
+        return backstack.getSize();
     }
 
     /**
@@ -383,7 +383,7 @@ public abstract class Router {
      */
     @NonNull
     public List<RouterTransaction> getBackstack() {
-        List<RouterTransaction> list = new ArrayList<>(backstack.size());
+        List<RouterTransaction> list = new ArrayList<>(backstack.getSize());
         Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
         while (backstackIterator.hasNext()) {
             list.add(backstackIterator.next());
@@ -700,7 +700,7 @@ public abstract class Router {
     }
 
     private void popToTransaction(@NonNull RouterTransaction transaction, @Nullable ControllerChangeHandler changeHandler) {
-        if (backstack.size() > 0) {
+        if (backstack.getSize() > 0) {
             RouterTransaction topTransaction = backstack.peek();
 
             List<RouterTransaction> updatedBackstack = new ArrayList<>();
@@ -747,7 +747,7 @@ public abstract class Router {
 
     @NonNull
     final List<Controller> getControllers() {
-        List<Controller> controllers = new ArrayList<>(backstack.size());
+        List<Controller> controllers = new ArrayList<>(backstack.getSize());
 
         Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
         while (backstackIterator.hasNext()) {
@@ -793,7 +793,7 @@ public abstract class Router {
         if (to != null) {
             to.ensureValidIndex(getTransactionIndexer());
             setRouterOnController(toController);
-        } else if (backstack.size() == 0 && !popsLastView) {
+        } else if (backstack.getSize() == 0 && !popsLastView) {
             // We're emptying out the backstack. Views get weird if you transition them out, so just no-op it. The host
             // Activity or controller should be handling this by finishing or at least hiding this view.
             changeHandler = new NoOpControllerChangeHandler();

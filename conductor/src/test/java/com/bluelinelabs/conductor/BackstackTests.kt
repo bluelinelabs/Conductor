@@ -1,67 +1,60 @@
-package com.bluelinelabs.conductor;
+package com.bluelinelabs.conductor
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-import static org.junit.Assert.assertEquals;
+class BackstackTests {
 
-public class BackstackTests {
+  private val backstack = Backstack()
 
-    private Backstack backstack;
+  @Test
+  fun testPush() {
+    assertEquals(0, backstack.size.toLong())
+    backstack.push(TestController().asTransaction())
+    assertEquals(1, backstack.size.toLong())
+  }
 
-    @Before
-    public void setup() {
-        backstack = new Backstack();
-    }
+  @Test
+  fun testPop() {
+    backstack.push(TestController().asTransaction())
+    backstack.push(TestController().asTransaction())
+    assertEquals(2, backstack.size.toLong())
 
-    @Test
-    public void testPush() {
-        assertEquals(0, backstack.size());
-        backstack.push(RouterTransaction.with(new TestController()));
-        assertEquals(1, backstack.size());
-    }
+    backstack.pop()
+    assertEquals(1, backstack.size.toLong())
 
-    @Test
-    public void testPop() {
-        backstack.push(RouterTransaction.with(new TestController()));
-        backstack.push(RouterTransaction.with(new TestController()));
-        assertEquals(2, backstack.size());
-        backstack.pop();
-        assertEquals(1, backstack.size());
-        backstack.pop();
-        assertEquals(0, backstack.size());
-    }
+    backstack.pop()
+    assertEquals(0, backstack.size.toLong())
+  }
 
-    @Test
-    public void testPeek() {
-        RouterTransaction transaction1 = RouterTransaction.with(new TestController());
-        RouterTransaction transaction2 = RouterTransaction.with(new TestController());
+  @Test
+  fun testPeek() {
+    val transaction1 = TestController().asTransaction()
+    val transaction2 = TestController().asTransaction()
 
-        backstack.push(transaction1);
-        assertEquals(transaction1, backstack.peek());
+    backstack.push(transaction1)
+    assertEquals(transaction1, backstack.peek())
 
-        backstack.push(transaction2);
-        assertEquals(transaction2, backstack.peek());
+    backstack.push(transaction2)
+    assertEquals(transaction2, backstack.peek())
 
-        backstack.pop();
-        assertEquals(transaction1, backstack.peek());
-    }
+    backstack.pop()
+    assertEquals(transaction1, backstack.peek())
+  }
 
-    @Test
-    public void testPopTo() {
-        RouterTransaction transaction1 = RouterTransaction.with(new TestController());
-        RouterTransaction transaction2 = RouterTransaction.with(new TestController());
-        RouterTransaction transaction3 = RouterTransaction.with(new TestController());
+  @Test
+  fun testPopTo() {
+    val transaction1 = TestController().asTransaction()
+    val transaction2 = TestController().asTransaction()
+    val transaction3 = TestController().asTransaction()
 
-        backstack.push(transaction1);
-        backstack.push(transaction2);
-        backstack.push(transaction3);
+    backstack.push(transaction1)
+    backstack.push(transaction2)
+    backstack.push(transaction3)
+    assertEquals(3, backstack.size.toLong())
 
-        assertEquals(3, backstack.size());
-
-        backstack.popTo(transaction1);
-
-        assertEquals(1, backstack.size());
-        assertEquals(transaction1, backstack.peek());
-    }
+    backstack.popTo(transaction1)
+    assertEquals(1, backstack.size.toLong())
+    assertEquals(transaction1, backstack.peek())
+  }
 }

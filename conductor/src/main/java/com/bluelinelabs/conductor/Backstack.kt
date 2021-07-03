@@ -1,118 +1,89 @@
-package com.bluelinelabs.conductor;
+package com.bluelinelabs.conductor
 
-import android.os.Bundle;
+import android.os.Bundle
+import java.util.*
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+internal class Backstack : Iterable<RouterTransaction> {
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.List;
+  private val backstack: Deque<RouterTransaction> = ArrayDeque()
 
-class Backstack implements Iterable<RouterTransaction> {
+  val isEmpty: Boolean get() = backstack.isEmpty()
 
-    private static final String KEY_ENTRIES = "Backstack.entries";
+  val size: Int get() = backstack.size
 
-    private final Deque<RouterTransaction> backstack = new ArrayDeque<>();
+  fun root(): RouterTransaction? = backstack.lastOrNull()
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    boolean isEmpty() {
-        return backstack.isEmpty();
+  override fun iterator(): MutableIterator<RouterTransaction> {
+    return backstack.iterator()
+  }
+
+  fun reverseIterator(): Iterator<RouterTransaction> = backstack.descendingIterator()
+
+  fun popTo(transaction: RouterTransaction): List<RouterTransaction> {
+    if (transaction in backstack) {
+      val popped: MutableList<RouterTransaction> = ArrayList()
+      while (backstack.peek() != transaction) {
+        val poppedTransaction = pop()
+        popped.add(poppedTransaction)
+      }
+      return popped
+    } else {
+      throw RuntimeException("Tried to pop to a transaction that was not on the back stack")
     }
+  }
 
-    int size() {
-        return backstack.size();
+  fun pop(): RouterTransaction {
+    return backstack.pop().also {
+      it.controller.destroy()
     }
+  }
 
-    @Nullable
-    RouterTransaction root() {
-        return backstack.size() > 0 ? backstack.getLast() : null;
+  fun peek(): RouterTransaction? = backstack.peek()
+
+  fun push(transaction: RouterTransaction) {
+    backstack.push(transaction)
+  }
+
+  fun popAll(): List<RouterTransaction> {
+    val list: MutableList<RouterTransaction> = ArrayList()
+    while (!isEmpty) {
+      list.add(pop())
     }
+    return list
+  }
 
-    @Override @NonNull
-    public Iterator<RouterTransaction> iterator() {
-        return backstack.iterator();
+  fun setBackstack(backstack: List<RouterTransaction>) {
+    this.backstack.clear()
+    backstack.forEach { transaction ->
+      this.backstack.push(transaction)
     }
+  }
 
-    @NonNull
-    Iterator<RouterTransaction> reverseIterator() {
-        return backstack.descendingIterator();
+  operator fun contains(controller: Controller): Boolean {
+    return backstack.any {
+      it.controller == controller
     }
+  }
 
-    @NonNull
-    List<RouterTransaction> popTo(@NonNull RouterTransaction transaction) {
-        List<RouterTransaction> popped = new ArrayList<>();
-        if (backstack.contains(transaction)) {
-            while (backstack.peek() != transaction) {
-                RouterTransaction poppedTransaction = pop();
-                popped.add(poppedTransaction);
-            }
-        } else {
-            throw new RuntimeException("Tried to pop to a transaction that was not on the back stack");
-        }
-        return popped;
+  fun saveInstanceState(outState: Bundle) {
+    val entryBundles = ArrayList<Bundle>(backstack.size)
+    backstack.mapTo(entryBundles) {
+      it.saveInstanceState()
     }
+    outState.putParcelableArrayList(KEY_ENTRIES, entryBundles)
+  }
 
-    @NonNull
-    RouterTransaction pop() {
-        RouterTransaction popped = backstack.pop();
-        popped.controller().destroy();
-        return popped;
+  fun restoreInstanceState(savedInstanceState: Bundle) {
+    val entryBundles = savedInstanceState.getParcelableArrayList<Bundle?>(KEY_ENTRIES)
+    if (entryBundles != null) {
+      entryBundles.reverse()
+      for (transactionBundle in entryBundles) {
+        backstack.push(RouterTransaction(transactionBundle!!))
+      }
     }
+  }
 
-    @Nullable
-    RouterTransaction peek() {
-        return backstack.peek();
-    }
-
-    void push(@NonNull RouterTransaction transaction) {
-        backstack.push(transaction);
-    }
-
-    @NonNull
-    List<RouterTransaction> popAll() {
-        List<RouterTransaction> list = new ArrayList<>();
-        while (!isEmpty()) {
-            list.add(pop());
-        }
-        return list;
-    }
-
-    void setBackstack(@NonNull List<RouterTransaction> backstack) {
-        this.backstack.clear();
-        for (RouterTransaction transaction : backstack) {
-            this.backstack.push(transaction);
-        }
-    }
-
-    boolean contains(@NonNull Controller controller) {
-        for (RouterTransaction transaction : backstack) {
-            if (controller == transaction.controller()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void saveInstanceState(@NonNull Bundle outState) {
-        ArrayList<Bundle> entryBundles = new ArrayList<>(backstack.size());
-        for (RouterTransaction entry : backstack) {
-            entryBundles.add(entry.saveInstanceState());
-        }
-
-        outState.putParcelableArrayList(KEY_ENTRIES, entryBundles);
-    }
-
-    void restoreInstanceState(@NonNull Bundle savedInstanceState) {
-        ArrayList<Bundle> entryBundles = savedInstanceState.getParcelableArrayList(KEY_ENTRIES);
-        if (entryBundles != null) {
-            Collections.reverse(entryBundles);
-            for (Bundle transactionBundle : entryBundles) {
-                backstack.push(new RouterTransaction(transactionBundle));
-            }
-        }
-    }
+  companion object {
+    private const val KEY_ENTRIES = "Backstack.entries"
+  }
 }
