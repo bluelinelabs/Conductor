@@ -1,0 +1,28 @@
+apply plugin: "maven-publish"
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.bluelinelabs'
+                artifactId = project.ext.artifactId
+                version = project.property("VERSION_NAME")
+                pom {
+                    description = "A small, yet full-featured framework that allows building View-based Android applications"
+                    licenses {
+                        license {
+                            name = "The Apache Software License, Version 2.0"
+                            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    }
+                    scm {
+                        connection = "scm:git:https://github.com/bluelinelabs/Conductor"
+                        developerConnection = "scm:git:https://github.com/bluelinelabs/Conductor"
+                        url = "https://github.com/bluelinelabs/Conductor"
+                    }
+                }
+            }
+        }
+    }
+}

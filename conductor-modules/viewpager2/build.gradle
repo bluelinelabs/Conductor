@@ -28,7 +28,7 @@ dependencies {
     implementation project(':conductor')
 }
 
-ext.artifactId = 'conductor-viewpager2'
-
 apply from: rootProject.file('dependencies.gradle')
-apply plugin: "com.vanniktech.maven.publish"
+
+ext.artifactId = 'conductor-viewpager2'
+apply from: rootProject.file('gradle/publish.gradle')

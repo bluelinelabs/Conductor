@@ -8,7 +8,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$agpVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "com.vanniktech:gradle-maven-publish-plugin:$mvnPublishVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
     }
 }
