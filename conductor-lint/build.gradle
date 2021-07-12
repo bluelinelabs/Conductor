@@ -1,4 +1,4 @@
-apply plugin: 'java-library'
+apply plugin: 'kotlin'
 
 configurations {
     lintChecks
@@ -7,6 +7,7 @@ configurations {
 dependencies {
     compileOnly rootProject.ext.lintapi
     compileOnly rootProject.ext.lintchecks
+    compileOnly rootProject.ext.kotlinStd
 
     testImplementation rootProject.ext.junit
     testImplementation rootProject.ext.lint
