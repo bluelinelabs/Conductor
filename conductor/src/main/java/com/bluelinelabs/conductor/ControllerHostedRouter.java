@@ -34,10 +34,6 @@ class ControllerHostedRouter extends Router {
 
     ControllerHostedRouter() { }
 
-    ControllerHostedRouter(int hostId, @Nullable String tag) {
-        this(hostId, tag, false);
-    }
-
     ControllerHostedRouter(int hostId, @Nullable String tag, boolean boundToContainer) {
         if (!boundToContainer && tag == null) {
             throw new IllegalStateException("ControllerHostedRouter can't be created without a tag if not bounded to its container");

@@ -3,6 +3,7 @@ package com.bluelinelabs.conductor.demo.controllers
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
+import com.bluelinelabs.conductor.Router.PopRootControllerMode
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.demo.R
@@ -10,7 +11,6 @@ import com.bluelinelabs.conductor.demo.controllers.base.BaseController
 import com.bluelinelabs.conductor.demo.databinding.ControllerParentBinding
 import com.bluelinelabs.conductor.demo.util.getMaterialColor
 import com.bluelinelabs.conductor.demo.util.viewBinding
-
 
 class ParentController : BaseController(R.layout.controller_parent) {
   private val binding: ControllerParentBinding by viewBinding(ControllerParentBinding::bind)
@@ -50,7 +50,7 @@ class ParentController : BaseController(R.layout.controller_parent) {
       else -> throw IllegalStateException("Invalid child index $index")
     }
 
-    val childRouter = getChildRouter(container).setPopsLastView(true)
+    val childRouter = getChildRouter(container).setPopRootControllerMode(PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     if (!childRouter.hasRootController()) {
       val child = ChildController(
         title = "Child Controller #$index",

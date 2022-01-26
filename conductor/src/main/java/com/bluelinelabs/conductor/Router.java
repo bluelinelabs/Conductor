@@ -35,14 +35,14 @@ import java.util.List;
 public abstract class Router {
 
     private static final String KEY_BACKSTACK = "Router.backstack";
-    private static final String KEY_POPS_LAST_VIEW = "Router.popsLastView";
+    private static final String KEY_POP_ROOT_CONTROLLER_MODE = "Router.popRootControllerMode";
 
     final Backstack backstack = new Backstack();
     private final List<ControllerChangeListener> changeListeners = new ArrayList<>();
     private final List<ChangeTransaction> pendingControllerChanges = new ArrayList<>();
     final List<Controller> destroyingControllers = new ArrayList<>();
 
-    private boolean popsLastView = false;
+    private PopRootControllerMode popRootControllerMode = PopRootControllerMode.POP_ROOT_CONTROLLER_LEAVING_VIEW;
     boolean containerFullyAttached = false;
     boolean isActivityStopped = false;
 
@@ -95,7 +95,7 @@ public abstract class Router {
             //noinspection ConstantConditions
             if (backstack.peek().controller().handleBack()) {
                 return true;
-            } else if (popCurrentController()) {
+            } else if ((backstack.getSize() > 1 || popRootControllerMode != PopRootControllerMode.NEVER) && popCurrentController()) {
                 return true;
             }
         }
@@ -162,7 +162,7 @@ public abstract class Router {
             }
         }
 
-        if (popsLastView) {
+        if (popRootControllerMode == PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW) {
             return topTransaction != null;
         } else {
             return !backstack.isEmpty();
@@ -221,7 +221,7 @@ public abstract class Router {
     }
 
     void destroy(boolean popViews) {
-        popsLastView = true;
+        popRootControllerMode = PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW;
         final List<RouterTransaction> poppedControllers = backstack.popAll();
         trackDestroyingControllers(poppedControllers);
 
@@ -251,10 +251,24 @@ public abstract class Router {
      * If set to true, this router will handle back presses by performing a change handler on the last controller and view
      * in the stack. This defaults to false so that the developer can either finish its containing Activity or otherwise
      * hide its parent view without any strange artifacting.
+     *
+     * Note: This method has been deprecated and should be replaced with setPopRootControllerMode.
      */
     @NonNull
+    @Deprecated
     public Router setPopsLastView(boolean popsLastView) {
-        this.popsLastView = popsLastView;
+        this.popRootControllerMode = popsLastView ? PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW : PopRootControllerMode.POP_ROOT_CONTROLLER_LEAVING_VIEW;
+        return this;
+    }
+
+    /**
+     * Sets the method this router will use to handle back presses when there is only one controller left in the backstack.
+     * Defaults to POP_ROOT_CONTROLLER_LEAVING_VIEW so that the developer can either finish its containing Activity or
+     * otherwise hide its parent view without any strange artifacting.
+     */
+    @NonNull
+    public Router setPopRootControllerMode(@NonNull PopRootControllerMode popRootControllerMode) {
+        this.popRootControllerMode = popRootControllerMode;
         return this;
     }
 
@@ -650,14 +664,14 @@ public abstract class Router {
         backstack.saveInstanceState(backstackState);
 
         outState.putParcelable(KEY_BACKSTACK, backstackState);
-        outState.putBoolean(KEY_POPS_LAST_VIEW, popsLastView);
+        outState.putInt(KEY_POP_ROOT_CONTROLLER_MODE, popRootControllerMode.ordinal());
     }
 
     public void restoreInstanceState(@NonNull Bundle savedInstanceState) {
         Bundle backstackBundle = savedInstanceState.getParcelable(KEY_BACKSTACK);
         //noinspection ConstantConditions
         backstack.restoreInstanceState(backstackBundle);
-        popsLastView = savedInstanceState.getBoolean(KEY_POPS_LAST_VIEW);
+        popRootControllerMode = PopRootControllerMode.values()[savedInstanceState.getInt(KEY_POP_ROOT_CONTROLLER_MODE)];
 
         Iterator<RouterTransaction> backstackIterator = backstack.reverseIterator();
         while (backstackIterator.hasNext()) {
@@ -803,7 +817,7 @@ public abstract class Router {
         if (to != null) {
             to.ensureValidIndex(getTransactionIndexer());
             setRouterOnController(toController);
-        } else if (backstack.getSize() == 0 && !popsLastView) {
+        } else if (backstack.getSize() == 0 && popRootControllerMode == PopRootControllerMode.POP_ROOT_CONTROLLER_LEAVING_VIEW) {
             // We're emptying out the backstack. Views get weird if you transition them out, so just no-op it. The host
             // Activity or controller should be handling this by finishing or at least hiding this view.
             changeHandler = new NoOpControllerChangeHandler();
@@ -1011,4 +1025,25 @@ public abstract class Router {
     @NonNull abstract Router getRootRouter();
     @NonNull abstract TransactionIndexer getTransactionIndexer();
 
+    /**
+     * Defines the way a Router will handle back button or pop events when there is only one controller
+     * left in the backstack.
+     */
+    public enum PopRootControllerMode {
+        /**
+         * The Router will not pop the final controller left on the backstack when the back button is pressed
+         * or when pop events are called. This mode should generally be used for Activity-hosted routers.
+         */
+        NEVER,
+        /**
+         * The Router will pop the final controller, but will leave its view in the hierarchy. This is useful
+         * when the developer wishes to allow its containing Activity to finish or otherwise hide its parent
+         * view without any strange artifacting.
+         */
+        POP_ROOT_CONTROLLER_LEAVING_VIEW,
+        /**
+         * The Router will pop both the final controller as well as its view.
+         */
+        POP_ROOT_CONTROLLER_AND_VIEW
+    }
 }
