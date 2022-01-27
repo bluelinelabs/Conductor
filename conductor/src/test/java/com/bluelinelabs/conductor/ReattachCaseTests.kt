@@ -124,7 +124,7 @@ class ReattachCaseTests {
     val childRouter = controllerB.getChildRouter(
       controllerB.view!!.findViewById(TestController.VIEW_ID)
     )
-    childRouter.setPopsLastView(true)
+    childRouter.setPopRootControllerMode(Router.PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     childRouter.pushController(
       childController.asTransaction(
         pushChangeHandler = MockChangeHandler.defaultHandler(),
@@ -179,7 +179,7 @@ class ReattachCaseTests {
     val childRouter = controllerB.getChildRouter(
       controllerB.view!!.findViewById(TestController.VIEW_ID)
     )
-    childRouter.setPopsLastView(true)
+    childRouter.setPopRootControllerMode(Router.PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     childRouter.pushController(
       childController.asTransaction(
         pushChangeHandler = MockChangeHandler.defaultHandler(),

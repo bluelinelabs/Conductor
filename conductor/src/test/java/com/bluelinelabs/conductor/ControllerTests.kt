@@ -276,7 +276,7 @@ class ControllerTests {
     Assert.assertNull(child2.parentController)
 
     var childRouter = parent.getChildRouter(parent.view!!.findViewById(TestController.VIEW_ID))
-    childRouter.setPopsLastView(true)
+    childRouter.setPopRootControllerMode(Router.PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     childRouter.setRoot(child1.asTransaction())
     Assert.assertEquals(1, parent.childRouters.size)
     Assert.assertEquals(childRouter, parent.childRouters[0])
@@ -362,7 +362,7 @@ class ControllerTests {
     val childTransaction1 = TestController().asTransaction()
     val childTransaction2 = TestController().asTransaction()
     var childRouter = parent.getChildRouter(parent.view!!.findViewById(TestController.CHILD_VIEW_ID_1))
-    childRouter.setPopsLastView(true)
+    childRouter.setPopRootControllerMode(Router.PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     childRouter.setRoot(childTransaction1)
     childRouter.pushController(childTransaction2)
     val savedState = Bundle()

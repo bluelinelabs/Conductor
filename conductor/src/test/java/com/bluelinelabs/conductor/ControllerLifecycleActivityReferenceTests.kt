@@ -112,7 +112,7 @@ class ControllerLifecycleActivityReferenceTests {
     child.addLifecycleListener(listener)
 
     val childRouter = parent.getChildRouter(parent.view!!.findViewById(TestController.VIEW_ID))
-    childRouter.setPopsLastView(true)
+    childRouter.setPopRootControllerMode(Router.PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     childRouter.pushController(
       child.asTransaction(
         pushChangeHandler = MockChangeHandler.defaultHandler(),
@@ -146,7 +146,7 @@ class ControllerLifecycleActivityReferenceTests {
     child.addLifecycleListener(listener)
 
     val childRouter = parent.getChildRouter(parent.view!!.findViewById(TestController.VIEW_ID))
-    childRouter.setPopsLastView(true)
+    childRouter.setPopRootControllerMode(Router.PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     childRouter.pushController(
       child.asTransaction(
         pushChangeHandler = MockChangeHandler.defaultHandler(),
@@ -199,7 +199,7 @@ class ControllerLifecycleActivityReferenceTests {
     val listener = ActivityReferencingLifecycleListener()
     child.addLifecycleListener(listener)
     val childRouter = parent.getChildRouter(parent.view!!.findViewById(TestController.VIEW_ID))
-    childRouter.setPopsLastView(true)
+    childRouter.setPopRootControllerMode(Router.PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW)
     childRouter.pushController(
       child.asTransaction(
         pushChangeHandler = MockChangeHandler.defaultHandler(),
