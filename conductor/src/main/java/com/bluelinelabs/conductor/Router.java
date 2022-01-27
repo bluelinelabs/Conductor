@@ -42,7 +42,7 @@ public abstract class Router {
     private final List<ChangeTransaction> pendingControllerChanges = new ArrayList<>();
     final List<Controller> destroyingControllers = new ArrayList<>();
 
-    private PopRootControllerMode popRootControllerMode = PopRootControllerMode.POP_ROOT_CONTROLLER_LEAVING_VIEW;
+    private PopRootControllerMode popRootControllerMode = PopRootControllerMode.POP_ROOT_CONTROLLER_BUT_NOT_VIEW;
     boolean containerFullyAttached = false;
     boolean isActivityStopped = false;
 
@@ -257,7 +257,7 @@ public abstract class Router {
     @NonNull
     @Deprecated
     public Router setPopsLastView(boolean popsLastView) {
-        this.popRootControllerMode = popsLastView ? PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW : PopRootControllerMode.POP_ROOT_CONTROLLER_LEAVING_VIEW;
+        this.popRootControllerMode = popsLastView ? PopRootControllerMode.POP_ROOT_CONTROLLER_AND_VIEW : PopRootControllerMode.POP_ROOT_CONTROLLER_BUT_NOT_VIEW;
         return this;
     }
 
@@ -817,7 +817,7 @@ public abstract class Router {
         if (to != null) {
             to.ensureValidIndex(getTransactionIndexer());
             setRouterOnController(toController);
-        } else if (backstack.getSize() == 0 && popRootControllerMode == PopRootControllerMode.POP_ROOT_CONTROLLER_LEAVING_VIEW) {
+        } else if (backstack.getSize() == 0 && popRootControllerMode == PopRootControllerMode.POP_ROOT_CONTROLLER_BUT_NOT_VIEW) {
             // We're emptying out the backstack. Views get weird if you transition them out, so just no-op it. The host
             // Activity or controller should be handling this by finishing or at least hiding this view.
             changeHandler = new NoOpControllerChangeHandler();
@@ -1040,7 +1040,7 @@ public abstract class Router {
          * when the developer wishes to allow its containing Activity to finish or otherwise hide its parent
          * view without any strange artifacting.
          */
-        POP_ROOT_CONTROLLER_LEAVING_VIEW,
+        POP_ROOT_CONTROLLER_BUT_NOT_VIEW,
         /**
          * The Router will pop both the final controller as well as its view.
          */
