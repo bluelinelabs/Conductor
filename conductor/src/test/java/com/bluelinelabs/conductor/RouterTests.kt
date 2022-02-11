@@ -252,6 +252,103 @@ class RouterTests {
   }
 
   @Test
+  fun testPushThenPopWithSetBackstackWithNoRemoveViewOnPush() {
+    val oldRootTransaction = TestController().asTransaction()
+    val oldTopTransaction = TestController().asTransaction(
+      pushChangeHandler = MockChangeHandler.noRemoveViewOnPushHandler()
+    )
+    router.setRoot(oldRootTransaction)
+    router.pushController(oldTopTransaction)
+    Assert.assertEquals(2, router.backstackSize.toLong())
+    Assert.assertTrue(oldRootTransaction.controller.isAttached)
+    Assert.assertTrue(oldTopTransaction.controller.isAttached)
+
+    val newTopTransaction = TestController().asTransaction()
+    router.pushController(newTopTransaction)
+
+    Assert.assertEquals(3, router.backstackSize.toLong())
+    Assert.assertFalse(oldRootTransaction.controller.isAttached)
+    Assert.assertFalse(oldTopTransaction.controller.isAttached)
+    Assert.assertTrue(newTopTransaction.controller.isAttached)
+
+    val backstack2 = listOf(oldRootTransaction, oldTopTransaction)
+    router.setBackstack(backstack2, null)
+
+    Assert.assertEquals(2, router.backstackSize.toLong())
+    val fetchedBackstack = router.getBackstack()
+    Assert.assertEquals(oldRootTransaction, fetchedBackstack[0])
+    Assert.assertEquals(oldTopTransaction, fetchedBackstack[1])
+    Assert.assertTrue(oldRootTransaction.controller.isAttached)
+    Assert.assertTrue(oldTopTransaction.controller.isAttached)
+    Assert.assertFalse(newTopTransaction.controller.isAttached)
+  }
+
+  @Test
+  fun testPopUsingSetBackstackWithNoRemoveViewOnPush() {
+    val oldRootTransaction = TestController().asTransaction()
+    val oldTopTransaction = TestController().asTransaction(
+      pushChangeHandler = MockChangeHandler.noRemoveViewOnPushHandler()
+    )
+    router.setRoot(oldRootTransaction)
+    router.pushController(oldTopTransaction)
+    Assert.assertEquals(2, router.backstackSize.toLong())
+    Assert.assertTrue(oldRootTransaction.controller.isAttached)
+    Assert.assertTrue(oldTopTransaction.controller.isAttached)
+
+    val newTopTransaction = TestController().asTransaction()
+    val backstack = listOf(oldRootTransaction, oldTopTransaction, newTopTransaction)
+    router.setBackstack(backstack, null)
+
+    Assert.assertEquals(3, router.backstackSize.toLong())
+    Assert.assertFalse(oldRootTransaction.controller.isAttached)
+    Assert.assertFalse(oldTopTransaction.controller.isAttached)
+    Assert.assertTrue(newTopTransaction.controller.isAttached)
+
+    val backstack2 = listOf(oldRootTransaction, oldTopTransaction)
+    router.setBackstack(backstack2, null)
+
+    Assert.assertEquals(2, router.backstackSize.toLong())
+    val fetchedBackstack = router.getBackstack()
+    Assert.assertEquals(oldRootTransaction, fetchedBackstack[0])
+    Assert.assertEquals(oldTopTransaction, fetchedBackstack[1])
+    Assert.assertTrue(oldRootTransaction.controller.isAttached)
+    Assert.assertTrue(oldTopTransaction.controller.isAttached)
+    Assert.assertFalse(newTopTransaction.controller.isAttached)
+  }
+
+  @Test
+  fun testPopWithNoRemoveViewOnPush() {
+    val oldRootTransaction = TestController().asTransaction()
+    val oldTopTransaction = TestController().asTransaction(
+      pushChangeHandler = MockChangeHandler.noRemoveViewOnPushHandler()
+    )
+    router.setRoot(oldRootTransaction)
+    router.pushController(oldTopTransaction)
+    Assert.assertEquals(2, router.backstackSize.toLong())
+    Assert.assertTrue(oldRootTransaction.controller.isAttached)
+    Assert.assertTrue(oldTopTransaction.controller.isAttached)
+
+    val newTopTransaction = TestController().asTransaction()
+    val backstack = listOf(oldRootTransaction, oldTopTransaction, newTopTransaction)
+    router.setBackstack(backstack, null)
+
+    Assert.assertEquals(3, router.backstackSize.toLong())
+    Assert.assertFalse(oldRootTransaction.controller.isAttached)
+    Assert.assertFalse(oldTopTransaction.controller.isAttached)
+    Assert.assertTrue(newTopTransaction.controller.isAttached)
+
+    router.popCurrentController()
+
+    Assert.assertEquals(2, router.backstackSize.toLong())
+    val fetchedBackstack = router.getBackstack()
+    Assert.assertEquals(oldRootTransaction, fetchedBackstack[0])
+    Assert.assertEquals(oldTopTransaction, fetchedBackstack[1])
+    Assert.assertTrue(oldRootTransaction.controller.isAttached)
+    Assert.assertTrue(oldTopTransaction.controller.isAttached)
+    Assert.assertFalse(newTopTransaction.controller.isAttached)
+  }
+
+  @Test
   fun testPopToRoot() {
     val rootTransaction = TestController().asTransaction()
     val transaction1 = TestController().asTransaction()
