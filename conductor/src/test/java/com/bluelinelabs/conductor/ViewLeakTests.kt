@@ -105,7 +105,7 @@ class ViewLeakTests {
 
     router.pushController(TestController().asTransaction())
     shadowOf(Looper.getMainLooper()).idle()
-    Assert.assertNotNull(view.parent)
+    Assert.assertNull(view.parent)
 
     router.popToRoot()
     shadowOf(Looper.getMainLooper()).idle()
