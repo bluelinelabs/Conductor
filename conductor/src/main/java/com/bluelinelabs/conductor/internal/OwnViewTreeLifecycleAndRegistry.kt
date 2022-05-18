@@ -1,5 +1,6 @@
 package com.bluelinelabs.conductor.internal
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -28,6 +29,7 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
 
   private var hasSavedState = false
   private var savedRegistryState = Bundle.EMPTY
+  private val parentChangeListeners = mutableMapOf<String, Controller.LifecycleListener>()
 
   init {
     controller.addLifecycleListener(object : Controller.LifecycleListener() {
@@ -84,29 +86,17 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
         }
       }
 
-      // AbstractComposeView adds its own OnAttachStateChangeListener by default. Since it
-      // does this on init, its detach callbacks get called before ours, which prevents us
-      // from saving state in onDetach. The if statement in here should detect upcoming
-      // detachment.
       override fun onChangeStart(
         changeController: Controller,
         changeHandler: ControllerChangeHandler,
-        changeType: ControllerChangeType
+        changeType: ControllerChangeType,
       ) {
-        if (
-          controller === changeController &&
-          !changeType.isEnter &&
-          changeHandler.removesFromViewOnPush() &&
-          changeController.view != null &&
-          lifecycleRegistry.currentState == Lifecycle.State.RESUMED
-        ) {
-          lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-
-          savedRegistryState = Bundle()
-          savedStateRegistryController.performSave(savedRegistryState)
-
-          hasSavedState = true
-        }
+        pauseOnChangeStart(
+          targetController = controller,
+          changeController = changeController,
+          changeHandler = changeHandler,
+          changeType = changeType,
+        )
       }
 
       override fun preDetach(controller: Controller, view: View) {
@@ -147,12 +137,78 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
           lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         }
       }
+
+      override fun postContextAvailable(controller: Controller, context: Context) {
+        listenForParentChangeStart(controller)
+      }
+
+      override fun preContextUnavailable(controller: Controller, context: Context) {
+        stopListeningForParentChangeStart(controller)
+      }
     })
   }
 
   override fun getLifecycle() = lifecycleRegistry
 
   override fun getSavedStateRegistry() = savedStateRegistryController.savedStateRegistry
+
+  private fun listenForParentChangeStart(controller: Controller) {
+    controller.parentController?.let { parent ->
+      val changeListener = object : Controller.LifecycleListener() {
+        override fun onChangeStart(
+          controller: Controller,
+          changeHandler: ControllerChangeHandler,
+          changeType: ControllerChangeType
+        ) {
+          pauseOnChangeStart(
+            targetController = parent,
+            changeController = controller,
+            changeHandler = changeHandler,
+            changeType = changeType,
+          )
+        }
+      }
+
+      parent.addLifecycleListener(changeListener)
+      parentChangeListeners[controller.instanceId] = changeListener
+
+      listenForParentChangeStart(parent)
+    }
+  }
+
+  private fun stopListeningForParentChangeStart(controller: Controller) {
+    controller.parentController?.let { parent ->
+      parentChangeListeners.remove(parent.instanceId)?.let { listener ->
+        parent.removeLifecycleListener(listener)
+      }
+    }
+  }
+
+  // AbstractComposeView adds its own OnAttachStateChangeListener by default. Since it
+  // does this on init, its detach callbacks get called before ours, which prevents us
+  // from saving state in onDetach. The if statement in here should detect upcoming
+  // detachment.
+  private fun pauseOnChangeStart(
+    targetController: Controller,
+    changeController: Controller,
+    changeHandler: ControllerChangeHandler,
+    changeType: ControllerChangeType,
+  ) {
+    if (
+      targetController === changeController &&
+      !changeType.isEnter &&
+      changeHandler.removesFromViewOnPush() &&
+      changeController.view != null &&
+      lifecycleRegistry.currentState == Lifecycle.State.RESUMED
+    ) {
+      lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+
+      savedRegistryState = Bundle()
+      savedStateRegistryController.performSave(savedRegistryState)
+
+      hasSavedState = true
+    }
+  }
 
   companion object {
     private const val KEY_SAVED_STATE = "Registry.savedState"
