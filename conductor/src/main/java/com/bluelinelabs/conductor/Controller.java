@@ -1024,9 +1024,10 @@ public abstract class Controller {
                 }
             } else {
                 attached = false;
-                awaitingParentAttach = false;
             }
         }
+
+        awaitingParentAttach = false;
 
         if (removeViewRef) {
             removeViewReference();
