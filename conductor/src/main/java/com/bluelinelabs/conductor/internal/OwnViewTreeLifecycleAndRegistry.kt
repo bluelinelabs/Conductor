@@ -213,8 +213,8 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
   companion object {
     private const val KEY_SAVED_STATE = "Registry.savedState"
 
-    fun own(target: Controller) {
-      OwnViewTreeLifecycleAndRegistry(target)
+    fun own(target: Controller): OwnViewTreeLifecycleAndRegistry {
+      return OwnViewTreeLifecycleAndRegistry(target)
     }
   }
 }
