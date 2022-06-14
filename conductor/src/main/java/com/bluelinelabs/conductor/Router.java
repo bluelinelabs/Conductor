@@ -742,6 +742,7 @@ public abstract class Router {
             @Override
             public void run() {
                 containerFullyAttached = true;
+                performPendingControllerChanges();
             }
         });
     }
@@ -861,12 +862,14 @@ public abstract class Router {
                 to.setNeedsAttach(true);
             }
             pendingControllerChanges.add(transaction);
-            container.post(new Runnable() {
-                @Override
-                public void run() {
-                    performPendingControllerChanges();
-                }
-            });
+            if (container != null) {
+                container.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        performPendingControllerChanges();
+                    }
+                });
+            }
         } else {
             ControllerChangeHandler.executeChange(transaction);
         }
