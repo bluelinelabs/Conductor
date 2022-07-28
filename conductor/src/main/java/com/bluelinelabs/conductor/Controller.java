@@ -1082,7 +1082,7 @@ public abstract class Controller {
     final View inflate(@NonNull ViewGroup parent) {
         if (view != null && view.getParent() != null && view.getParent() != parent) {
             detach(view, true, false);
-            removeViewReference(view.getContext());
+            removeViewReference(view != null ? view.getContext() : null);
         }
 
         if (view == null) {
