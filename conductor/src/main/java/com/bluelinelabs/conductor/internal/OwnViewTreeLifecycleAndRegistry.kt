@@ -29,7 +29,6 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
 
   private var hasSavedState = false
   private var savedRegistryState = Bundle.EMPTY
-  private val parentChangeListeners = mutableMapOf<String, Controller.LifecycleListener>()
 
   init {
     controller.addLifecycleListener(object : Controller.LifecycleListener() {
@@ -97,6 +96,8 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
           changeHandler = changeHandler,
           changeType = changeType,
         )
+
+        GlobalChangeStartListener.onChangeStart(changeController, changeHandler, changeType)
       }
 
       override fun preDetach(controller: Controller, view: View) {
@@ -138,11 +139,11 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
       }
 
       override fun postContextAvailable(controller: Controller, context: Context) {
-        listenForParentChangeStart(controller)
+        listenForAncestorChangeStart(controller)
       }
 
       override fun preContextUnavailable(controller: Controller, context: Context) {
-        stopListeningForParentChangeStart(controller)
+        stopListeningForAncestorChangeStart(controller)
       }
     })
   }
@@ -151,40 +152,23 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
 
   override fun getSavedStateRegistry() = savedStateRegistryController.savedStateRegistry
 
-  private fun listenForParentChangeStart(controller: Controller) {
-    controller.parentController?.let { parent ->
-      val changeListener = object : Controller.LifecycleListener() {
-        override fun onChangeStart(
-          controller: Controller,
-          changeHandler: ControllerChangeHandler,
-          changeType: ControllerChangeType
-        ) {
-          // No-op on the case where we (the child controller) hasn't yet created a View as our parent is being
-          // changed out.
-          if (::lifecycleRegistry.isInitialized) {
-            pauseOnChangeStart(
-              targetController = parent,
-              changeController = controller,
-              changeHandler = changeHandler,
-              changeType = changeType,
-            )
-          }
-        }
+  private fun listenForAncestorChangeStart(controller: Controller) {
+    GlobalChangeStartListener.subscribe(controller, controller.ancestors()) { ancestor, changeHandler, changeType ->
+      // No-op on the case where we (the child controller) hasn't yet created a View as our parent is being
+      // changed out.
+      if (::lifecycleRegistry.isInitialized) {
+        pauseOnChangeStart(
+          targetController = ancestor,
+          changeController = ancestor,
+          changeHandler = changeHandler,
+          changeType = changeType,
+        )
       }
-
-      parent.addLifecycleListener(changeListener)
-      parentChangeListeners[controller.instanceId] = changeListener
-
-      listenForParentChangeStart(parent)
     }
   }
 
-  private fun stopListeningForParentChangeStart(controller: Controller) {
-    controller.parentController?.let { parent ->
-      parentChangeListeners.remove(parent.instanceId)?.let { listener ->
-        parent.removeLifecycleListener(listener)
-      }
-    }
+  private fun stopListeningForAncestorChangeStart(controller: Controller) {
+    GlobalChangeStartListener.unsubscribe(controller)
   }
 
   // AbstractComposeView adds its own OnAttachStateChangeListener by default. Since it
@@ -213,11 +197,55 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
     }
   }
 
+  private fun Controller.ancestors(): Collection<String> {
+    return buildList {
+      var ancestor = parentController
+      while (ancestor != null) {
+        add(ancestor.instanceId)
+        ancestor = ancestor.parentController
+      }
+    }
+  }
+
   companion object {
     private const val KEY_SAVED_STATE = "Registry.savedState"
 
     fun own(target: Controller): OwnViewTreeLifecycleAndRegistry {
       return OwnViewTreeLifecycleAndRegistry(target)
+    }
+  }
+}
+
+// In order to prevent child controllers from having strong references to all of their ancestors, some of which may
+// break their connection before the child is made aware, this shared listener is used to call all interested parties
+// when a controller begins transitioning.
+private object GlobalChangeStartListener {
+  private val listeners = mutableMapOf<String, Listener>()
+
+  fun subscribe(
+    controller: Controller,
+    targetControllers: Collection<String>,
+    listener: (Controller, ControllerChangeHandler, ControllerChangeType) -> Unit,
+  ) {
+    listeners[controller.instanceId] = Listener(targetControllers, listener)
+  }
+
+  fun unsubscribe(controller: Controller) {
+    listeners.remove(controller.instanceId)
+  }
+
+  fun onChangeStart(controller: Controller, changeHandler: ControllerChangeHandler, changeType: ControllerChangeType) {
+    listeners.values.forEach { it.call(controller, changeHandler, changeType) }
+  }
+
+  private class Listener(
+    private val targetControllers: Collection<String>,
+    private val listener: (Controller, ControllerChangeHandler, ControllerChangeType) -> Unit,
+  ) {
+    fun call(controller: Controller, changeHandler: ControllerChangeHandler, changeType: ControllerChangeType) {
+      if (targetControllers.contains(controller.instanceId)) {
+        listener(controller, changeHandler, changeType)
+      }
     }
   }
 }
