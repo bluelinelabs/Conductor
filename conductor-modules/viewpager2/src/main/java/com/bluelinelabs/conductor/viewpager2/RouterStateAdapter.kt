@@ -155,6 +155,7 @@ abstract class RouterStateAdapter(private val host: Controller) :
   private fun attachRouter(holder: RouterViewHolder, position: Int) {
     val itemId = getItemId(position)
     val router = host.getChildRouter(holder.container, "$itemId", true, false)!!
+            .setPopRootControllerMode(Router.PopRootControllerMode.NEVER)
 
     // This should have already been handled by onViewRecycled, but it seems like this wasn't
     // always reliably called

@@ -77,7 +77,8 @@ public abstract class RouterPagerAdapter extends PagerAdapter {
             savedPages.remove(position);
         }
 
-        Router router = host.getChildRouter(container, name);
+        Router router = host.getChildRouter(container, name)
+                .setPopRootControllerMode(Router.PopRootControllerMode.NEVER);
         if (!router.hasRootController()) {
             Bundle routerSavedState = savedPages.get(position);
 
