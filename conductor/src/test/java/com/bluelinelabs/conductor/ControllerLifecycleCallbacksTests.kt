@@ -465,6 +465,8 @@ class ControllerLifecycleCallbacksTests {
     assertCalls(expectedCallState, child)
 
     activityController.get().router.popCurrentController()
+    expectedCallState.changeStartCalls++
+    expectedCallState.changeEndCalls++
     expectedCallState.detachCalls++
     expectedCallState.destroyViewCalls++
     expectedCallState.contextUnavailableCalls++

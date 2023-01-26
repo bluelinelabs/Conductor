@@ -155,7 +155,7 @@ class ControllerLifecycleActivityReferenceTests {
     )
     activity.router.popCurrentController()
 
-    Assert.assertEquals(listOf(true), listener.changeEndReferences)
+    Assert.assertEquals(listOf(true, true), listener.changeEndReferences)
     Assert.assertEquals(listOf(true), listener.postCreateViewReferences)
     Assert.assertEquals(listOf(true), listener.postAttachReferences)
     Assert.assertEquals(listOf(true), listener.postDetachReferences)
@@ -208,7 +208,7 @@ class ControllerLifecycleActivityReferenceTests {
     )
     activityController.pause().stop().destroy()
 
-    Assert.assertEquals(listOf(true), listener.changeEndReferences)
+    Assert.assertEquals(listOf(true, true), listener.changeEndReferences)
     Assert.assertEquals(listOf(true), listener.postCreateViewReferences)
     Assert.assertEquals(listOf(true), listener.postAttachReferences)
     Assert.assertEquals(listOf(true), listener.postDetachReferences)
