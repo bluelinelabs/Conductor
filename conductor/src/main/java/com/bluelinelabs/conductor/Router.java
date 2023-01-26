@@ -225,8 +225,9 @@ public abstract class Router {
         final List<RouterTransaction> poppedControllers = backstack.popAll();
         trackDestroyingControllers(poppedControllers);
 
+        RouterTransaction topTransaction = null;
         if (popViews && poppedControllers.size() > 0) {
-            RouterTransaction topTransaction = poppedControllers.get(0);
+            topTransaction = poppedControllers.get(0);
             topTransaction.controller().addLifecycleListener(new Controller.LifecycleListener() {
                 @Override
                 public void onChangeEnd(@NonNull Controller controller, @NonNull ControllerChangeHandler changeHandler, @NonNull ControllerChangeType changeType) {
@@ -240,6 +241,16 @@ public abstract class Router {
             });
 
             performControllerChange(null, topTransaction, false, topTransaction.popChangeHandler());
+        }
+
+        if (poppedControllers.size() > 0) {
+            NoOpControllerChangeHandler changeHandler = new NoOpControllerChangeHandler();
+            for (RouterTransaction routerTransaction : poppedControllers) {
+                if (routerTransaction != topTransaction) {
+                    routerTransaction.controller().changeStarted(changeHandler, ControllerChangeType.POP_EXIT);
+                    routerTransaction.controller().changeEnded(changeHandler, ControllerChangeType.POP_EXIT);
+                }
+            }
         }
     }
 
@@ -874,12 +885,7 @@ public abstract class Router {
             }
             pendingControllerChanges.add(transaction);
             if (container != null) {
-                container.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        performPendingControllerChanges();
-                    }
-                });
+                container.post(this::performPendingControllerChanges);
             }
         } else {
             ControllerChangeHandler.executeChange(transaction);
