@@ -135,7 +135,22 @@ public abstract class Router {
 
         if (poppingTopController) {
             trackDestroyingController(backstack.pop());
-            performControllerChange(backstack.peek(), topTransaction, false);
+            // Ensure all entries on the backstack, which should be visible, becomes so
+            List<RouterTransaction> newVisibleTransactions = getVisibleTransactions(backstack.iterator(), false);
+            if (newVisibleTransactions.isEmpty()) {
+                // Nothing else is visible, so just pop
+                performControllerChange(backstack.peek(), topTransaction, false);
+            } else {
+                // Loop backwards to ensure the last change made is the new top Controller
+                for (int i = newVisibleTransactions.size() - 1; i >= 0; i--) {
+                    RouterTransaction newVisibleTransaction = newVisibleTransactions.get(i);
+                    if (i == 0) {
+                        performControllerChange(newVisibleTransaction, topTransaction, false, topTransaction.popChangeHandler());
+                    } else {
+                        performControllerChange(newVisibleTransaction, null, false, topTransaction.popChangeHandler());
+                    }
+                }
+            }
         } else {
             RouterTransaction removedTransaction = null;
             RouterTransaction nextTransaction = null;
@@ -179,8 +194,12 @@ public abstract class Router {
     public void pushController(@NonNull RouterTransaction transaction) {
         ThreadUtils.ensureMainThread();
 
+        List<RouterTransaction> oldVisibleTransactions = getVisibleTransactions(backstack.iterator(), false);
         RouterTransaction from = backstack.peek();
         pushToBackstack(transaction);
+
+        ensureRemovesFromViewOnPushRemovalIsEnforced(transaction, from, oldVisibleTransactions, null);
+
         performControllerChange(transaction, from, true);
     }
 
@@ -201,16 +220,7 @@ public abstract class Router {
         }
 
         final ControllerChangeHandler handler = transaction.pushChangeHandler();
-        if (topTransaction != null) {
-            //noinspection ConstantConditions
-            final boolean oldHandlerRemovedViews = topTransaction.pushChangeHandler() == null || topTransaction.pushChangeHandler().removesFromViewOnPush();
-            final boolean newHandlerRemovesViews = handler == null || handler.removesFromViewOnPush();
-            if (!oldHandlerRemovedViews && newHandlerRemovesViews) {
-                for (RouterTransaction visibleTransaction : getVisibleTransactions(backstack.iterator(), true)) {
-                    performControllerChange(null, visibleTransaction, true, handler);
-                }
-            }
-        }
+        ensureRemovesFromViewOnPushRemovalIsEnforced(transaction, topTransaction, getVisibleTransactions(backstack.iterator(), true), handler);
 
         pushToBackstack(transaction);
 
@@ -951,6 +961,33 @@ public abstract class Router {
         }
     }
 
+    /**
+     * Goes through all {@param oldVisibleTransactions} to ensure {@link ControllerChangeHandler#removesFromViewOnPush()} == false
+     * is only respected if the preceding {@link Controller} is also visible. Detaches all {@link Controller}s who are no longer supposed to be attached.
+     *
+     * @param newTopTransaction      The transaction intended to be the new top
+     * @param oldTopTransaction      The transaction which was previously the top, if any
+     * @param oldVisibleTransactions All transactions which were previously deemed visible as per {@link Router#getVisibleTransactions(Iterator, boolean)}
+     * @param changeHandler          Optional {@link ControllerChangeHandler} to override transition when removing any {@link Controller}s deemed to require removal
+     */
+    private void ensureRemovesFromViewOnPushRemovalIsEnforced(
+            @NonNull RouterTransaction newTopTransaction,
+            @Nullable RouterTransaction oldTopTransaction,
+            @NonNull List<RouterTransaction> oldVisibleTransactions,
+            @Nullable ControllerChangeHandler changeHandler) {
+        if (oldTopTransaction != null) {
+            final ControllerChangeHandler newChangeHandler = newTopTransaction.pushChangeHandler() != null ? newTopTransaction.pushChangeHandler() : changeHandler;
+            //noinspection ConstantConditions
+            final boolean oldHandlerRemovedViews = oldTopTransaction.pushChangeHandler() == null || oldTopTransaction.pushChangeHandler().removesFromViewOnPush();
+            final boolean newHandlerRemovesViews = newChangeHandler == null || newChangeHandler.removesFromViewOnPush();
+            if (!oldHandlerRemovedViews && newHandlerRemovesViews) {
+                for (RouterTransaction visibleTransaction : oldVisibleTransactions) {
+                    performControllerChange(null, visibleTransaction, false);
+                }
+            }
+        }
+    }
+
     // Swap around transaction indices to ensure they don't get thrown out of order by the
     // developer rearranging the backstack at runtime.
     private void ensureOrderedTransactionIndices(List<RouterTransaction> backstack) {
@@ -1001,7 +1038,9 @@ public abstract class Router {
                 transactions.add(transaction);
             }
 
-            visible = transaction.pushChangeHandler() != null && !transaction.pushChangeHandler().removesFromViewOnPush();
+            // We only care about removesFromViewOnPush if the current transaction is visible
+            //noinspection ConstantConditions
+            visible = visible && transaction.pushChangeHandler() != null && !transaction.pushChangeHandler().removesFromViewOnPush();
 
             if (onlyTop && !visible) {
                 break;
