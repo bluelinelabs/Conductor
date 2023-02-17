@@ -2,10 +2,11 @@ package com.bluelinelabs.conductor
 
 import android.os.Bundle
 import java.util.*
+import java.util.concurrent.LinkedBlockingDeque
 
 internal class Backstack : Iterable<RouterTransaction> {
 
-  private val backstack: Deque<RouterTransaction> = ArrayDeque()
+  private val backstack: Deque<RouterTransaction> = LinkedBlockingDeque()
 
   val isEmpty: Boolean get() = backstack.isEmpty()
 

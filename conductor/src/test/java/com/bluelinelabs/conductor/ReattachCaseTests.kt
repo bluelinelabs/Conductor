@@ -2,7 +2,9 @@ package com.bluelinelabs.conductor
 
 import android.os.Bundle
 import android.os.Looper
+import android.view.View
 import com.bluelinelabs.conductor.Conductor.attachRouter
+import com.bluelinelabs.conductor.Controller.LifecycleListener
 import com.bluelinelabs.conductor.internal.LifecycleHandler
 import com.bluelinelabs.conductor.util.ActivityProxy
 import com.bluelinelabs.conductor.util.AttachFakingFrameLayout
@@ -396,5 +398,45 @@ class ReattachCaseTests {
   private fun sleepWakeDevice() {
     activityController.saveInstanceState(Bundle()).pause()
     activityController.resume()
+  }
+
+  @Test
+  fun testSetRootInPostAttachAfterBackgrounding() {
+    val controllerA = TestController()
+    val controllerB = TestController()
+    activityController.start().resume()
+
+    // Populate backstack
+    router.setBackstack((0..5).map {
+      TestController().asTransaction(
+        pushChangeHandler = MockChangeHandler.defaultHandler(),
+        popChangeHandler = MockChangeHandler.defaultHandler()
+      )
+    }, null)
+
+    // Push to a new controller
+    router.pushController(
+      controllerA.asTransaction(
+        pushChangeHandler = MockChangeHandler.defaultHandler(),
+        popChangeHandler = MockChangeHandler.defaultHandler()
+      )
+    )
+
+    // Add listener to controller A's postAttach to set root to controller B.
+    controllerA.addLifecycleListener(object : LifecycleListener() {
+      override fun postAttach(controller: Controller, view: View) {
+        router.setRoot(
+          controllerB.asTransaction(
+            pushChangeHandler = MockChangeHandler.defaultHandler(),
+            popChangeHandler = MockChangeHandler.defaultHandler()
+          )
+        )
+        shadowOf(Looper.getMainLooper()).idle()
+      }
+    })
+
+    // Simulate backgrounding App
+    activityController.pause().stop()
+    activityController.start().resume()
   }
 }
