@@ -30,6 +30,9 @@ abstract class ControllerChangeHandler {
    * - This handler's implementation of [performChange] should remove `from` from `container`
    *   before calling `changeListener.onChangeCompleted()`
    * - When a controller is pushed, the previous controller will stay attached and its view will remain created
+   * - When a view is recreated (e.g. after a configuration change), any controllers underneath a transaction
+   *   using this handler will have their view recreated and attached, even though they're not the top-most
+   *   controller
    *
    * If this is false:
    * - This handler's implementation of [performChange] should only remove `from` from `container`
