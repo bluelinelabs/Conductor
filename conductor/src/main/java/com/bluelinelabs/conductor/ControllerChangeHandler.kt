@@ -23,6 +23,26 @@ abstract class ControllerChangeHandler {
    */
   open val isReusable: Boolean = false
 
+  /**
+   * Returns whether or not this handler removes the `from` view from the container when performing a push.
+   *
+   * If this is true:
+   * - This handler's implementation of [performChange] should remove `from` from `container`
+   *   before calling `changeListener.onChangeCompleted()`
+   * - When a controller is pushed, the previous controller will stay attached and its view will remain created
+   *
+   * If this is false:
+   * - This handler's implementation of [performChange] should only remove `from` from `container`
+   *   when `isPush` is false
+   * - When a controller is pushed, the previous controller will be detached and its view will be destroyed
+   *
+   * If a controller pushed onto the backstack will completely cover the previous controller,
+   * using a change handler with [removesFromViewOnPush] true should result in no visual interruption
+   * to the user, while allowing the previous controller's view to be destroyed to reclaim resources.
+   * If instead, the previous controller should still be visible after the new controller is pushed,
+   * using a change handler with [removesFromViewOnPush] false will keep the previous controller's
+   * view in the view hierarchy, where it can still be seen (and even interacted with).
+   */
   open val removesFromViewOnPush: Boolean = true
 
   private var hasBeenUsed = false
