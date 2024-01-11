@@ -29,15 +29,15 @@ abstract class ControllerChangeHandler {
    * If this is true:
    * - This handler's implementation of [performChange] should remove `from` from `container`
    *   before calling `changeListener.onChangeCompleted()`
-   * - When a controller is pushed, the previous controller will stay attached and its view will remain created
-   * - When a view is recreated (e.g. after a configuration change), any controllers underneath a transaction
-   *   using this handler will have their view recreated and attached, even though they're not the top-most
-   *   controller
+   * - When a controller is pushed, the previous controller will be detached and its view will be destroyed
    *
    * If this is false:
    * - This handler's implementation of [performChange] should only remove `from` from `container`
    *   when `isPush` is false
-   * - When a controller is pushed, the previous controller will be detached and its view will be destroyed
+   * - When a controller is pushed, the previous controller will stay attached and its view will remain created
+   * - When a view is recreated (e.g. after a configuration change), any controllers underneath a transaction
+   *   using this handler will have their view recreated and attached, even though they're not the top-most
+   *   controller
    *
    * If a controller pushed onto the backstack will completely cover the previous controller,
    * using a change handler with [removesFromViewOnPush] true should result in no visual interruption
