@@ -4,6 +4,8 @@ import android.os.Bundle
 import java.util.ArrayDeque
 import java.util.Deque
 
+import com.bluelinelabs.conductor.internal.parcelableArrayListCompat
+
 internal class Backstack : Iterable<RouterTransaction> {
 
   private val backstack: Deque<RouterTransaction> = ArrayDeque()
@@ -81,12 +83,10 @@ internal class Backstack : Iterable<RouterTransaction> {
   }
 
   fun restoreInstanceState(savedInstanceState: Bundle) {
-    val entryBundles = savedInstanceState.getParcelableArrayList<Bundle?>(KEY_ENTRIES)
-    if (entryBundles != null) {
-      entryBundles.reverse()
-      for (transactionBundle in entryBundles) {
-        backstack.push(RouterTransaction(transactionBundle!!))
-      }
+    val entryBundles = savedInstanceState.parcelableArrayListCompat<Bundle>(KEY_ENTRIES)
+
+    entryBundles?.reversed()?.forEach { bundle ->
+        backstack.push(RouterTransaction(bundle))
     }
 
     onBackstackUpdatedListener?.onBackstackUpdated()

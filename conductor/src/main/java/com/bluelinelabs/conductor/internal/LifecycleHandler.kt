@@ -325,13 +325,13 @@ private interface LifecycleHandlerDelegate : ActivityLifecycleCallbacks {
 
   fun handleOnCreate(savedInstanceState: Bundle?) {
     savedInstanceState ?: return
-    data.permissionRequestMap = savedInstanceState.getParcelable<StringSparseArrayParceler>(KEY_PERMISSION_REQUEST_CODES)
+    data.permissionRequestMap = savedInstanceState.parcelableCompat<StringSparseArrayParceler>(KEY_PERMISSION_REQUEST_CODES)
       ?.stringSparseArray
       ?: SparseArray()
-    data.activityRequestMap = savedInstanceState.getParcelable<StringSparseArrayParceler>(KEY_ACTIVITY_REQUEST_CODES)
+    data.activityRequestMap = savedInstanceState.parcelableCompat<StringSparseArrayParceler>(KEY_ACTIVITY_REQUEST_CODES)
       ?.stringSparseArray
       ?: SparseArray()
-    data.pendingPermissionRequests = savedInstanceState.getParcelableArrayList(KEY_PENDING_PERMISSION_REQUESTS)
+    data.pendingPermissionRequests = savedInstanceState.parcelableArrayListCompat(KEY_PENDING_PERMISSION_REQUESTS)
       ?: ArrayList()
   }
 
