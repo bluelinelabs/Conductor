@@ -8,14 +8,7 @@ import com.android.tools.lint.checks.infrastructure.TestFile;
 import org.intellij.lang.annotations.Language;
 import org.junit.Test;
 
-@SuppressWarnings("UnstableApiUsage")
 public class ControllerChangeHandlerDetectorTest {
-
-    private static final String CONSTRUCTOR =
-            "src/test/SampleHandler.java:2: Error: This ControllerChangeHandler needs to have a public default constructor (test.SampleHandler) [ValidControllerChangeHandler]\n"
-                    + "public class SampleHandler extends com.bluelinelabs.conductor.ControllerChangeHandler {\n"
-                    + "^\n"
-                    + "1 errors, 0 warnings\n";
 
     private final TestFile controllerChangeHandlerStub = java(
             "package com.bluelinelabs.conductor;\n"
@@ -63,7 +56,12 @@ public class ControllerChangeHandlerDetectorTest {
                 .files(controllerChangeHandlerStub, java(source))
                 .issues(ControllerIssueDetector.ISSUE, ControllerChangeHandlerIssueDetector.ISSUE)
                 .run()
-                .expect(CONSTRUCTOR);
+                .expect(""
+                        + "src/test/SampleHandler.java:3: Error: This ControllerChangeHandler needs to have a public default constructor (test.SampleHandler) [ValidControllerChangeHandler]\n"
+                        + "    public SampleHandler(int number) { }\n"
+                        + "           ~~~~~~~~~~~~~\n"
+                        + "1 errors, 0 warnings\n"
+                );
     }
 
     @Test
@@ -94,7 +92,12 @@ public class ControllerChangeHandlerDetectorTest {
                 .files(controllerChangeHandlerStub, java(source))
                 .issues(ControllerIssueDetector.ISSUE, ControllerChangeHandlerIssueDetector.ISSUE)
                 .run()
-                .expect(CONSTRUCTOR);
+                .expect(""
+                        + "src/test/SampleHandler.java:3: Error: This ControllerChangeHandler needs to have a public default constructor (test.SampleHandler) [ValidControllerChangeHandler]\n"
+                        + "    private SampleHandler() { }\n"
+                        + "            ~~~~~~~~~~~~~\n"
+                        + "1 errors, 0 warnings\n"
+                );
     }
 
     @Test
@@ -111,7 +114,7 @@ public class ControllerChangeHandlerDetectorTest {
                 .run()
                 .expect("src/test/SampleHandler.java:2: Error: This ControllerChangeHandler class should be public (test.SampleHandler) [ValidControllerChangeHandler]\n"
                         + "private class SampleHandler extends com.bluelinelabs.conductor.ControllerChangeHandler {\n"
-                        + "^\n"
+                        + "              ~~~~~~~~~~~~~\n"
                         + "1 errors, 0 warnings\n");
     }
 
@@ -131,7 +134,7 @@ public class ControllerChangeHandlerDetectorTest {
                 .run()
                 .expect("src/test/SampleHandler.java:2: Error: This ControllerChangeHandler class should be public (test.SampleHandler) [ValidControllerChangeHandler]\n" +
                         "private class SampleHandler extends test.BaseChangeHandler {}\n" +
-                        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                        "              ~~~~~~~~~~~~~\n" +
                         "1 errors, 0 warnings");
     }
 }

@@ -10,6 +10,7 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
+import com.intellij.psi.PsiType;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UClass;
@@ -20,7 +21,6 @@ import org.jetbrains.uast.UParameter;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("UnstableApiUsage")
 public final class ControllerIssueDetector extends Detector implements Detector.UastScanner {
 
     static final Issue ISSUE =
@@ -48,52 +48,53 @@ public final class ControllerIssueDetector extends Detector implements Detector.
                     return;
                 }
 
-                final boolean hasSuperType = evaluator.extendsClass(node.getPsi(), CLASS_NAME, true);
+                final boolean hasSuperType = evaluator.extendsClass(node.getJavaPsi(), CLASS_NAME, true);
                 if (!hasSuperType) {
                     return;
                 }
 
                 if (!evaluator.isPublic(node)) {
                     String message = String.format("This Controller class should be public (%1$s)", node.getQualifiedName());
-                    context.report(ISSUE, node, context.getLocation((UElement) node), message);
+                    context.report(ISSUE, node, context.getLocation(Identify.byName(node)), message);
                     return;
                 }
 
                 if (node.getContainingClass() != null && !evaluator.isStatic(node)) {
                     String message = String.format("This Controller inner class should be static (%1$s)", node.getQualifiedName());
-                    context.report(ISSUE, node, context.getLocation((UElement) node), message);
+                    context.report(ISSUE, node, context.getLocation(Identify.byName(node)), message);
                     return;
                 }
 
-                boolean hasConstructor = false;
+                UMethod constructor = null;
                 boolean hasDefaultConstructor = false;
                 boolean hasBundleConstructor = false;
                 for (UMethod method : node.getMethods()) {
                     if (method.isConstructor()) {
-                        hasConstructor = true;
+                        constructor = method;
                         if (evaluator.isPublic(method)) {
                             List<UParameter> parameters = method.getUastParameters();
-                            if (parameters.size() == 0) {
+                            if (parameters.isEmpty()) {
                                 hasDefaultConstructor = true;
                                 break;
-                            } else if (parameters.size() == 1 &&
-                                    (parameters.get(0).getType().equalsToText(SdkConstants.CLASS_BUNDLE)) ||
-                                    parameters.get(0).getType().equalsToText("Bundle")) {
-                                hasBundleConstructor = true;
+                            } else if (parameters.size() == 1) {
+                                PsiType type = parameters.get(0).getType();
+                                if (type.equalsToText(SdkConstants.CLASS_BUNDLE) || type.equalsToText("Bundle")) {
+                                    hasBundleConstructor = true;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
 
-                if (hasConstructor && !hasDefaultConstructor && !hasBundleConstructor) {
+                if (constructor != null && !hasDefaultConstructor && !hasBundleConstructor) {
                     String message = String.format(
                             "This Controller needs to have either a public default constructor or a" +
                                     " public single-argument constructor that takes a Bundle. (`%1$s`)",
                             node.getQualifiedName());
-                    context.report(ISSUE, node, context.getLocation((UElement) node), message);
+                    context.report(ISSUE, node, context.getLocation(Identify.byName(constructor)), message);
                 }
             }
         };
     }
-
 }
