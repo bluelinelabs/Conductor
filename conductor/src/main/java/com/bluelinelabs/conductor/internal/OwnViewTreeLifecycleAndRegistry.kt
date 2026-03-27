@@ -30,6 +30,8 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
 
   private var hasSavedState = false
   private var savedRegistryState = Bundle.EMPTY
+  private var isControllerChangeInProgress: Boolean = false
+
   override val lifecycle: LifecycleRegistry
     get() = lifecycleRegistry
 
@@ -75,6 +77,8 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
         changeHandler: ControllerChangeHandler,
         changeType: ControllerChangeType
       ) {
+        isControllerChangeInProgress = false
+
         // Should only happen if pushing another controller over this one was aborted
         if (
           controller === changeController &&
@@ -85,6 +89,17 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
         ) {
           lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
         }
+
+        // View is not required anymore we can destroy the lifecycle
+        if (
+          controller === changeController &&
+          changeType == ControllerChangeType.PUSH_EXIT &&
+          changeHandler.removesFromViewOnPush &&
+          changeController.view?.windowToken != null &&
+          lifecycleRegistry.currentState.isAtLeast(Lifecycle.State.STARTED)
+        ) {
+          lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        }
       }
 
       override fun onChangeStart(
@@ -92,6 +107,8 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
         changeHandler: ControllerChangeHandler,
         changeType: ControllerChangeType,
       ) {
+        isControllerChangeInProgress = true
+
         pauseOnChangeStart(
           targetController = controller,
           changeController = changeController,
@@ -135,9 +152,11 @@ internal class OwnViewTreeLifecycleAndRegistry private constructor(
               lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             }
           })
-        } else {
+        } else if (!isControllerChangeInProgress) {
+          // View is still can be used by change handlers
           lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         }
+
       }
 
       override fun postContextAvailable(controller: Controller, context: Context) {
